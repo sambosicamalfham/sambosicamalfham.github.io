@@ -157,6 +157,12 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .iurl input{width:100%;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:13px;outline:none;direction:ltr}
 .ogrow .oimg{width:42px;height:42px;flex:none;border-radius:10px;border:1.5px dashed #ccc;background:#fafafa;display:grid;place-items:center;font-size:17px;overflow:hidden;cursor:pointer;padding:0}
 .ogrow .oimg img{width:100%;height:100%;object-fit:cover}
+.imf{display:flex;gap:11px;align-items:center}
+.imfv{flex:none;background:#f1efed;border:2px dashed #ddd;border-radius:13px;overflow:hidden;display:grid;place-items:center;font-size:24px;color:#aaa;cursor:pointer}
+.imfv.sq{width:72px;height:72px}
+.imfv.wide{width:150px;height:72px}
+.imfv img{width:100%;height:100%;object-fit:cover}
+.imfb{display:flex;flex-direction:column;gap:6px}
 </style>
 </head>
 <body>
@@ -941,6 +947,30 @@ function shrink(file, max, q){
     im.src = url;
   });
 }
+/* حقل صورة صغير (للوجو والغلاف) — القيمة بتنحفظ بـ input مخفي بنفس الـid */
+function imgFieldHtml(id, cur, label, shape){
+  cur = cur || '';
+  return `<div class="f"><label>${esc(label)}</label>
+    <div class="imf">
+      <div class="imfv ${shape}" id="${id}V" onclick="$('${id}F').click()">${cur?`<img src="${esc(cur)}" alt="">`:'🖼️'}</div>
+      <div class="imfb">
+        <button type="button" class="btn sm gh" onclick="$('${id}F').click()">📁 اختار صورة</button>
+        <button type="button" class="btn sm gh" onclick="imgFieldSet('${id}','')">🗑️ شيل</button>
+      </div>
+      <input type="file" id="${id}F" accept="image/*" style="display:none" onchange="imgFieldFile('${id}', this.files[0], '${shape}'); this.value=''">
+      <input type="hidden" id="${id}" value="${esc(cur)}">
+    </div></div>`;
+}
+function imgFieldSet(id, url){
+  $(id).value = url || '';
+  $(id + 'V').innerHTML = url ? `<img src="${esc(url)}" alt="">` : '🖼️';
+}
+async function imgFieldFile(id, f, shape){
+  if(!f) return;
+  $(id + 'V').innerHTML = '⏳';
+  try{ imgFieldSet(id, await makeImg(f, shape === 'wide' ? 1100 : 360, 0.8)); toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ'); }
+  catch(e){ imgFieldSet(id, $(id).value); alert('ما زبطت: ' + e.message); }
+}
 /* بترجع رابط الصورة: Cloudinary إذا مفعّل، وإلا صورة مصغّرة محفوظة داخلياً */
 async function makeImg(f, smallMax, q){
   if(hasCloud()){
@@ -955,7 +985,7 @@ async function makeImg(f, smallMax, q){
   }
   const sm = await shrink(f, smallMax, q);
   const d = sm.data();
-  if(d.length > 250000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
+  if(d.length > 350000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
   return d;
 }
 async function handleImg(f){
@@ -976,7 +1006,7 @@ async function handleImg(f){
     }else{
       const sm = await shrink(f, 520, 0.72);
       const d = sm.data();
-      if(d.length > 250000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
+      if(d.length > 350000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
       setPv(d);
     }
     toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ');
@@ -990,7 +1020,7 @@ function renderCats(){
     <div class="bar"><button class="btn sm red" onclick="editCat()">+ قسم جديد</button></div>
     ${CATS.length ? CATS.map((c,i)=>`
       <div class="card"><div class="it">
-        <div class="ph" style="width:52px;height:52px;display:grid;place-items:center;font-size:26px;background:#f4f2f0">${esc(c.icon||'🍽️')}</div>
+        <div class="ph" style="width:52px;height:52px;display:grid;place-items:center;font-size:26px;background:#f4f2f0;overflow:hidden">${c.img?`<img src="${esc(c.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc(c.icon||'🍽️')}</div>
         <div class="mid"><div class="nm">${esc(c.name)}</div>
           <div class="muted">${ITEMS.filter(x=>x.catId===c.id).length} صنف</div></div>
         <button class="btn sm gh" onclick="moveCat(${i},-1)" ${i===0?'disabled':''}>▲</button>
@@ -1013,12 +1043,13 @@ function editCat(id){
   const c = id ? CATS.find(x=>x.id===id) : {name:'',icon:'🍕'};
   if(!c) return;
   openModal(id?'تعديل قسم':'قسم جديد', `
+    ${imgPickHtml(c.img||'')}
     <div class="f"><label>الاسم *</label><input id="cName2" value="${esc(c.name)}"></div>
-    <div class="f"><label>الأيقونة (إيموجي)</label><input id="cIcon" value="${esc(c.icon||'')}" style="font-size:24px;text-align:center">
+    <div class="f"><label>الأيقونة (إيموجي) — بتطلع إذا ما في صورة</label><input id="cIcon" value="${esc(c.icon||'')}" style="font-size:24px;text-align:center">
       <div class="muted" style="margin-top:7px">🍕 🌯 🍔 🍟 🥗 🥤 🍫 🍗 🥪 🧃 🍰 🌮</div></div>
   `, async () => {
     const name = val('cName2'); if(!name){ alert('الاسم مطلوب'); return false; }
-    const data = {name, icon: val('cIcon') || '🍽️'};
+    const data = {name, icon: val('cIcon') || '🍽️', img: window._pickImg || ''};
     if(id) await db.collection('categories').doc(id).update(data);
     else await db.collection('categories').add(Object.assign(data,{order:(CATS.length+1)*10}));
     return true;
@@ -1237,8 +1268,8 @@ function renderSet(){
         <input id="sTag" value="${esc(SET.tagline||'')}" placeholder="مذاق لا يُقاوم"></div>
       <div class="f"><label>واتساب (بصيغة 972…)</label><input id="sPhone" class="ltr" value="${esc(SET.phone||window.WHATSAPP||'')}"></div>
       <div class="f2">
-        <div class="f"><label>رابط اللوجو</label><input id="sLogo" value="${esc(SET.logo||'')}" placeholder="اختياري"></div>
-        <div class="f"><label>رابط صورة الغلاف</label><input id="sCover" value="${esc(SET.cover||'')}" placeholder="اختياري"></div>
+        ${imgFieldHtml('sLogo', SET.logo, 'اللوجو', 'sq')}
+        ${imgFieldHtml('sCover', SET.cover, 'صورة الغلاف', 'wide')}
       </div>
     </div>
     <div class="card">
