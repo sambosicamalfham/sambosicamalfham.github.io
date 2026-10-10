@@ -1049,6 +1049,8 @@ function editGroup(id){
       <option value="full" ${g.priceMode==='full'?'selected':''}>السعر الكامل (للأحجام)</option></select>
       <div class="muted" style="margin-top:5px">للأحجام اختار "السعر الكامل" عشان الزبون يشوف 45 / 58 / 68</div></div>
     <label class="chk"><input type="checkbox" id="gReq" ${g.required?'checked':''}><span>إلزامي (لازم يختار)</span></label>
+    <label class="chk"><input type="checkbox" id="gHalves" ${(g.halves===true || (g.halves===undefined && /إضاف|اضاف/.test(g.title||'') && !/مشروب|صوص|صلص/.test(g.title||''))) ? 'checked' : ''}><span>🍕 الزبون بيختار وين تنحط (كاملة / نص / ربع)</span></label>
+    <div class="muted" style="margin:-4px 0 6px">فعّلها بس لإضافات البيتسا — مش للمشروبات أو الصوصات</div>
     <div style="margin-top:14px"><label style="font-weight:800;font-size:14px;display:block;margin-bottom:9px">الخيارات</label>
       <div id="gRows">${(g.items||[]).map(o=>ogRow(o)).join('')}</div>
       <button class="btn sm gh" onclick="addOgRow()">+ خيار</button></div>
@@ -1060,7 +1062,7 @@ function editGroup(id){
       return lb ? {id:'o'+(i+1), label:lb, delta:dl} : null;
     }).filter(Boolean);
     if(!items.length){ alert('ضيف خيار واحد على الأقل'); return false; }
-    const data = {title, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, items};
+    const data = {title, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
     if(id) await db.collection('optionGroups').doc(id).update(data);
     else await db.collection('optionGroups').add(Object.assign(data,{order:(GROUPS.length+1)*10}));
     return true;

@@ -714,6 +714,9 @@ function halvesOn(G){
   if(!G || G.type !== 'many') return false;
   if(G.halves === true) return true;
   if(G.halves === false) return false;
+  // بدون إعداد من اللوحة: بس مجموعات "إضافات" بقسم البيتسا، ومش المشروبات أو الصوصات
+  const t = G.title || '';
+  if(!/إضاف|اضاف/.test(t) || /مشروب|صوص|صلص|شراب/.test(t)) return false;
   const c = CATS.find(x => x.id === (cur||{}).catId);
   return !!(c && /بيت|بيز/.test(c.name||''));
 }
