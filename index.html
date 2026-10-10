@@ -330,6 +330,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pc{transform-box:fill-box;transform-origin:center}
 @keyframes pzdrop{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion:reduce){.tp.drop .pc{animation:none}}
+.cat .bx{overflow:hidden}
+.cat .bx img{width:100%;height:100%;object-fit:cover}
+.cat.on .bx:has(img){padding:3px}
+.cat.on .bx:has(img) img{border-radius:15px}
 </style>
 </head>
 <body>
@@ -601,7 +605,7 @@ function paint(){
 
   $('cats').innerHTML = CATS.map(c =>
     '<button class="cat" data-c="' + c.id + '" onclick="openCat(\'' + c.id + '\')">' +
-    '<span class="bx">' + esc(c.icon||'🍽️') + '</span><span class="lb">' + esc(c.name) + '</span></button>').join('');
+    '<span class="bx">' + (c.img ? '<img src="' + esc(c.img) + '" alt="" loading="lazy">' : esc(c.icon||'🍽️')) + '</span><span class="lb">' + esc(c.name) + '</span></button>').join('');
 
   renderHome(); renderCatsView(); renderMe(); paintCart();
 }
@@ -649,7 +653,7 @@ function renderCatsView(){
   $('catsList').innerHTML = CATS.map(c => {
     const n = avail().filter(i => i.catId === c.id).length;
     return '<button class="rowcard" style="width:100%;text-align:right" onclick="openCat(\'' + c.id + '\')">' +
-      '<div class="hd"><span class="ic" style="background:#f5f3f1;font-size:18px">' + esc(c.icon||'🍽️') + '</span>' +
+      '<div class="hd"><span class="ic" style="background:#f5f3f1;font-size:18px;overflow:hidden">' + (c.img ? '<img src="' + esc(c.img) + '" alt="" style="width:100%;height:100%;object-fit:cover">' : esc(c.icon||'🍽️')) + '</span>' +
       '<span style="flex:1">' + esc(c.name) + '</span>' +
       '<span style="color:var(--muted);font-size:13px;font-weight:600">' + n + ' صنف</span></div></button>';
   }).join('');
@@ -764,8 +768,7 @@ function unit(){
   });
   return p;
 }
-/* ============ معاينة البيتسا الحيّة ============ */
-let pzShown = {};
+/* ============ محرّك رسم البيتسا (نفس الكود باللوحة والمتجر) ============ */
 function seedRand(str){
   let h = 2166136261;
   for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -823,84 +826,89 @@ function inRegion(x, y, k){
     default:   return true;
   }
 }
-/* بيرجع قائمة الإضافات المختارة مع مكانها */
-function chosenToppings(){
-  const out = [];
-  (cur.opts||[]).forEach(g => {
-    const G = grp(g); if(!halvesOn(G)) return;
-    (sel[g]||[]).forEach(o => {
-      const O = G.items.find(x => x.id === o); if(!O) return;
-      out.push({key: g + ':' + o, label: O.label, img: O.img || '', reg: side[g + ':' + o] || 'f'});
-    });
-  });
-  // الجبنة تحت، وبعدين الباقي
-  return out.sort((a,b) => (toppingKind(b.label) === 'chz') - (toppingKind(a.label) === 'chz'));
-}
-function pizzaPreview(){
-  const tops = chosenToppings();
+/* tops: [{key,label,img,reg,ps,pn}] — ps = حجم القطعة، pn = كثافة/كمية */
+function pizzaSvgFrom(tops, o){
+  o = o || {};
+  const idp = o.idp || 'pz', isNew = o.isNew || (() => false);
   const R = 84;
   let defs = '', body = '', n = 0;
   const regs = {};
   tops.forEach(tp => {
     regs[tp.reg] = 1;
+    const ps = Math.max(.4, Math.min(2.5, Number(tp.ps) || 1));
+    const pn = Math.max(.3, Math.min(3, Number(tp.pn) || 1));
     const rnd = seedRand(tp.key);
     const isQ = tp.reg.length === 2, isH = tp.reg === 'r' || tp.reg === 'l';
-    const want = isQ ? 5 : isH ? 8 : 14, pts = [];
-    for(let tries = 0; pts.length < want && tries < 600; tries++){
-      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * R;
+    const want = Math.max(1, Math.round((isQ ? 5 : isH ? 8 : 14) * pn)), pts = [];
+    const minD = 18 * ps * Math.min(1, 1 / Math.sqrt(pn)), minD2 = minD * minD;
+    for(let tries = 0; pts.length < want && tries < 900; tries++){
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * (R - 4 * ps);
       const x = Math.cos(a) * r, y = Math.sin(a) * r;
       if(!inRegion(x, y, tp.reg)) continue;
-      if(pts.some(p => (p[0]-x)*(p[0]-x) + (p[1]-y)*(p[1]-y) < 320)) continue;
+      if(pts.some(p => (p[0]-x)*(p[0]-x) + (p[1]-y)*(p[1]-y) < minD2)) continue;
       pts.push([x, y, rnd() * 360]);
     }
-    const isNew = !pzShown[tp.key + '@' + tp.reg];
-    pzShown[tp.key + '@' + tp.reg] = 1;
     let g = '';
+    const tf = p => '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ') scale(' + ps.toFixed(2) + ')">';
     if(tp.img){
-      const id = 'pzc' + (n++);
+      const id = idp + 'c' + (n++);
       const png = /^data:image\/(png|webp)|\.png(\?|$)/i.test(tp.img);
       if(!png) defs += '<clipPath id="' + id + '"><circle r="9"/></clipPath>';
       pts.forEach((p,i) => {
-        g += '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ')"' +
-          '><g class="pc" style="animation-delay:' + (i * 35) + 'ms">' +
+        g += tf(p) + '<g class="pc" style="animation-delay:' + (i * 35) + 'ms">' +
           '<image href="' + esc(tp.img) + '" x="-10" y="-10" width="20" height="20" preserveAspectRatio="xMidYMid slice"' +
           (png ? '' : ' clip-path="url(#' + id + ')"') + '/>' +
           (png ? '' : '<circle r="9" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1"/>') + '</g></g>';
       });
     }else{
       const shape = pieceSvg(toppingKind(tp.label));
-      pts.forEach((p,i) => {
-        g += '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ')"' +
-          '><g class="pc" style="animation-delay:' + (i * 35) + 'ms">' + shape + '</g></g>';
-      });
+      pts.forEach((p,i) => { g += tf(p) + '<g class="pc" style="animation-delay:' + (i * 35) + 'ms">' + shape + '</g></g>'; });
     }
-    body += '<g class="tp ' + (isNew ? 'drop' : '') + '" filter="url(#pzsh)">' + g + '</g>';
+    body += '<g class="tp ' + (isNew(tp) ? 'drop' : '') + '" filter="url(#' + idp + 'sh)">' + g + '</g>';
   });
   const showH = regs.r || regs.l || regs.rt || regs.lt || regs.rb || regs.lb;
   const showQ = regs.rt || regs.lt || regs.rb || regs.lb;
   const guides = (showH ? '<line x1="0" y1="-96" x2="0" y2="96" class="gd"/>' : '') +
                  (showQ ? '<line x1="-96" y1="0" x2="96" y2="0" class="gd"/>' : '');
-  // بقع الجبنة المحمّرة — ثابتة لكل صنف
-  const rb = seedRand('base' + (cur.id||'')); let spots = '';
+  const rb = seedRand('base' + (o.seed || '')); let spots = '';
   for(let i = 0; i < 26; i++){
     const a = rb() * 6.283, r = Math.sqrt(rb()) * 88;
     spots += '<ellipse cx="' + (Math.cos(a)*r).toFixed(1) + '" cy="' + (Math.sin(a)*r).toFixed(1) + '" rx="' + (3 + rb()*6).toFixed(1) +
       '" ry="' + (2 + rb()*4).toFixed(1) + '" fill="' + (rb() < .55 ? '#e3a94a' : '#c97a2c') + '" opacity="' + (.25 + rb()*.35).toFixed(2) + '"/>';
   }
-  return '<div class="pzview"><svg viewBox="-120 -120 240 240" aria-label="معاينة البيتسا">' +
+  return '<svg viewBox="-120 -120 240 240" aria-label="معاينة البيتسا">' +
     '<defs>' +
-      '<radialGradient id="pzcr" r=".5"><stop offset=".78" stop-color="#e8b36a"/><stop offset=".9" stop-color="#d4943f"/><stop offset="1" stop-color="#a8692a"/></radialGradient>' +
-      '<radialGradient id="pzch" r=".5"><stop offset="0" stop-color="#fbe39a"/><stop offset=".8" stop-color="#f5cf6b"/><stop offset="1" stop-color="#e3a944"/></radialGradient>' +
-      '<filter id="pzsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-opacity=".35"/></filter>' +
-      '<filter id="pzbs" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".28"/></filter>' +
-      '<filter id="pzch2"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>' +
+      '<radialGradient id="' + idp + 'cr" r=".5"><stop offset=".78" stop-color="#e8b36a"/><stop offset=".9" stop-color="#d4943f"/><stop offset="1" stop-color="#a8692a"/></radialGradient>' +
+      '<radialGradient id="' + idp + 'ch" r=".5"><stop offset="0" stop-color="#fbe39a"/><stop offset=".8" stop-color="#f5cf6b"/><stop offset="1" stop-color="#e3a944"/></radialGradient>' +
+      '<filter id="' + idp + 'sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-opacity=".35"/></filter>' +
+      '<filter id="' + idp + 'bs" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".28"/></filter>' +
+      '<filter id="' + idp + 'tx"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>' +
       defs + '</defs>' +
-    '<circle r="114" fill="url(#pzcr)" filter="url(#pzbs)"/>' +
+    '<circle r="114" fill="url(#' + idp + 'cr)" filter="url(#' + idp + 'bs)"/>' +
     '<circle r="99" fill="#b8321f"/>' +
-    '<circle r="96" fill="url(#pzch)" filter="url(#pzch2)"/>' +
-    '<g filter="url(#pzch2)">' + spots + '</g>' +
-    guides + body +
-    '</svg>' +
+    '<circle r="96" fill="url(#' + idp + 'ch)" filter="url(#' + idp + 'tx)"/>' +
+    '<g filter="url(#' + idp + 'tx)">' + spots + '</g>' +
+    guides + body + '</svg>';
+}
+
+/* ============ معاينة البيتسا الحيّة بالمتجر ============ */
+let pzShown = {};
+function chosenToppings(){
+  const out = [];
+  (cur.opts||[]).forEach(g => {
+    const G = grp(g); if(!halvesOn(G)) return;
+    (sel[g]||[]).forEach(o => {
+      const O = G.items.find(x => x.id === o); if(!O) return;
+      out.push({key: g + ':' + o, label: O.label, img: O.img || '', reg: side[g + ':' + o] || 'f', ps: O.ps, pn: O.pn});
+    });
+  });
+  return out.sort((a,b) => (toppingKind(b.label) === 'chz') - (toppingKind(a.label) === 'chz'));
+}
+function pizzaPreview(){
+  const tops = chosenToppings();
+  const svg = pizzaSvgFrom(tops, {seed: cur.id || '', idp: 'pz', isNew: tp => {
+    const k = tp.key + '@' + tp.reg + '@' + (tp.ps||1) + '@' + (tp.pn||1); const n = !pzShown[k]; pzShown[k] = 1; return n; }});
+  return '<div class="pzview">' + svg +
     '<div class="pzcap">' + (tops.length ? '🍕 بيتسيتك — ' + tops.length + ' إضافة' : '🍕 اختار إضافات وشوفها على البيتسا') + '</div></div>';
 }
 

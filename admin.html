@@ -163,6 +163,30 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .imfv.wide{width:150px;height:72px}
 .imfv img{width:100%;height:100%;object-fit:cover}
 .imfb{display:flex;flex-direction:column;gap:6px}
+.crop-bg{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px}
+.crop-box{background:#fff;border-radius:20px;padding:16px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.crop-h{font-weight:900;font-size:17px}
+.crop-tip{font-size:12.5px;color:var(--muted);margin:3px 0 12px}
+.crop-fr{position:relative;overflow:hidden;margin:0 auto;border-radius:12px;background:#222;cursor:grab;touch-action:none;
+  box-shadow:0 0 0 3px var(--red)}
+.crop-fr.chk{background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/16px 16px}
+.crop-fr:active{cursor:grabbing}
+.crop-fr img{position:absolute;left:0;top:0;max-width:none;user-select:none;pointer-events:none;transform-origin:0 0}
+.crop-z{display:flex;align-items:center;gap:10px;margin:14px 4px 4px;font-size:14px}
+.crop-z input{flex:1;accent-color:var(--red)}
+.crop-a{display:flex;gap:9px;margin-top:12px}
+.crop-a .btn{flex:1}
+.ogrow{flex-wrap:wrap}
+.ogsz{display:none;flex-basis:100%;gap:12px;align-items:center;flex-wrap:wrap;background:#fff7f0;border-radius:10px;padding:7px 10px;margin:0 0 4px 0;font-size:12px;font-weight:700;color:var(--ink-2)}
+#gRows.hv .ogsz{display:flex}
+.ogsz label{display:flex;align-items:center;gap:6px;flex:1 1 180px;white-space:nowrap}
+.ogsz input[type=range]{min-width:70px}
+.ogsz label b{min-width:38px;color:var(--red)}
+.ogsz input[type=range]{flex:1;accent-color:var(--red);padding:0;border:none}
+.ogrow.cur .ogsz{background:#ffe9eb}
+.ogprev{display:flex;align-items:center;gap:14px;background:#faf8f6;border-radius:14px;padding:10px;margin-bottom:10px}
+.ogprev svg{width:150px;height:150px;flex:none}
+.ogpc{font-size:13px;line-height:1.7}.ogpc span{color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
@@ -886,6 +910,129 @@ function editItem(id){
   window._pickImg = it.img || '';
 }
 
+/* ============ محرّك رسم البيتسا (نفس الكود باللوحة والمتجر) ============ */
+function seedRand(str){
+  let h = 2166136261;
+  for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+/* شكل مرسوم لكل إضافة حسب اسمها، بيستعمل بس إذا الإضافة ما إلها صورة */
+function toppingKind(label){
+  const t = String(label||'');
+  if(/زيتون\s*(اسود|أسود)/.test(t)) return 'olB';
+  if(/زيتون/.test(t)) return 'olG';
+  if(/فطر|مشروم/.test(t)) return 'mush';
+  if(/ذر[ةه]/.test(t)) return 'corn';
+  if(/بصل/.test(t)) return 'onion';
+  if(/هالبينو|حار|حر\b/.test(t) && /فلفل|هالبينو/.test(t)) return 'jal';
+  if(/فلفل/.test(t)) return 'pep';
+  if(/طون/.test(t)) return 'tuna';
+  if(/سلامي|نقانق|سجق|ببروني|بيبروني/.test(t)) return 'sal';
+  if(/دجاج|شاورما|فاهيتا/.test(t)) return 'chk';
+  if(/كباب|لحم|انتريكوت|إنتريكوت|برقيت|برجيت|بيف|همبرغر/.test(t)) return 'beef';
+  if(/جبن/.test(t)) return 'chz';
+  if(/بندور|طماط/.test(t)) return 'tom';
+  if(/اناناس|أناناس/.test(t)) return 'pine';
+  if(/ريحان|سبانخ|جرجير/.test(t)) return 'leaf';
+  return 'dot';
+}
+function pieceSvg(k){
+  switch(k){
+    case 'olB': return '<circle r="6.5" fill="#1d1a19"/><circle r="2.6" fill="#5c4a3c"/><circle cx="-2.4" cy="-2.6" r="1.3" fill="#fff" opacity=".35"/>';
+    case 'olG': return '<circle r="6.5" fill="#6d8a25"/><circle r="2.6" fill="#c44a2c"/><circle cx="-2.4" cy="-2.6" r="1.3" fill="#fff" opacity=".35"/>';
+    case 'mush': return '<path d="M-8 1 Q-8 -8 0 -8 Q8 -8 8 1 Z" fill="#d9c1a0" stroke="#a5875f" stroke-width="1"/><rect x="-2.6" y="0" width="5.2" height="7" rx="1.5" fill="#e9d8bd" stroke="#a5875f" stroke-width="1"/>';
+    case 'corn': return '<ellipse cx="-3" cy="0" rx="2.6" ry="3.2" fill="#f2c12e"/><ellipse cx="3" cy="-1" rx="2.6" ry="3.2" fill="#f5cc45"/><ellipse cx="0" cy="3.6" rx="2.6" ry="3.2" fill="#e9b522"/>';
+    case 'onion': return '<path d="M-8 2 Q0 -9 8 2" fill="none" stroke="#a75b97" stroke-width="2.6" stroke-linecap="round"/><path d="M-5 3 Q0 -4 5 3" fill="none" stroke="#e9d4ea" stroke-width="1.6" stroke-linecap="round"/>';
+    case 'pep': return '<path d="M-9 3 Q0 -7 9 3" fill="none" stroke="#2f7d2a" stroke-width="4" stroke-linecap="round"/>';
+    case 'jal': return '<circle r="6" fill="#3f8f2f"/><circle r="3.6" fill="#cfe5a5"/><circle cx="1" cy="-1" r=".9" fill="#f5f0c8"/><circle cx="-1.2" cy="1" r=".9" fill="#f5f0c8"/>';
+    case 'tuna': return '<path d="M-7 -2 Q-3 -7 3 -5 Q8 -3 6 3 Q2 7 -4 5 Q-9 2 -7 -2 Z" fill="#c9a185" stroke="#a7806a" stroke-width=".8"/>';
+    case 'sal': return '<circle r="8.5" fill="#b3302a"/><circle r="8.5" fill="none" stroke="#7d1c18" stroke-width="1"/><circle cx="-3" cy="-2" r="1.3" fill="#f0b3a8"/><circle cx="3" cy="2" r="1.1" fill="#f0b3a8"/><circle cx="2" cy="-4" r=".9" fill="#f0b3a8"/><circle cx="-2" cy="4" r="1" fill="#f0b3a8"/>';
+    case 'chk': return '<path d="M-7 -3 L-1 -7 L7 -4 L6 4 L-2 7 L-7 3 Z" fill="#e3b77e" stroke="#b07a3c" stroke-width="1"/><path d="M-4 -2 L3 -3" stroke="#c8935a" stroke-width="1"/>';
+    case 'beef': return '<path d="M-7 -4 L0 -7 L7 -3 L6 5 L-3 7 L-7 2 Z" fill="#6e3d22" stroke="#4a2614" stroke-width="1"/><circle cx="-2" cy="-1" r="1.2" fill="#8d5636"/><circle cx="3" cy="2" r="1" fill="#8d5636"/>';
+    case 'chz': return '<path d="M-9 0 Q-7 -8 0 -7 Q8 -8 9 0 Q8 8 0 7 Q-8 8 -9 0 Z" fill="#fff4cf" opacity=".95"/>';
+    case 'tom': return '<circle r="8" fill="#d9362b"/><circle r="5.6" fill="#ef6a55"/><circle cx="-2" cy="-1" r="1" fill="#f7d26a"/><circle cx="2" cy="1" r="1" fill="#f7d26a"/><circle cx="0" cy="-3" r="1" fill="#f7d26a"/>';
+    case 'pine': return '<path d="M-7 -5 L7 -5 L4 6 L-4 6 Z" fill="#f4d35e" stroke="#d8ad2c" stroke-width="1"/>';
+    case 'leaf': return '<path d="M-8 0 Q0 -8 8 0 Q0 8 -8 0 Z" fill="#3c8d3a"/><path d="M-7 0 L7 0" stroke="#2a6a28" stroke-width="1"/>';
+    default: return '<circle r="6" fill="#e07b39"/><circle r="6" fill="none" stroke="#a9541e" stroke-width="1"/>';
+  }
+}
+function inRegion(x, y, k){
+  const g = 5;
+  switch(k){
+    case 'r':  return x > g;
+    case 'l':  return x < -g;
+    case 'rt': return x > g && y < -g;
+    case 'lt': return x < -g && y < -g;
+    case 'rb': return x > g && y > g;
+    case 'lb': return x < -g && y > g;
+    default:   return true;
+  }
+}
+/* tops: [{key,label,img,reg,ps,pn}] — ps = حجم القطعة، pn = كثافة/كمية */
+function pizzaSvgFrom(tops, o){
+  o = o || {};
+  const idp = o.idp || 'pz', isNew = o.isNew || (() => false);
+  const R = 84;
+  let defs = '', body = '', n = 0;
+  const regs = {};
+  tops.forEach(tp => {
+    regs[tp.reg] = 1;
+    const ps = Math.max(.4, Math.min(2.5, Number(tp.ps) || 1));
+    const pn = Math.max(.3, Math.min(3, Number(tp.pn) || 1));
+    const rnd = seedRand(tp.key);
+    const isQ = tp.reg.length === 2, isH = tp.reg === 'r' || tp.reg === 'l';
+    const want = Math.max(1, Math.round((isQ ? 5 : isH ? 8 : 14) * pn)), pts = [];
+    const minD = 18 * ps * Math.min(1, 1 / Math.sqrt(pn)), minD2 = minD * minD;
+    for(let tries = 0; pts.length < want && tries < 900; tries++){
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * (R - 4 * ps);
+      const x = Math.cos(a) * r, y = Math.sin(a) * r;
+      if(!inRegion(x, y, tp.reg)) continue;
+      if(pts.some(p => (p[0]-x)*(p[0]-x) + (p[1]-y)*(p[1]-y) < minD2)) continue;
+      pts.push([x, y, rnd() * 360]);
+    }
+    let g = '';
+    const tf = p => '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ') scale(' + ps.toFixed(2) + ')">';
+    if(tp.img){
+      const id = idp + 'c' + (n++);
+      const png = /^data:image\/(png|webp)|\.png(\?|$)/i.test(tp.img);
+      if(!png) defs += '<clipPath id="' + id + '"><circle r="9"/></clipPath>';
+      pts.forEach((p,i) => {
+        g += tf(p) + '<g class="pc" style="animation-delay:' + (i * 35) + 'ms">' +
+          '<image href="' + esc(tp.img) + '" x="-10" y="-10" width="20" height="20" preserveAspectRatio="xMidYMid slice"' +
+          (png ? '' : ' clip-path="url(#' + id + ')"') + '/>' +
+          (png ? '' : '<circle r="9" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1"/>') + '</g></g>';
+      });
+    }else{
+      const shape = pieceSvg(toppingKind(tp.label));
+      pts.forEach((p,i) => { g += tf(p) + '<g class="pc" style="animation-delay:' + (i * 35) + 'ms">' + shape + '</g></g>'; });
+    }
+    body += '<g class="tp ' + (isNew(tp) ? 'drop' : '') + '" filter="url(#' + idp + 'sh)">' + g + '</g>';
+  });
+  const showH = regs.r || regs.l || regs.rt || regs.lt || regs.rb || regs.lb;
+  const showQ = regs.rt || regs.lt || regs.rb || regs.lb;
+  const guides = (showH ? '<line x1="0" y1="-96" x2="0" y2="96" class="gd"/>' : '') +
+                 (showQ ? '<line x1="-96" y1="0" x2="96" y2="0" class="gd"/>' : '');
+  const rb = seedRand('base' + (o.seed || '')); let spots = '';
+  for(let i = 0; i < 26; i++){
+    const a = rb() * 6.283, r = Math.sqrt(rb()) * 88;
+    spots += '<ellipse cx="' + (Math.cos(a)*r).toFixed(1) + '" cy="' + (Math.sin(a)*r).toFixed(1) + '" rx="' + (3 + rb()*6).toFixed(1) +
+      '" ry="' + (2 + rb()*4).toFixed(1) + '" fill="' + (rb() < .55 ? '#e3a94a' : '#c97a2c') + '" opacity="' + (.25 + rb()*.35).toFixed(2) + '"/>';
+  }
+  return '<svg viewBox="-120 -120 240 240" aria-label="معاينة البيتسا">' +
+    '<defs>' +
+      '<radialGradient id="' + idp + 'cr" r=".5"><stop offset=".78" stop-color="#e8b36a"/><stop offset=".9" stop-color="#d4943f"/><stop offset="1" stop-color="#a8692a"/></radialGradient>' +
+      '<radialGradient id="' + idp + 'ch" r=".5"><stop offset="0" stop-color="#fbe39a"/><stop offset=".8" stop-color="#f5cf6b"/><stop offset="1" stop-color="#e3a944"/></radialGradient>' +
+      '<filter id="' + idp + 'sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-opacity=".35"/></filter>' +
+      '<filter id="' + idp + 'bs" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".28"/></filter>' +
+      '<filter id="' + idp + 'tx"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>' +
+      defs + '</defs>' +
+    '<circle r="114" fill="url(#' + idp + 'cr)" filter="url(#' + idp + 'bs)"/>' +
+    '<circle r="99" fill="#b8321f"/>' +
+    '<circle r="96" fill="url(#' + idp + 'ch)" filter="url(#' + idp + 'tx)"/>' +
+    '<g filter="url(#' + idp + 'tx)">' + spots + '</g>' +
+    guides + body + '</svg>';
+}
+
 /* ========= الصور ========= */
 const hasCloud = () => !!(window.CLOUDINARY && window.CLOUDINARY.cloudName && window.CLOUDINARY.preset);
 function setPv(url){
@@ -895,8 +1042,8 @@ function setPv(url){
   const rm = $('imgRm'); if(rm) rm.style.display = url ? '' : 'none';
   const u = $('imgUrl'); if(u && u.value !== url && !String(url).startsWith('data:')) u.value = url || '';
 }
-function imgPickHtml(cur){
-  window._pickImg = cur || '';
+function imgPickHtml(cur, aspect, what){
+  window._pickImg = cur || ''; window._pickAspect = aspect || 1.6; window._pickWhat = what || 'الصنف';
   setTimeout(() => {
     setPv(cur || '');
     const box = $('pvBox'); if(!box) return;
@@ -906,7 +1053,7 @@ function imgPickHtml(cur){
       const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handleImg(f); };
   }, 0);
   return `<div class="imgpick2">
-    <div class="pv2" id="pvBox" onclick="$('fileIn').click()"></div>
+    <div class="pv2" id="pvBox" onclick="$('fileIn').click()" style="aspect-ratio:${window._pickAspect};${window._pickAspect<=1?'max-width:220px;max-height:none;margin:0 auto':''}"></div>
     <div class="ibtns">
       <button type="button" class="btn sm gh" onclick="$('fileIn').click()">📁 اختار صورة</button>
       <button type="button" class="btn sm gh only-m" onclick="$('camIn').click()">📸 صوّر هلأ</button>
@@ -926,27 +1073,6 @@ document.addEventListener('paste', e => {
   const it = [...(e.clipboardData||{}).items||[]].find(x => x.type.startsWith('image/'));
   if(it){ e.preventDefault(); handleImg(it.getAsFile()); }
 });
-/* تصغير الصورة بالمتصفح قبل الرفع */
-function shrink(file, max, q){
-  return new Promise((res, rej) => {
-    const url = URL.createObjectURL(file), im = new Image();
-    im.onload = () => {
-      const s = Math.min(1, max / Math.max(im.width, im.height));
-      const c = document.createElement('canvas');
-      c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
-      // PNG/WebP بنخليها بخلفية شفافة (مهم لصور الإضافات اللي بتنحط على البيتسا)
-      const keepAlpha = /png|webp/i.test(file.type || file.name || '');
-      const type = keepAlpha ? 'image/png' : 'image/jpeg';
-      const x = c.getContext('2d');
-      if(!keepAlpha){ x.fillStyle = '#fff'; x.fillRect(0,0,c.width,c.height); }
-      x.drawImage(im, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
-      c.toBlob(b => b ? res({blob:b, data:() => c.toDataURL(type, q)}) : rej(new Error('ما قدرت أقرا الصورة')), type, q);
-    };
-    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('الملف مش صورة أو نوعه مش مدعوم')); };
-    im.src = url;
-  });
-}
 /* حقل صورة صغير (للوجو والغلاف) — القيمة بتنحفظ بـ input مخفي بنفس الـid */
 function imgFieldHtml(id, cur, label, shape){
   cur = cur || '';
@@ -968,49 +1094,138 @@ function imgFieldSet(id, url){
 async function imgFieldFile(id, f, shape){
   if(!f) return;
   $(id + 'V').innerHTML = '⏳';
-  try{ imgFieldSet(id, await makeImg(f, shape === 'wide' ? 1100 : 360, 0.8)); toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ'); }
+  try{
+    const url = await makeImg(f, shape === 'wide' ? 1100 : 360, 0.8, shape === 'wide' ? 16/9 : 1, shape === 'wide' ? 'ظبّط صورة الغلاف' : 'ظبّط اللوجو');
+    imgFieldSet(id, url === null ? $(id).value : url);
+    if(url) toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ');
+  }
   catch(e){ imgFieldSet(id, $(id).value); alert('ما زبطت: ' + e.message); }
 }
-/* بترجع رابط الصورة: Cloudinary إذا مفعّل، وإلا صورة مصغّرة محفوظة داخلياً */
-async function makeImg(f, smallMax, q){
+/* ========= أداة قص الصورة (سحب + تكبير) ========= */
+function loadImgFile(f){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => res({im, url});
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('الملف مش صورة أو نوعه مش مدعوم')); };
+    im.src = url;
+  });
+}
+/* بترجع canvas بالجزء المقصوص، أو null إذا لغى */
+async function cropDialog(f, aspect, title){
+  const {im, url} = await loadImgFile(f);
+  const alpha = /png|webp/i.test(f.type || f.name || '');
+  return new Promise(resolve => {
+    const W = im.naturalWidth, H = im.naturalHeight;
+    const maxW = Math.min(window.innerWidth - 48, 460), maxH = Math.min(window.innerHeight * 0.5, 360);
+    let FW = maxW, FH = FW / aspect;
+    if(FH > maxH){ FH = maxH; FW = FH * aspect; }
+    const s0 = Math.max(FW / W, FH / H);
+    let z = 1, s = s0, ox = (FW - W * s) / 2, oy = (FH - H * s) / 2;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'crop-bg';
+    wrap.innerHTML = `<div class="crop-box">
+      <div class="crop-h">${esc(title || 'ظبّط الصورة')}</div>
+      <div class="crop-tip">اسحب الصورة لتختار شو يبيّن، واستعمل الشريط للتكبير</div>
+      <div class="crop-fr ${alpha ? 'chk' : ''}" style="width:${FW}px;height:${FH}px"><img alt="" draggable="false"></div>
+      <div class="crop-z"><span>➖</span><input type="range" min="1" max="4" step="0.01" value="1"><span>➕</span></div>
+      <div class="crop-a">
+        <button type="button" class="btn gh" data-a="x">إلغاء</button>
+        <button type="button" class="btn red" data-a="ok">✓ تمام</button>
+      </div></div>`;
+    document.body.appendChild(wrap);
+    const fr = wrap.querySelector('.crop-fr'), img = fr.querySelector('img'), rng = wrap.querySelector('input');
+    img.src = url;
+    const clamp = () => {
+      ox = Math.min(0, Math.max(FW - W * s, ox));
+      oy = Math.min(0, Math.max(FH - H * s, oy));
+    };
+    const draw = () => { clamp(); img.style.width = (W * s) + 'px'; img.style.height = (H * s) + 'px'; img.style.transform = `translate(${ox}px,${oy}px)`; };
+    const zoomTo = (nz, cx = FW / 2, cy = FH / 2) => {
+      nz = Math.max(1, Math.min(4, nz));
+      const ns = s0 * nz;
+      ox = cx - (cx - ox) * ns / s; oy = cy - (cy - oy) * ns / s;
+      z = nz; s = ns; rng.value = z; draw();
+    };
+    draw();
+    rng.oninput = () => zoomTo(Number(rng.value));
+    // سحب بالماوس أو الإصبع، وتكبير بإصبعين
+    const pts = new Map(); let pinch0 = 0, z0 = 1;
+    fr.onpointerdown = e => { fr.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if(pts.size === 2){ const [a,b] = [...pts.values()]; pinch0 = Math.hypot(a[0]-b[0], a[1]-b[1]); z0 = z; } };
+    fr.onpointermove = e => {
+      if(!pts.has(e.pointerId)) return;
+      const p = pts.get(e.pointerId);
+      if(pts.size === 1){ ox += e.clientX - p[0]; oy += e.clientY - p[1]; draw(); }
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if(pts.size === 2 && pinch0){ const [a,b] = [...pts.values()]; zoomTo(z0 * Math.hypot(a[0]-b[0], a[1]-b[1]) / pinch0); }
+    };
+    fr.onpointerup = fr.onpointercancel = e => { pts.delete(e.pointerId); if(pts.size < 2) pinch0 = 0; };
+    fr.onwheel = e => { e.preventDefault(); const r = fr.getBoundingClientRect(); zoomTo(z * (e.deltaY < 0 ? 1.08 : 0.93), e.clientX - r.left, e.clientY - r.top); };
+
+    const done = ok => {
+      let out = null;
+      if(ok){
+        const sx = -ox / s, sy = -oy / s, sw = FW / s, sh = FH / s;
+        const ow = Math.max(1, Math.round(Math.min(sw, 1600))), oh = Math.max(1, Math.round(ow / aspect));
+        out = document.createElement('canvas'); out.width = ow; out.height = oh;
+        const x = out.getContext('2d');
+        if(!alpha){ x.fillStyle = '#fff'; x.fillRect(0, 0, ow, oh); }
+        x.imageSmoothingQuality = 'high';
+        x.drawImage(im, sx, sy, sw, sh, 0, 0, ow, oh);
+        out._alpha = alpha;
+      }
+      URL.revokeObjectURL(url); wrap.remove(); resolve(out);
+    };
+    wrap.querySelector('[data-a="ok"]').onclick = () => done(true);
+    wrap.querySelector('[data-a="x"]').onclick = () => done(false);
+  });
+}
+/* تصغير canvas وترميزه */
+function encodeCanvas(c, max, q){
+  const k = Math.min(1, max / Math.max(c.width, c.height));
+  let o = c;
+  if(k < 1){
+    o = document.createElement('canvas'); o.width = Math.round(c.width * k); o.height = Math.round(c.height * k);
+    const x = o.getContext('2d');
+    if(!c._alpha){ x.fillStyle = '#fff'; x.fillRect(0, 0, o.width, o.height); }
+    x.imageSmoothingQuality = 'high'; x.drawImage(c, 0, 0, o.width, o.height);
+  }
+  const type = c._alpha ? 'image/png' : 'image/jpeg';
+  return new Promise((res, rej) => o.toBlob(b => b ? res({blob:b, data:() => o.toDataURL(type, q)}) : rej(new Error('ما قدرت أجهّز الصورة')), type, q));
+}
+/* بترجع رابط الصورة بعد القص: Cloudinary إذا مفعّل، وإلا محفوظة داخلياً.
+   إذا لغى القص بترجع null */
+async function makeImg(f, smallMax, q, aspect, title){
+  const c = await cropDialog(f, aspect || 1, title);
+  if(!c) return null;
   if(hasCloud()){
-    const {blob} = await shrink(f, 1400, 0.85);
+    const {blob} = await encodeCanvas(c, 1400, 0.85);
     const fd = new FormData();
     fd.append('file', blob, blob.type === 'image/png' ? 'img.png' : 'img.jpg');
     fd.append('upload_preset', window.CLOUDINARY.preset);
     const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/image/upload', {method:'POST', body:fd});
     const j = await r.json();
     if(!j.secure_url) throw new Error(j.error ? j.error.message : 'فشل الرفع');
-    return j.secure_url.replace('/upload/', '/upload/w_' + (smallMax < 400 ? 300 : 700) + ',q_auto,f_auto/');
+    return j.secure_url.replace('/upload/', '/upload/w_' + (smallMax < 400 ? 300 : 900) + ',q_auto,f_auto/');
   }
-  const sm = await shrink(f, smallMax, q);
-  const d = sm.data();
+  let sm = await encodeCanvas(c, smallMax, q), d = sm.data();
+  if(d.length > 350000){ sm = await encodeCanvas(c, Math.round(smallMax * 0.7), q * 0.85); d = sm.data(); }
   if(d.length > 350000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
   return d;
 }
+
 async function handleImg(f){
   if(!f) return;
   if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||'')){ alert('اختار صورة'); return; }
-  const box = $('pvBox'); if(box) box.innerHTML = '<div class="ph0">⏳<span>جاري التجهيز...</span></div>';
+  const prev = window._pickImg || '';
+  const box = $('pvBox');
   try{
-    if(hasCloud()){
-      const {blob} = await shrink(f, 1400, 0.85);
-      const fd = new FormData();
-      fd.append('file', blob, blob.type === 'image/png' ? 'img.png' : 'img.jpg');
-      fd.append('upload_preset', window.CLOUDINARY.preset);
-      if(box) box.innerHTML = '<div class="ph0">⏳<span>جاري الرفع...</span></div>';
-      const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/image/upload', {method:'POST', body:fd});
-      const j = await r.json();
-      if(!j.secure_url) throw new Error(j.error ? j.error.message : 'فشل الرفع');
-      setPv(j.secure_url.replace('/upload/', '/upload/w_700,q_auto,f_auto/'));
-    }else{
-      const sm = await shrink(f, 520, 0.72);
-      const d = sm.data();
-      if(d.length > 350000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
-      setPv(d);
-    }
+    const url = await makeImg(f, 560, 0.75, window._pickAspect || 1.6, 'ظبّط صورة ' + (window._pickWhat || 'الصنف'));
+    if(url === null){ setPv(prev); return; }
+    setPv(url);
     toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ');
-  }catch(e){ setPv(''); alert('ما زبطت: ' + e.message); }
+  }catch(e){ setPv(prev); alert('ما زبطت: ' + e.message); }
 }
 
 /* ========= الأقسام ========= */
@@ -1043,7 +1258,7 @@ function editCat(id){
   const c = id ? CATS.find(x=>x.id===id) : {name:'',icon:'🍕'};
   if(!c) return;
   openModal(id?'تعديل قسم':'قسم جديد', `
-    ${imgPickHtml(c.img||'')}
+    ${imgPickHtml(c.img||'', 1, 'القسم')}
     <div class="f"><label>الاسم *</label><input id="cName2" value="${esc(c.name)}"></div>
     <div class="f"><label>الأيقونة (إيموجي) — بتطلع إذا ما في صورة</label><input id="cIcon" value="${esc(c.icon||'')}" style="font-size:24px;text-align:center">
       <div class="muted" style="margin-top:7px">🍕 🌯 🍔 🍟 🥗 🥤 🍫 🍗 🥪 🧃 🍰 🌮</div></div>
@@ -1086,6 +1301,7 @@ function renderGroups(){
       : `<div class="empty"><div class="e">⚙️</div><div>ما في مجموعات</div></div>`}`;
 }
 function editGroup(id){
+  setTimeout(ogHalvesToggle, 0);
   const g = id ? GROUPS.find(x=>x.id===id) : {title:'',type:'many',required:false,style:'',items:[{id:'o1',label:'',delta:0}]};
   if(!g) return;
   openModal(id?'تعديل مجموعة':'مجموعة جديدة', `
@@ -1103,9 +1319,10 @@ function editGroup(id){
       <option value="full" ${g.priceMode==='full'?'selected':''}>السعر الكامل (للأحجام)</option></select>
       <div class="muted" style="margin-top:5px">للأحجام اختار "السعر الكامل" عشان الزبون يشوف 45 / 58 / 68</div></div>
     <label class="chk"><input type="checkbox" id="gReq" ${g.required?'checked':''}><span>إلزامي (لازم يختار)</span></label>
-    <label class="chk"><input type="checkbox" id="gHalves" ${(g.halves===true || (g.halves===undefined && /إضاف|اضاف/.test(g.title||'') && !/مشروب|صوص|صلص/.test(g.title||''))) ? 'checked' : ''}><span>🍕 الزبون بيختار وين تنحط (كاملة / نص / ربع)</span></label>
+    <label class="chk"><input type="checkbox" id="gHalves" onchange="ogHalvesToggle()" ${(g.halves===true || (g.halves===undefined && /إضاف|اضاف/.test(g.title||'') && !/مشروب|صوص|صلص/.test(g.title||''))) ? 'checked' : ''}><span>🍕 الزبون بيختار وين تنحط (كاملة / نص / ربع)</span></label>
     <div class="muted" style="margin:-4px 0 6px">فعّلها بس لإضافات البيتسا — مش للمشروبات أو الصوصات</div>
     <div style="margin-top:14px"><label style="font-weight:800;font-size:14px;display:block;margin-bottom:9px">الخيارات</label>
+      <div id="ogPrev" class="ogprev"></div>
       <div id="gRows">${(g.items||[]).map(o=>ogRow(o)).join('')}</div>
       <button class="btn sm gh" onclick="addOgRow()">+ خيار</button></div>
   `, async () => {
@@ -1114,7 +1331,9 @@ function editGroup(id){
       const lb = r.querySelector('.l').value.trim();
       const dl = Number(r.querySelector('.d').value || 0);
       const im = r.dataset.img || '';
-      return lb ? Object.assign({id:'o'+(i+1), label:lb, delta:dl}, im ? {img:im} : {}) : null;
+      const ps = Number(r.querySelector('.ps').value) || 1, pn = Number(r.querySelector('.pn').value) || 1;
+      return lb ? Object.assign({id:'o'+(i+1), label:lb, delta:dl}, im ? {img:im} : {},
+        ps !== 1 ? {ps} : {}, pn !== 1 ? {pn} : {}) : null;
     }).filter(Boolean);
     if(!items.length){ alert('ضيف خيار واحد على الأقل'); return false; }
     const data = {title, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
@@ -1129,7 +1348,35 @@ function ogRow(o){
     <button type="button" class="oimg" title="صورة للخيار" onclick="pickOgImg(this)">${im?`<img src="${esc(im)}" alt="">`:'📷'}</button>
     <input class="l" placeholder="اسم الخيار" value="${esc((o&&o.label)||'')}">
     <input class="d" type="number" inputmode="decimal" placeholder="+₪" value="${(o&&o.delta)||0}">
-    <button class="x" onclick="this.parentNode.remove()">✕</button></div>`;
+    <button class="x" onclick="this.parentNode.remove()">✕</button>
+    <div class="ogsz">
+      <label>📏 حجم القطعة <b>${Math.round(((o&&o.ps)||1)*100)}%</b>
+        <input type="range" class="ps" min="0.5" max="2" step="0.05" value="${(o&&o.ps)||1}" oninput="ogSz(this)" onfocus="ogPreview(this.closest('.ogrow'))"></label>
+      <label>🔢 الكمية <b>${Math.round(((o&&o.pn)||1)*100)}%</b>
+        <input type="range" class="pn" min="0.4" max="2.5" step="0.05" value="${(o&&o.pn)||1}" oninput="ogSz(this)" onfocus="ogPreview(this.closest('.ogrow'))"></label>
+      <button type="button" class="btn sm gh" onclick="ogPreview(this.closest('.ogrow'))">👁️ شوف</button>
+    </div></div>`;
+}
+function ogHalvesToggle(){
+  const on = $('gHalves') && $('gHalves').checked;
+  const rows = $('gRows'); if(rows) rows.classList.toggle('hv', !!on);
+  const pv = $('ogPrev'); if(!pv) return;
+  pv.style.display = on ? '' : 'none';
+  if(on){ const r = document.querySelector('#gRows .ogrow'); if(r) ogPreview(r); }
+}
+function ogSz(inp){
+  inp.parentNode.querySelector('b').textContent = Math.round(inp.value * 100) + '%';
+  ogPreview(inp.closest('.ogrow'));
+}
+function ogPreview(row){
+  const pv = $('ogPrev'); if(!pv || !row) return;
+  document.querySelectorAll('#gRows .ogrow.cur').forEach(r => r.classList.remove('cur'));
+  row.classList.add('cur');
+  const label = row.querySelector('.l').value.trim() || 'إضافة';
+  const tp = {key: 'adm:' + label, label, img: row.dataset.img || '', reg: 'f',
+              ps: Number(row.querySelector('.ps').value), pn: Number(row.querySelector('.pn').value)};
+  pv.innerHTML = pizzaSvgFrom([tp], {idp: 'ad', seed: 'admin'}) +
+    `<div class="ogpc"><b>${esc(label)}</b> على البيتسا كاملة<br><span>حرّك الشريطين لحد ما يعجبك الشكل</span></div>`;
 }
 function addOgRow(){ $('gRows').insertAdjacentHTML('beforeend', ogRow(null)); }
 /* صورة لكل خيار (مشروب، إضافة، حجم...) */
@@ -1154,9 +1401,11 @@ async function ogImgFile(btn, f){
   const row = btn.closest('.ogrow');
   btn.innerHTML = '⏳';
   try{
-    const url = await makeImg(f, 240, 0.75);
+    const url = await makeImg(f, 240, 0.75, 1, 'ظبّط صورة الخيار — للإضافات خلّي القطعة تعبّي المربع');
+    if(url === null){ btn.innerHTML = row.dataset.img ? `<img src="${esc(row.dataset.img)}" alt="">` : '📷'; return; }
     row.dataset.img = url;
     btn.innerHTML = `<img src="${esc(url)}" alt="">`;
+    if($('gHalves') && $('gHalves').checked) ogPreview(row);
   }catch(e){ btn.innerHTML = row.dataset.img ? `<img src="${esc(row.dataset.img)}" alt="">` : '📷'; alert('ما زبطت: ' + e.message); }
 }
 function delGroup(id){
@@ -1186,7 +1435,7 @@ function editDeal(id){
   if(!d) return;
   window._pickImg = d.img || '';
   openModal(id?'تعديل عرض':'عرض جديد', `
-    ${imgPickHtml(d.img)}
+    ${imgPickHtml(d.img, 1, 'العرض')}
     <div class="f"><label>العنوان *</label><input id="dTitle" value="${esc(d.title)}" placeholder="العرض العائلي"></div>
     <div class="f"><label>التفاصيل</label><input id="dDesc" value="${esc(d.desc||'')}" placeholder="2 بيتسا كبيرة + مقبلات + مشروب"></div>
     <div class="f2">
