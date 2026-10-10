@@ -304,6 +304,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .sheet.on ~ .toast.on{transform:translateX(-50%) translateY(0)}
 .vh{padding-top:22px}
 .vh h2{margin:0 0 14px;font-size:21px;font-weight:900;padding:0 16px}
+/* ===== مكان الإضافة على البيتسا ===== */
+.sidebox{background:var(--red-soft);border-bottom:1px solid var(--line);padding:10px 14px 14px}
+.side{display:flex;gap:8px}
+.side.q{margin-top:8px;gap:6px}
+.side.q button{font-size:11px;padding:6px 2px;line-height:1.3}
+.side.q button svg{width:32px;height:32px}
+.side button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;
+  background:#fff;border:2px solid transparent;border-radius:14px;font:inherit;font-size:12px;font-weight:700;
+  color:var(--ink-2);cursor:pointer;transition:border-color .15s,transform .15s}
+.side button svg{width:38px;height:38px}
+.side button.on{border-color:var(--red);color:var(--red);transform:translateY(-1px)}
 </style>
 </head>
 <body>
@@ -688,12 +699,37 @@ function openCat(id){
 /* ============ صفحة المنتج ============ */
 function openP(id){
   cur = byId(id); if(!cur) return;
-  qty = 1; note = ''; sel = {};
+  qty = 1; note = ''; sel = {}; side = {};
   (cur.opts||[]).forEach(g => {
     const G = grp(g); if(!G) return;
     sel[g] = G.type === 'one' ? (G.items[0]||{}).id : [];
   });
   drawP(); show();
+}
+let side = {};
+const SIDES = [['f','كاملة'],['r','نص يمين'],['l','نص يسار']];
+const QUARTERS = [['rt','ربع يمين فوق'],['lt','ربع يسار فوق'],['rb','ربع يمين تحت'],['lb','ربع يسار تحت']];
+const SIDE_NAME = {r:'نص يمين', l:'نص يسار', rt:'ربع يمين فوق', lt:'ربع يسار فوق', rb:'ربع يمين تحت', lb:'ربع يسار تحت'};
+function halvesOn(G){
+  if(!G || G.type !== 'many') return false;
+  if(G.halves === true) return true;
+  if(G.halves === false) return false;
+  const c = CATS.find(x => x.id === (cur||{}).catId);
+  return !!(c && /بيت|بيز/.test(c.name||''));
+}
+function pizzaSvg(k){
+  const Q = {rt:'M20 20 L20 6 A14 14 0 0 1 34 20 Z', lt:'M20 20 L6 20 A14 14 0 0 1 20 6 Z',
+             rb:'M20 20 L34 20 A14 14 0 0 1 20 34 Z', lb:'M20 20 L20 34 A14 14 0 0 1 6 20 Z',
+             r:'M20 6 A14 14 0 0 1 20 34 Z', l:'M20 6 A14 14 0 0 0 20 34 Z'};
+  const fill = k === 'f' ? '<circle cx="20" cy="20" r="14" fill="#e3242b"/>' : '<path d="' + Q[k] + '" fill="#e3242b"/>';
+  const hz = k.length === 2 ? '<line x1="2" y1="20" x2="38" y2="20" stroke="#d9a441" stroke-width="1.5" stroke-dasharray="2 2"/>' : '';
+  return '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#f6d38b" stroke="#d9a441" stroke-width="2"/>' +
+    '<circle cx="20" cy="20" r="14" fill="#fbe7b8"/>' + fill +
+    '<line x1="20" y1="2" x2="20" y2="38" stroke="#d9a441" stroke-width="1.5" stroke-dasharray="2 2"/>' + hz + '</svg>';
+}
+function setSide(g, o, v){
+  side[g + ':' + o] = v;
+  const t = $('sc').scrollTop; drawP(); $('sc').scrollTop = t;
 }
 function unit(){
   if(!cur) return 0;
@@ -729,7 +765,13 @@ function drawP(){
         const on = G.type === 'one' ? sel[g] === o.id : (sel[g]||[]).indexOf(o.id) >= 0;
         return '<div class="o ' + (on?'sel':'') + '" onclick="pick(\'' + g + '\',\'' + o.id + '\')">' +
           '<div class="mk"></div><div class="l">' + esc(o.label) + '</div>' +
-          '<div class="p ltr">' + (Number(o.delta) ? '₪' + Number(o.delta) : '') + '</div></div>';
+          '<div class="p ltr">' + (Number(o.delta) ? '₪' + Number(o.delta) : '') + '</div></div>' +
+          (on && halvesOn(G) ? (() => {
+            const btn = ([k,t]) => '<button class="' + ((side[g+':'+o.id]||'f') === k ? 'on' : '') + '" onclick="setSide(\'' + g + '\',\'' + o.id + '\',\'' + k + '\')">' +
+              pizzaSvg(k) + '<span>' + t + '</span></button>';
+            return '<div class="sidebox"><div class="side">' + SIDES.map(btn).join('') + '</div>' +
+              '<div class="side q">' + QUARTERS.map(btn).join('') + '</div></div>';
+          })() : '');
       }).join('') + '</div>';
     }
     return '<div class="og"><div class="t"><span>' + esc(G.title) + '</span>' +
@@ -765,7 +807,7 @@ function pick(g, o){
   if(G.type === 'one') sel[g] = o;
   else{
     const a = sel[g] || [], i = a.indexOf(o);
-    if(i >= 0) a.splice(i,1); else a.push(o);
+    if(i >= 0){ a.splice(i,1); delete side[g + ':' + o]; } else a.push(o);
     sel[g] = a;
   }
   const t = $('sc').scrollTop; drawP(); $('sc').scrollTop = t;
@@ -780,7 +822,9 @@ function labels(){
       if(o && G.items.length > 1) out.push(o.label);
     }else (sel[g]||[]).forEach(s => {
       const o = G.items.find(x => x.id === s);
-      if(o) out.push('+ ' + o.label);
+      if(!o) return;
+      const k = halvesOn(G) ? (side[g + ':' + s] || 'f') : 'f';
+      out.push('+ ' + o.label + (SIDE_NAME[k] ? ' (' + SIDE_NAME[k] + ')' : ''));
     });
   });
   return out;

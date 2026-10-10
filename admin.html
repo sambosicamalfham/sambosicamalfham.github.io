@@ -448,7 +448,7 @@ function renderOrders(){
     const d = o.createdAtStr ? new Date(o.createdAtStr) : null;
     const when = d ? d.toLocaleDateString('ar-EG') + ' · ' + d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
     const lines = (o.items||[]).map(i =>
-      `<div><b>${i.qty}×</b> ${esc(i.name)} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>` +
+      `<div><b>${Number(i.qty)||0}×</b> ${esc(i.name)} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>` +
       ((i.labels||[]).length ? `<div class="o">${esc(i.labels.join(' · '))}</div>` : '') +
       (i.note ? `<div class="o">📝 ${esc(i.note)}</div>` : '') + `</div>`).join('');
     const c = o.customer || {};
@@ -478,12 +478,45 @@ function renderOrders(){
 function setStatus(id, s){
   db.collection('orders').doc(id).update({status:s}).catch(e=>alert(e.message));
 }
+/* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
+const clean = t => String(t||'').replace(/[\p{Extended_Pictographic}️‍]/gu,'').trim();
+function splitLabels(labels){
+  const KEYS = {'نص يمين':['rt','rb'], 'نص يسار':['lt','lb'], 'ربع يمين فوق':['rt'],
+                'ربع يسار فوق':['lt'], 'ربع يمين تحت':['rb'], 'ربع يسار تحت':['lb']};
+  const r = {opts:[], all:[], rt:[], lt:[], rb:[], lb:[], half:false, quarter:false};
+  (labels||[]).forEach(t => {
+    t = String(t);
+    if(!t.startsWith('+ ')){ r.opts.push(t); return; }
+    t = t.slice(2);
+    const m = t.match(/ \(((?:نص|ربع) [^)]+)\)$/);
+    if(m && KEYS[m[1]]){
+      const nm = clean(t.slice(0, m.index));
+      KEYS[m[1]].forEach(k => { if(r[k].indexOf(nm) < 0) r[k].push(nm); });
+      if(m[1].startsWith('ربع')) r.quarter = true; else r.half = true;
+    }else r.all.push(clean(t));
+  });
+  return r;
+}
+function pizzaPrint(i){
+  const s = splitLabels(i.labels);
+  if(!s.half && !s.quarter) return null;
+  const list = a => a.length ? a.map(x => '<div>' + esc(x) + '</div>').join('') : '<div class="emp">—</div>';
+  const top = (s.opts.length ? '<br><small>' + esc(s.opts.join(' · ')) + '</small>' : '') +
+    (s.all.length ? '<div class="pall">على كلها: <b>' + esc(s.all.join('، ')) + '</b></div>' : '');
+  if(s.quarter) return top + '<div class="pz4">' +
+    '<div class="q rt">' + list(s.rt) + '</div><div class="q lt">' + list(s.lt) + '</div>' +
+    '<div class="q rb">' + list(s.rb) + '</div><div class="q lb">' + list(s.lb) + '</div></div>';
+  const R = s.rt, L = s.lt;
+  return top +
+    '<div class="pz"><div class="h r"><span class="hl">يمين</span>' + list(R) + '</div>' +
+    '<div class="h l"><span class="hl">يسار</span>' + list(L) + '</div></div>';
+}
 function printOrder(id){
   const o = ORDERS.find(x => x.id === id); if(!o) return;
   const c = o.customer || {};
   const d = o.createdAtStr ? new Date(o.createdAtStr) : new Date();
   const rows = (o.items||[]).map(i =>
-    `<tr><td>${i.qty}×</td><td>${esc(i.name)}${(i.labels||[]).length?'<br><small>'+esc(i.labels.join(' · '))+'</small>':''}${i.note?'<br><small>📝 '+esc(i.note)+'</small>':''}</td>
+    `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(i.name)}</b>${pizzaPrint(i) || ((i.labels||[]).length?'<br><small>'+esc(i.labels.join(' · '))+'</small>':'')}${i.note?'<br><small>📝 '+esc(i.note)+'</small>':''}</td>
      <td style="text-align:left">${(i.unit*i.qty).toFixed(2)}</td></tr>`).join('');
   const w = window.open('', '_blank', 'width=380,height=640');
   w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طلب</title>
@@ -491,7 +524,22 @@ function printOrder(id){
     h3{margin:0 0 2px;text-align:center}.c{text-align:center;color:#666;font-size:11px;margin-bottom:10px}
     table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px dashed #ccc;vertical-align:top}
     small{color:#666}.tot{margin-top:10px;font-size:15px;font-weight:bold;display:flex;justify-content:space-between}
-    .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8}</style></head><body>
+    .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8}
+    .pall{margin-top:6px;font-size:12px}
+    .pz{display:flex;width:190px;height:190px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
+    .pz .h{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;
+      font-size:13px;font-weight:700;text-align:center;padding:0 6px}
+    .pz .r{border-left:2px dashed #000;padding-right:14px}.pz .l{padding-left:14px}
+    .pz .hl{font-size:10px;font-weight:400;border:1px solid #000;border-radius:8px;padding:0 6px;margin-bottom:3px}
+    .pz .emp,.pz4 .emp{color:#999;font-weight:400}
+    .pz4{display:grid;grid-template-columns:1fr 1fr;width:200px;height:200px;margin:8px auto 4px;
+      border:3px solid #000;border-radius:50%;overflow:hidden}
+    .pz4 .q{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
+      font-size:12px;font-weight:700;text-align:center;line-height:1.25}
+    .pz4 .rt{border-left:2px dashed #000;border-bottom:2px dashed #000;padding:22px 4px 2px 10px}
+    .pz4 .lt{border-bottom:2px dashed #000;padding:22px 10px 2px 4px}
+    .pz4 .rb{border-left:2px dashed #000;padding:2px 4px 22px 10px}
+    .pz4 .lb{padding:2px 10px 22px 4px}</style></head><body>
     <h3>${esc(SET.name||'')}</h3><div class="c">${d.toLocaleString('ar-EG')}</div>
     <table>${rows}</table>
     <div class="tot"><span>الإجمالي</span><span>${Number(o.total).toFixed(2)} ₪</span></div>
