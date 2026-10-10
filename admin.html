@@ -127,6 +127,21 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .setup{background:#fff8e1;border:1.5px dashed #e0b73a;color:#7a5c00;border-radius:15px;padding:16px;margin:16px 0;font-size:13.5px;line-height:1.85;font-weight:600}
 .setup b{color:#5c4500}
+/* ===== إضافات ===== */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:14px}
+.stt{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:11px 13px}
+.stt .v{font-weight:900;font-size:19px;line-height:1.3}.stt .v small{font-size:12px;color:var(--muted)}
+.stt .l{font-size:12px;color:var(--muted);margin-top:2px}
+.warnbox{background:#fff3e0;border:1.5px solid var(--amber);color:#8a4b00;border-radius:12px;padding:11px 13px;font-weight:800;font-size:13.5px;margin-bottom:12px}
+.bar.prn{gap:7px}
+.tg{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-weight:800;font-size:12.5px;color:var(--ink-2);cursor:pointer;font-family:inherit}
+.tg.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.ono{background:var(--ink);color:#fff;border-radius:8px;padding:1px 8px;font-size:14px;margin-inline-end:4px}
+.age{display:inline-block;margin-inline-start:6px;font-weight:800;color:var(--ink-2);background:#eee;border-radius:7px;padding:0 7px}
+.age.warn{background:#fff3e0;color:var(--amber)}
+.age.late{background:var(--red);color:#fff;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.55}}
+.onote{margin-top:6px;border-top:1px dashed #ddd;padding-top:6px;font-weight:700}
 </style>
 </head>
 <body>
@@ -282,14 +297,16 @@ function onLogin(u){
     CPNS = s.docs.map(d=>({id:d.id,...d.data()}));
     if(view==='cpn') render();
   }, err => console.error('coupons', err));
-  db.collection('orders').orderBy('createdAtStr','desc').limit(120).onSnapshot(s => {
+  db.collection('orders').orderBy('createdAtStr','desc').limit(250).onSnapshot(s => {
     ORDERS = s.docs.map(d=>({id:d.id,...d.data()}));
+    computeNums();
     const nNew = ORDERS.filter(o=>o.status==='new').length;
     const el = $('nNew');
     el.style.display = nNew ? '' : 'none'; el.textContent = nNew;
     if(!firstOrdersLoad && nNew > lastNewCount) ding();
     lastNewCount = nNew; firstOrdersLoad = false;
     if(view==='orders') render();
+    autoPrint();
   }, err => console.error(err));
 }
 
@@ -431,12 +448,18 @@ const ST = {
 function renderOrders(){
   const live = ORDERS.filter(o => ['new','prep','ready'].includes(o.status));
   const list = ordFilter === 'live' ? live : ORDERS;
-  const head = `
+  const head = setupWarnings() + todaySummary() + `
     <h2 class="sec">الطلبات</h2>
     <div class="bar">
       <button class="btn sm ${ordFilter==='live'?'red':'gh'}" onclick="ordFilter='live';render()">الحالية (${live.length})</button>
       <button class="btn sm ${ordFilter==='all'?'red':'gh'}" onclick="ordFilter='all';render()">الكل (${ORDERS.length})</button>
       <button class="btn sm gh" onclick="ding()">🔔 جرّب الصوت</button>
+    </div>
+    <div class="bar prn">
+      <span class="muted">🖨️ الطباعة:</span>
+      <button class="tg ${PRN.auto?'on':''}" onclick="setPrn('auto')">تلقائية</button>
+      <button class="tg ${PRN.kitchen?'on':''}" onclick="setPrn('kitchen')">ورقة مطبخ</button>
+      <button class="tg ${PRN.receipt?'on':''}" onclick="setPrn('receipt')">فاتورة</button>
     </div>`;
   if(!list.length){
     $('vOrders').innerHTML = head + `<div class="empty"><div class="e">🧾</div><div>ما في طلبات</div></div>`;
@@ -455,11 +478,11 @@ function renderOrders(){
     const wa = String(c.phone||'').replace(/\D/g,'').replace(/^0/,'972');
     return `<div class="card ord ${cls}">
       <div class="top">
-        <div><div class="who">${esc(c.name||'—')} <span class="pill ${st.c}">${st.t}</span></div>
-          <div class="when">${esc(when)}</div></div>
+        <div><div class="who"><span class="ono">#${ordNo(o)}</span> ${esc(c.name||'—')} <span class="pill ${st.c}">${st.t}</span></div>
+          <div class="when">${esc(when)} ${ageHtml(o)}</div></div>
         <div class="tot">${money(o.total)}</div>
       </div>
-      <div class="lines">${lines}</div>
+      <div class="lines">${lines}${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}</div>
       <div class="meta">
         <span class="pill ${o.type==='pickup'?'b':''}">${o.type==='pickup'?'🏪 استلام':'🛵 توصيل'}</span>
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
@@ -469,14 +492,17 @@ function renderOrders(){
       </div>
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
-        <button class="btn sm gh" onclick="printOrder('${o.id}')">🖨️ طباعة</button>
+        <button class="btn sm gh" onclick="printOrder('${o.id}')">🖨️ طباعة${PRINTED.indexOf(o.id)>=0?' ✓':''}</button>
+        ${o.status==='ready'&&c.phone?`<button class="btn sm gh" onclick="notifyReady('${o.id}')">💬 بلّغ الزبون</button>`:''}
         ${o.status!=='cancel'&&o.status!=='done'?`<button class="btn sm gh" onclick="setStatus('${o.id}','cancel')">إلغاء</button>`:''}
       </div>
     </div>`;
   }).join('');
+  tickAges();
 }
 function setStatus(id, s){
   db.collection('orders').doc(id).update({status:s}).catch(e=>alert(e.message));
+  if(s === 'ready') notifyReady(id);
 }
 /* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
 const clean = t => String(t||'').replace(/[\p{Extended_Pictographic}️‍]/gu,'').trim();
@@ -511,43 +537,200 @@ function pizzaPrint(i){
     '<div class="pz"><div class="h r"><span class="hl">يمين</span>' + list(R) + '</div>' +
     '<div class="h l"><span class="hl">يسار</span>' + list(L) + '</div></div>';
 }
-function printOrder(id){
-  const o = ORDERS.find(x => x.id === id); if(!o) return;
+/* ========= الطباعة ========= */
+let PRN = {auto:false, kitchen:true, receipt:true};
+try{ Object.assign(PRN, JSON.parse(localStorage.getItem('pz_prn')||'{}')); }catch(e){}
+function setPrn(k){ PRN[k] = !PRN[k]; try{ localStorage.setItem('pz_prn', JSON.stringify(PRN)); }catch(e){} render(); }
+let PRINTED = [];
+try{ PRINTED = JSON.parse(localStorage.getItem('pz_printed')||'[]'); }catch(e){}
+function markPrinted(id){
+  if(PRINTED.indexOf(id) < 0) PRINTED.push(id);
+  PRINTED = PRINTED.slice(-300);
+  try{ localStorage.setItem('pz_printed', JSON.stringify(PRINTED)); }catch(e){}
+}
+const PRINT_CSS = `
+  @page{margin:4mm}
+  body{font-family:system-ui,sans-serif;font-size:13px;margin:0;padding:6px;width:290px;color:#000}
+  .tk{page-break-after:always;break-after:page}
+  .tk:last-child{page-break-after:auto;break-after:auto}
+  .no{font-size:40px;font-weight:900;text-align:center;line-height:1;margin:2px 0}
+  .ty{text-align:center;font-size:17px;font-weight:900;border:2px solid #000;border-radius:8px;padding:3px;margin:6px 0}
+  .ty.inv{background:#000;color:#fff}
+  h3{margin:0 0 2px;text-align:center;font-size:15px}.c{text-align:center;font-size:11px;margin-bottom:8px}
+  .k{border-top:2px solid #000;padding:7px 0}
+  .k .n{font-size:18px;font-weight:900}
+  .k .lb{font-size:14px;margin-top:3px;line-height:1.5}
+  .nt{border:2px dashed #000;border-radius:6px;padding:5px 7px;margin-top:6px;font-size:14px;font-weight:700}
+  table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px dashed #999;vertical-align:top}
+  small{color:#333}.sm{display:flex;justify-content:space-between;font-size:13px;margin-top:4px}
+  .tot{margin-top:8px;font-size:16px;font-weight:bold;display:flex;justify-content:space-between;border-top:2px solid #000;padding-top:6px}
+  .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8;font-size:14px}
+  .pall{margin-top:6px;font-size:13px}
+  .pz{display:flex;width:190px;height:190px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
+  .pz .h{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;font-size:13px;font-weight:700;text-align:center;padding:0 6px}
+  .pz .r{border-left:2px dashed #000;padding-right:14px}.pz .l{padding-left:14px}
+  .pz .hl{font-size:10px;font-weight:400;border:1px solid #000;border-radius:8px;padding:0 6px;margin-bottom:3px}
+  .pz .emp,.pz4 .emp{color:#999;font-weight:400}
+  .pz4{display:grid;grid-template-columns:1fr 1fr;width:200px;height:200px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
+  .pz4 .q{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;font-size:12px;font-weight:700;text-align:center;line-height:1.25}
+  .pz4 .rt{border-left:2px dashed #000;border-bottom:2px dashed #000;padding:22px 4px 2px 10px}
+  .pz4 .lt{border-bottom:2px dashed #000;padding:22px 10px 2px 4px}
+  .pz4 .rb{border-left:2px dashed #000;padding:2px 4px 22px 10px}
+  .pz4 .lb{padding:2px 10px 22px 4px}`;
+
+function ticketHtml(o){
   const c = o.customer || {};
   const d = o.createdAtStr ? new Date(o.createdAtStr) : new Date();
-  const rows = (o.items||[]).map(i =>
-    `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(i.name)}</b>${pizzaPrint(i) || ((i.labels||[]).length?'<br><small>'+esc(i.labels.join(' · '))+'</small>':'')}${i.note?'<br><small>📝 '+esc(i.note)+'</small>':''}</td>
-     <td style="text-align:left">${(i.unit*i.qty).toFixed(2)}</td></tr>`).join('');
-  const w = window.open('', '_blank', 'width=380,height=640');
-  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طلب</title>
-    <style>body{font-family:system-ui,sans-serif;font-size:13px;padding:10px;width:300px}
-    h3{margin:0 0 2px;text-align:center}.c{text-align:center;color:#666;font-size:11px;margin-bottom:10px}
-    table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px dashed #ccc;vertical-align:top}
-    small{color:#666}.tot{margin-top:10px;font-size:15px;font-weight:bold;display:flex;justify-content:space-between}
-    .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8}
-    .pall{margin-top:6px;font-size:12px}
-    .pz{display:flex;width:190px;height:190px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
-    .pz .h{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;
-      font-size:13px;font-weight:700;text-align:center;padding:0 6px}
-    .pz .r{border-left:2px dashed #000;padding-right:14px}.pz .l{padding-left:14px}
-    .pz .hl{font-size:10px;font-weight:400;border:1px solid #000;border-radius:8px;padding:0 6px;margin-bottom:3px}
-    .pz .emp,.pz4 .emp{color:#999;font-weight:400}
-    .pz4{display:grid;grid-template-columns:1fr 1fr;width:200px;height:200px;margin:8px auto 4px;
-      border:3px solid #000;border-radius:50%;overflow:hidden}
-    .pz4 .q{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
-      font-size:12px;font-weight:700;text-align:center;line-height:1.25}
-    .pz4 .rt{border-left:2px dashed #000;border-bottom:2px dashed #000;padding:22px 4px 2px 10px}
-    .pz4 .lt{border-bottom:2px dashed #000;padding:22px 10px 2px 4px}
-    .pz4 .rb{border-left:2px dashed #000;padding:2px 4px 22px 10px}
-    .pz4 .lb{padding:2px 10px 22px 4px}</style></head><body>
-    <h3>${esc(SET.name||'')}</h3><div class="c">${d.toLocaleString('ar-EG')}</div>
-    <table>${rows}</table>
-    <div class="tot"><span>الإجمالي</span><span>${Number(o.total).toFixed(2)} ₪</span></div>
-    <div class="inf">👤 ${esc(c.name||'')}<br>📞 ${esc(c.phone||'')}
-      ${c.addr?'<br>📍 '+esc(c.addr):''}<br>${o.type==='pickup'?'🏪 استلام من المحل':'🛵 توصيل ('+Number(o.fee||0)+' ₪)'}</div>
-    </body></html>`);
-  w.document.close(); setTimeout(()=>w.print(), 350);
+  const time = d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  const no = '#' + ordNo(o);
+  const del = o.type !== 'pickup';
+  const parts = [];
+
+  if(PRN.kitchen){
+    const lines = (o.items||[]).map(i => {
+      const pz = pizzaPrint(i);
+      return `<div class="k"><div class="n">${Number(i.qty)||0} × ${esc(i.name)}</div>` +
+        (pz ? `<div class="lb">${pz}</div>` : ((i.labels||[]).length ? `<div class="lb">${esc(i.labels.map(clean).join(' · '))}</div>` : '')) +
+        (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
+    }).join('');
+    parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
+      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${lines}
+      ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}</div>`);
+  }
+
+  if(PRN.receipt || !PRN.kitchen){
+    const rows = (o.items||[]).map(i =>
+      `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(i.name)}</b>${(i.labels||[]).length?'<br><small>'+esc(i.labels.map(clean).join(' · '))+'</small>':''}</td>
+       <td style="text-align:left">${(Number(i.unit)*Number(i.qty)||0).toFixed(2)}</td></tr>`).join('');
+    const sub = Number(o.subtotal||0), disc = Number(o.discount||0);
+    parts.push(`<div class="tk"><h3>${esc(SET.name||'')}</h3>
+      <div class="c">${d.toLocaleDateString('ar-EG')} · ${esc(time)}</div>
+      <div class="no" style="font-size:26px">${no}</div>
+      <table>${rows}</table>
+      ${sub ? `<div class="sm"><span>المجموع</span><span>${sub.toFixed(2)} ₪</span></div>` : ''}
+      ${disc ? `<div class="sm"><span>خصم${o.coupon?' ('+esc(o.coupon)+')':''}</span><span>-${disc.toFixed(2)} ₪</span></div>` : ''}
+      ${del ? `<div class="sm"><span>توصيل</span><span>${Number(o.fee||0).toFixed(2)} ₪</span></div>` : ''}
+      <div class="tot"><span>الإجمالي</span><span>${Number(o.total||0).toFixed(2)} ₪</span></div>
+      <div class="inf">👤 ${esc(c.name||'')}<br>📞 ${esc(c.phone||'')}
+        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
+        ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
+  }
+  return `<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${PRINT_CSS}</style></head><body>${parts.join('')}</body></html>`;
 }
+
+/* بتطبع عن طريق إطار مخفي، فما في نافذة بتنفتح وما بينحجب من المتصفح */
+function printOrder(id){
+  const o = ORDERS.find(x => x.id === id); if(!o) return;
+  markPrinted(o.id);
+  let f = $('prnFrame');
+  if(f) f.remove();
+  f = document.createElement('iframe');
+  f.id = 'prnFrame';
+  f.style.cssText = 'position:fixed;width:0;height:0;border:0;left:-9999px;top:0';
+  document.body.appendChild(f);
+  const doc = f.contentWindow.document;
+  doc.open(); doc.write(ticketHtml(o)); doc.close();
+  setTimeout(() => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ console.error(e); } }, 400);
+}
+let printQ = [];
+function autoPrint(){
+  if(!PRN.auto) return;
+  const now = Date.now();
+  ORDERS.filter(o => o.status === 'new' && PRINTED.indexOf(o.id) < 0 && printQ.indexOf(o.id) < 0 &&
+      o.createdAtStr && now - new Date(o.createdAtStr).getTime() < 15*60*1000)
+    .sort((a,b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr)))
+    .forEach(o => printQ.push(o.id));
+  runQ();
+}
+let qBusy = false;
+function runQ(){
+  if(qBusy || !printQ.length) return;
+  qBusy = true;
+  printOrder(printQ.shift());
+  setTimeout(() => { qBusy = false; runQ(); }, 4000);
+}
+
+/* ========= رقم الطلب اليومي ========= */
+let NUMS = {};
+const dayKey = s => { const d = new Date(s); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); };
+function computeNums(){
+  NUMS = {};
+  const byDay = {};
+  ORDERS.forEach(o => { if(!o.createdAtStr) return; (byDay[dayKey(o.createdAtStr)] = byDay[dayKey(o.createdAtStr)] || []).push(o); });
+  Object.values(byDay).forEach(a => {
+    a.sort((x,y) => String(x.createdAtStr).localeCompare(String(y.createdAtStr)));
+    a.forEach((o,i) => { NUMS[o.id] = i + 1; });
+  });
+}
+const ordNo = o => NUMS[o.id] || '—';
+
+/* ========= عدّاد الوقت ========= */
+function prepMax(){
+  const n = String(SET.prepTime||'').match(/\d+/g);
+  return n ? Number(n[n.length-1]) : 35;
+}
+function ageHtml(o){
+  if(!o.createdAtStr || !['new','prep','ready'].includes(o.status)) return '';
+  return `<span class="age" data-t="${esc(o.createdAtStr)}" data-s="${esc(o.status)}"></span>`;
+}
+function tickAges(){
+  const lim = prepMax(), now = Date.now();
+  document.querySelectorAll('.age').forEach(el => {
+    const m = Math.max(0, Math.floor((now - new Date(el.dataset.t).getTime()) / 60000));
+    el.textContent = '⏱ ' + (m < 60 ? m + ' د' : Math.floor(m/60) + ' س ' + (m%60) + ' د');
+    el.classList.toggle('late', el.dataset.s !== 'ready' && m >= lim);
+    el.classList.toggle('warn', el.dataset.s !== 'ready' && m >= lim - 5 && m < lim);
+  });
+}
+setInterval(tickAges, 20000);
+
+/* ========= بلّغ الزبون إنه الطلب جاهز ========= */
+function waPhone(p){
+  let d = String(p||'').replace(/\D/g,'');
+  if(d.startsWith('972')) return d;
+  if(d.startsWith('0')) return '972' + d.slice(1);
+  return d;
+}
+function notifyReady(id){
+  const o = ORDERS.find(x => x.id === id); if(!o) return;
+  const c = o.customer || {}, wa = waPhone(c.phone);
+  if(!wa) return;
+  const first = String(c.name||'').trim().split(/\s+/)[0] || '';
+  const msg = o.type === 'pickup'
+    ? `أهلاً ${first} 👋\nطلبك رقم #${ordNo(o)} جاهز للاستلام من المحل 🍕\nبالهنا والشفا!\n${SET.name||''}`
+    : `أهلاً ${first} 👋\nطلبك رقم #${ordNo(o)} جاهز وطالع مع السائق 🛵\nالمبلغ: ${Number(o.total||0).toFixed(2)} ₪\n${SET.name||''}`;
+  window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ========= ملخص اليوم ========= */
+function todaySummary(){
+  const k = dayKey(new Date().toISOString());
+  const t = ORDERS.filter(o => o.createdAtStr && dayKey(o.createdAtStr) === k && o.status !== 'cancel');
+  const rev = t.reduce((s,o) => s + Number(o.total||0), 0);
+  const cnt = {};
+  t.forEach(o => (o.items||[]).forEach(i => { cnt[i.name] = (cnt[i.name]||0) + (Number(i.qty)||0); }));
+  const top = Object.entries(cnt).sort((a,b) => b[1]-a[1])[0];
+  const del = t.filter(o => o.type !== 'pickup').length;
+  const box = (v,l) => `<div class="stt"><div class="v">${v}</div><div class="l">${l}</div></div>`;
+  return `<div class="stats">` +
+    box(t.length, 'طلبات اليوم') +
+    box(`<span class="ltr">${rev.toFixed(0)} ₪</span>`, 'دخل اليوم') +
+    box(`<span class="ltr">${t.length ? (rev/t.length).toFixed(0) : 0} ₪</span>`, 'معدل الطلب') +
+    box(top ? esc(top[0]) + ` <small>(${top[1]})</small>` : '—', 'الأكثر طلباً') +
+    box(`${del} / ${t.length - del}`, 'توصيل / استلام') +
+  `</div>`;
+}
+
+/* ========= تنبيهات الإعدادات ========= */
+function setupWarnings(){
+  const w = [];
+  const ph = String(SET.phone || window.WHATSAPP || '');
+  if(!ph || /^9725?0{6,}$/.test(ph) || ph === '972500000000')
+    w.push('رقم الواتساب لسا وهمي — الطلبات ما رح توصلك! صلّحه من 🏪 الإعدادات.');
+  if(!w.length) return '';
+  return w.map(x => `<div class="warnbox">⚠️ ${esc(x)}</div>`).join('');
+}
+
 
 /* ========= المنيو ========= */
 function catName(id){ const c = CATS.find(x=>x.id===id); return c ? (c.icon||'')+' '+c.name : '—'; }

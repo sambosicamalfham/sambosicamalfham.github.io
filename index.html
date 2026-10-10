@@ -867,6 +867,25 @@ function paintCart(){
 }
 function imgLine(l){ return pic({img:l.img, catId:l.catId, icon:l.icon}); }
 
+/* متى بيفتح المحل */
+function nextOpen(){
+  const n = new Date(), m = n.getHours()*60 + n.getMinutes();
+  for(let k = 0; k < 8; k++){
+    const d = (n.getDay() + k) % 7;
+    const H = (SET.hours||{})[d] || (SET.hours||{})[String(d)];
+    if(!H || !H[0]) continue;
+    if(k === 0 && mins(H[0]) <= m) continue;
+    return (k === 0 ? 'اليوم' : k === 1 ? 'بكرا' : 'يوم ' + DAYS[d]) + ' الساعة ' + H[0];
+  }
+  return '';
+}
+/* رقم تلفون إسرائيلي صحيح → 05xxxxxxxx */
+function normPhone(p){
+  let d = String(p||'').replace(/\D/g,'');
+  if(d.startsWith('972')) d = '0' + d.slice(3);
+  if(/^05\d{8}$/.test(d) || /^0[234689]\d{7}$/.test(d) || /^07\d{8}$/.test(d)) return d;
+  return '';
+}
 function openCart(){
   const s = status(), over = Number(SET.freeishOver||0), min = Number(SET.minOrder||0);
   const lines = cart.map((l,i) =>
@@ -924,11 +943,13 @@ function openCart(){
       '<div class="empty"><div class="e">🛒</div><div>السلة فاضية</div></div>';
   }
   $('sc').innerHTML = body;
-  const ok = sub() >= min;
+  const ok = sub() >= min, nx = s.open ? '' : nextOpen();
   $('ft').innerHTML = cart.length
-    ? '<button class="cta" id="send" onclick="sendOrder()"' + (ok?'':' disabled') + '>' +
+    ? (!s.open
+        ? '<button class="cta" disabled><span>😴 المحل مسكّر هلأ' + (nx ? ' — بنفتح ' + nx : '') + '</span></button>'
+        : '<button class="cta" id="send" onclick="sendOrder()"' + (ok?'':' disabled') + '>' +
       (ok ? '<span>✅ إتمام الطلب</span><span>' + nis(total()) + '</span>'
-          : '<span>أقل طلبية <span class="ltr">₪' + min + '</span></span>') + '</button>'
+          : '<span>أقل طلبية <span class="ltr">₪' + min + '</span></span>') + '</button>')
     : '<button class="cta" onclick="closeSheet()">تصفّح المنيو</button>';
   cur = null; show();
 }
@@ -963,7 +984,10 @@ function dropCoupon(){ coupon = null; cpnMsg = ''; openCart(); }
 
 function sendOrder(){
   const name  = ($('nm') ? $('nm').value : '').trim();
-  const phone = ($('ph') ? $('ph').value : '').trim();
+  const phoneRaw = ($('ph') ? $('ph').value : '').trim();
+  const phone = normPhone(phoneRaw);
+  if(!status().open){ alert('المحل مسكّر هلأ' + (nextOpen() ? '، بنفتح ' + nextOpen() : '')); return; }
+  if(name && phoneRaw && !phone){ alert('رقم التلفون مش صحيح — اكتبه هيك: 05xxxxxxxx'); if($('ph')) $('ph').focus(); return; }
   const addr  = ($('ad') ? $('ad').value : '').trim();
   if(!name || !phone){ alert('لو سمحت اكتب الاسم ورقم الهاتف'); return; }
   if(otype === 'delivery' && !addr){ alert('لو سمحت اكتب العنوان للتوصيل'); return; }
