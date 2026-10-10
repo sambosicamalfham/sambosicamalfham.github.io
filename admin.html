@@ -155,6 +155,8 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .iurl{margin-top:6px;font-size:12.5px;color:var(--muted)}
 .iurl summary{cursor:pointer}
 .iurl input{width:100%;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:13px;outline:none;direction:ltr}
+.ogrow .oimg{width:42px;height:42px;flex:none;border-radius:10px;border:1.5px dashed #ccc;background:#fafafa;display:grid;place-items:center;font-size:17px;overflow:hidden;cursor:pointer;padding:0}
+.ogrow .oimg img{width:100%;height:100%;object-fit:cover}
 </style>
 </head>
 <body>
@@ -935,6 +937,23 @@ function shrink(file, max, q){
     im.src = url;
   });
 }
+/* بترجع رابط الصورة: Cloudinary إذا مفعّل، وإلا صورة مصغّرة محفوظة داخلياً */
+async function makeImg(f, smallMax, q){
+  if(hasCloud()){
+    const {blob} = await shrink(f, 1400, 0.85);
+    const fd = new FormData();
+    fd.append('file', blob, 'img.jpg');
+    fd.append('upload_preset', window.CLOUDINARY.preset);
+    const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/image/upload', {method:'POST', body:fd});
+    const j = await r.json();
+    if(!j.secure_url) throw new Error(j.error ? j.error.message : 'فشل الرفع');
+    return j.secure_url.replace('/upload/', '/upload/w_' + (smallMax < 400 ? 300 : 700) + ',q_auto,f_auto/');
+  }
+  const sm = await shrink(f, smallMax, q);
+  const d = sm.data();
+  if(d.length > 250000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
+  return d;
+}
 async function handleImg(f){
   if(!f) return;
   if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||'')){ alert('اختار صورة'); return; }
@@ -1059,7 +1078,8 @@ function editGroup(id){
     const items = Array.from(document.querySelectorAll('#gRows .ogrow')).map((r,i)=>{
       const lb = r.querySelector('.l').value.trim();
       const dl = Number(r.querySelector('.d').value || 0);
-      return lb ? {id:'o'+(i+1), label:lb, delta:dl} : null;
+      const im = r.dataset.img || '';
+      return lb ? Object.assign({id:'o'+(i+1), label:lb, delta:dl}, im ? {img:im} : {}) : null;
     }).filter(Boolean);
     if(!items.length){ alert('ضيف خيار واحد على الأقل'); return false; }
     const data = {title, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
@@ -1069,12 +1089,41 @@ function editGroup(id){
   });
 }
 function ogRow(o){
-  return `<div class="ogrow">
+  const im = (o && o.img) || '';
+  return `<div class="ogrow" data-img="${esc(im)}">
+    <button type="button" class="oimg" title="صورة للخيار" onclick="pickOgImg(this)">${im?`<img src="${esc(im)}" alt="">`:'📷'}</button>
     <input class="l" placeholder="اسم الخيار" value="${esc((o&&o.label)||'')}">
     <input class="d" type="number" inputmode="decimal" placeholder="+₪" value="${(o&&o.delta)||0}">
     <button class="x" onclick="this.parentNode.remove()">✕</button></div>`;
 }
 function addOgRow(){ $('gRows').insertAdjacentHTML('beforeend', ogRow(null)); }
+/* صورة لكل خيار (مشروب، إضافة، حجم...) */
+let _ogBtn = null;
+function pickOgImg(btn){
+  const row = btn.closest('.ogrow');
+  if(row.dataset.img){
+    const c = prompt('اكتب 1 لتغيير الصورة، أو 2 لحذفها', '1');
+    if(c === '2'){ row.dataset.img = ''; btn.innerHTML = '📷'; return; }
+    if(c !== '1') return;
+  }
+  _ogBtn = btn;
+  let inp = $('ogFile');
+  if(!inp){
+    inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.id = 'ogFile'; inp.style.display = 'none';
+    inp.onchange = () => { const f = inp.files[0]; inp.value = ''; if(f && _ogBtn) ogImgFile(_ogBtn, f); };
+    document.body.appendChild(inp);
+  }
+  inp.click();
+}
+async function ogImgFile(btn, f){
+  const row = btn.closest('.ogrow');
+  btn.innerHTML = '⏳';
+  try{
+    const url = await makeImg(f, 240, 0.75);
+    row.dataset.img = url;
+    btn.innerHTML = `<img src="${esc(url)}" alt="">`;
+  }catch(e){ btn.innerHTML = row.dataset.img ? `<img src="${esc(row.dataset.img)}" alt="">` : '📷'; alert('ما زبطت: ' + e.message); }
+}
 function delGroup(id){
   const n = ITEMS.filter(i=>(i.opts||[]).includes(id)).length;
   if(!confirm(n ? ('هاي المجموعة مربوطة بـ'+n+' صنف. تحذفها؟') : 'حذف المجموعة؟')) return;

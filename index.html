@@ -315,6 +315,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:var(--ink-2);cursor:pointer;transition:border-color .15s,transform .15s}
 .side button svg{width:38px;height:38px}
 .side button.on{border-color:var(--red);color:var(--red);transform:translateY(-1px)}
+/* صور الخيارات */
+.o .oi{width:46px;height:46px;flex:none;border-radius:11px;object-fit:cover;background:#f4f2f0}
+.o.sel .oi{box-shadow:0 0 0 2px var(--red)}
+.tile .ti{width:64px;height:64px;margin:0 auto 7px;border-radius:13px;overflow:hidden;background:#f4f2f0}
+.tile .ti img{width:100%;height:100%;object-fit:cover}
+.tile.sel .ti{box-shadow:0 0 0 2px #fff}
 </style>
 </head>
 <body>
@@ -760,14 +766,14 @@ function drawP(){
         const on = sel[g] === o.id, d = Number(o.delta||0);
         const lb = full ? ('₪' + (base(it)+d)) : (d ? ('+ ₪' + d) : '');
         return '<button class="tile ' + (on?'sel':'') + '" onclick="pick(\'' + g + '\',\'' + o.id + '\')">' +
-          (o.icon ? '<div class="ic">' + esc(o.icon) + '</div>' : '') +
+          (o.img ? '<div class="ti"><img src="' + esc(o.img) + '" alt="" loading="lazy"></div>' : (o.icon ? '<div class="ic">' + esc(o.icon) + '</div>' : '')) +
           '<div class="l">' + esc(o.label) + '</div>' + (lb ? '<div class="p ltr">' + lb + '</div>' : '') + '</button>';
       }).join('') + '</div>';
     }else{
       inner = '<div class="olist">' + G.items.map(o => {
         const on = G.type === 'one' ? sel[g] === o.id : (sel[g]||[]).indexOf(o.id) >= 0;
         return '<div class="o ' + (on?'sel':'') + '" onclick="pick(\'' + g + '\',\'' + o.id + '\')">' +
-          '<div class="mk"></div><div class="l">' + esc(o.label) + '</div>' +
+          '<div class="mk"></div>' + (o.img ? '<img class="oi" src="' + esc(o.img) + '" alt="" loading="lazy">' : '') + '<div class="l">' + esc(o.label) + '</div>' +
           '<div class="p ltr">' + (Number(o.delta) ? '₪' + Number(o.delta) : '') + '</div></div>' +
           (on && halvesOn(G) ? (() => {
             const btn = ([k,t]) => '<button class="' + ((side[g+':'+o.id]||'f') === k ? 'on' : '') + '" onclick="setSide(\'' + g + '\',\'' + o.id + '\',\'' + k + '\')">' +
