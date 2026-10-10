@@ -142,6 +142,19 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .age.late{background:var(--red);color:#fff;animation:blink 1.2s infinite}
 @keyframes blink{50%{opacity:.55}}
 .onote{margin-top:6px;border-top:1px dashed #ddd;padding-top:6px;font-weight:700}
+.imgpick2{margin-bottom:14px}
+.pv2{width:100%;aspect-ratio:16/10;max-height:230px;border-radius:14px;background:#f1efed;border:2px dashed #ddd;overflow:hidden;cursor:pointer;display:grid;place-items:center;transition:border-color .15s}
+.pv2.drag{border-color:var(--red);background:#fff5f5}
+.pv2 img{width:100%;height:100%;object-fit:cover}
+.pv2 .ph0{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:34px;color:#aaa}
+.pv2 .ph0 span{font-size:13px;font-weight:700}
+.ibtns{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.only-m{display:none}
+@media (pointer:coarse){.only-m{display:inline-flex}}
+.ihint{font-size:12px;margin-top:6px}
+.iurl{margin-top:6px;font-size:12.5px;color:var(--muted)}
+.iurl summary{cursor:pointer}
+.iurl input{width:100%;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:13px;outline:none;direction:ltr}
 </style>
 </head>
 <body>
@@ -866,37 +879,85 @@ function editItem(id){
 }
 
 /* ========= الصور ========= */
+const hasCloud = () => !!(window.CLOUDINARY && window.CLOUDINARY.cloudName && window.CLOUDINARY.preset);
+function setPv(url){
+  window._pickImg = url || '';
+  const box = $('pvBox'); if(!box) return;
+  box.innerHTML = url ? `<img src="${esc(url)}" alt="">` : '<div class="ph0">🖼️<span>اكبس أو اسحب صورة لهون</span></div>';
+  const rm = $('imgRm'); if(rm) rm.style.display = url ? '' : 'none';
+  const u = $('imgUrl'); if(u && u.value !== url && !String(url).startsWith('data:')) u.value = url || '';
+}
 function imgPickHtml(cur){
   window._pickImg = cur || '';
-  const has = !!(window.CLOUDINARY && window.CLOUDINARY.cloudName && window.CLOUDINARY.preset);
-  return `<div class="imgpick">
-    <div class="pv" id="pvBox">${cur?`<img src="${esc(cur)}" alt="">`:'🖼️'}</div>
-    <div class="side">
-      ${has ? `<button class="btn sm gh" onclick="document.getElementById('fileIn').click()">📷 ارفع صورة</button>
-               <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="upImg(this)">`
-            : `<div class="muted" style="margin-bottom:6px">الرفع المباشر مش مفعّل — الصق رابط صورة</div>`}
-      <input id="imgUrl" placeholder="أو الصق رابط صورة" value="${esc(cur||'')}"
-        style="width:100%;margin-top:7px;border:1.5px solid var(--line);border-radius:10px;padding:9px;font-size:13px;outline:none"
-        oninput="window._pickImg=this.value;document.getElementById('pvBox').innerHTML=this.value?'<img src=\\''+this.value+'\\'>':'🖼️'">
-    </div></div>`;
+  setTimeout(() => {
+    setPv(cur || '');
+    const box = $('pvBox'); if(!box) return;
+    box.ondragover = e => { e.preventDefault(); box.classList.add('drag'); };
+    box.ondragleave = () => box.classList.remove('drag');
+    box.ondrop = e => { e.preventDefault(); box.classList.remove('drag');
+      const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handleImg(f); };
+  }, 0);
+  return `<div class="imgpick2">
+    <div class="pv2" id="pvBox" onclick="$('fileIn').click()"></div>
+    <div class="ibtns">
+      <button type="button" class="btn sm gh" onclick="$('fileIn').click()">📁 اختار صورة</button>
+      <button type="button" class="btn sm gh only-m" onclick="$('camIn').click()">📸 صوّر هلأ</button>
+      <button type="button" class="btn sm gh" id="imgRm" onclick="setPv('')">🗑️ شيل الصورة</button>
+    </div>
+    <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="handleImg(this.files[0]);this.value=''">
+    <input type="file" id="camIn" accept="image/*" capture="environment" style="display:none" onchange="handleImg(this.files[0]);this.value=''">
+    <div class="muted ihint">بتقدر كمان تعمل <b>Ctrl+V</b> للصق صورة نسختها${hasCloud() ? '' : ' · <span title="الصور بتنحفظ مصغّرة بقاعدة البيانات">💾 حفظ داخلي</span>'}</div>
+    <details class="iurl"><summary>أو حط رابط صورة</summary>
+      <input id="imgUrl" placeholder="https://..." value="${esc(cur && !String(cur).startsWith('data:') ? cur : '')}"
+        oninput="setPv(this.value.trim())"></details>
+  </div>`;
 }
-async function upImg(inp){
-  const f = inp.files && inp.files[0]; if(!f) return;
-  const box = $('pvBox'); box.innerHTML = '⏳';
+/* لصق صورة من الحافظة لما يكون شباك تعديل الصنف مفتوح */
+document.addEventListener('paste', e => {
+  if(!$('pvBox')) return;
+  const it = [...(e.clipboardData||{}).items||[]].find(x => x.type.startsWith('image/'));
+  if(it){ e.preventDefault(); handleImg(it.getAsFile()); }
+});
+/* تصغير الصورة بالمتصفح قبل الرفع */
+function shrink(file, max, q){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+      const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,c.width,c.height);
+      x.drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? res({blob:b, data:() => c.toDataURL('image/jpeg', q)}) : rej(new Error('ما قدرت أقرا الصورة')), 'image/jpeg', q);
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('الملف مش صورة أو نوعه مش مدعوم')); };
+    im.src = url;
+  });
+}
+async function handleImg(f){
+  if(!f) return;
+  if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||'')){ alert('اختار صورة'); return; }
+  const box = $('pvBox'); if(box) box.innerHTML = '<div class="ph0">⏳<span>جاري التجهيز...</span></div>';
   try{
-    const fd = new FormData();
-    fd.append('file', f);
-    fd.append('upload_preset', window.CLOUDINARY.preset);
-    const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/image/upload',
-      {method:'POST', body:fd});
-    const j = await r.json();
-    if(!j.secure_url) throw new Error(j.error ? j.error.message : 'فشل الرفع');
-    const url = j.secure_url.replace('/upload/', '/upload/w_700,q_auto,f_auto/');
-    window._pickImg = url;
-    box.innerHTML = `<img src="${url}">`;
-    if($('imgUrl')) $('imgUrl').value = url;
-    toast('تم رفع الصورة ✓');
-  }catch(e){ box.innerHTML = '🖼️'; alert('ما زبطت: ' + e.message); }
+    if(hasCloud()){
+      const {blob} = await shrink(f, 1400, 0.85);
+      const fd = new FormData();
+      fd.append('file', blob, 'img.jpg');
+      fd.append('upload_preset', window.CLOUDINARY.preset);
+      if(box) box.innerHTML = '<div class="ph0">⏳<span>جاري الرفع...</span></div>';
+      const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/image/upload', {method:'POST', body:fd});
+      const j = await r.json();
+      if(!j.secure_url) throw new Error(j.error ? j.error.message : 'فشل الرفع');
+      setPv(j.secure_url.replace('/upload/', '/upload/w_700,q_auto,f_auto/'));
+    }else{
+      const sm = await shrink(f, 520, 0.72);
+      const d = sm.data();
+      if(d.length > 250000) throw new Error('الصورة كبيرة كثير حتى بعد التصغير');
+      setPv(d);
+    }
+    toast('الصورة جاهزة ✓ — لا تنسى تكبس حفظ');
+  }catch(e){ setPv(''); alert('ما زبطت: ' + e.message); }
 }
 
 /* ========= الأقسام ========= */
