@@ -143,7 +143,7 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 @keyframes blink{50%{opacity:.55}}
 .onote{margin-top:6px;border-top:1px dashed #ddd;padding-top:6px;font-weight:700}
 .imgpick2{margin-bottom:14px}
-.pv2{width:100%;aspect-ratio:16/10;max-height:230px;border-radius:14px;background:#f1efed;border:2px dashed #ddd;overflow:hidden;cursor:pointer;display:grid;place-items:center;transition:border-color .15s}
+.pv2{width:100%;max-width:400px;margin:0 auto;aspect-ratio:16/10;border-radius:14px;background:#f1efed;border:2px dashed #ddd;overflow:hidden;cursor:pointer;display:grid;place-items:center;transition:border-color .15s}
 .pv2.drag{border-color:var(--red);background:#fff5f5}
 .pv2 img{width:100%;height:100%;object-fit:cover}
 .pv2 .ph0{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:34px;color:#aaa}
@@ -187,6 +187,7 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .ogprev{display:flex;align-items:center;gap:14px;background:#faf8f6;border-radius:14px;padding:10px;margin-bottom:10px}
 .ogprev svg{width:150px;height:150px;flex:none}
 .ogpc{font-size:13px;line-height:1.7}.ogpc span{color:var(--muted);font-size:12px}
+.crop-q{display:flex;gap:7px;justify-content:center;margin-top:8px}
 </style>
 </head>
 <body>
@@ -1040,6 +1041,7 @@ function setPv(url){
   const box = $('pvBox'); if(!box) return;
   box.innerHTML = url ? `<img src="${esc(url)}" alt="">` : '<div class="ph0">🖼️<span>اكبس أو اسحب صورة لهون</span></div>';
   const rm = $('imgRm'); if(rm) rm.style.display = url ? '' : 'none';
+  const ed = $('imgEd'); if(ed) ed.style.display = url ? '' : 'none';
   const u = $('imgUrl'); if(u && u.value !== url && !String(url).startsWith('data:')) u.value = url || '';
 }
 function imgPickHtml(cur, aspect, what){
@@ -1053,10 +1055,11 @@ function imgPickHtml(cur, aspect, what){
       const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handleImg(f); };
   }, 0);
   return `<div class="imgpick2">
-    <div class="pv2" id="pvBox" onclick="$('fileIn').click()" style="aspect-ratio:${window._pickAspect};${window._pickAspect<=1?'max-width:220px;max-height:none;margin:0 auto':''}"></div>
+    <div class="pv2" id="pvBox" onclick="$('fileIn').click()" style="aspect-ratio:${window._pickAspect};${window._pickAspect<=1?'max-width:220px':''}"></div>
     <div class="ibtns">
       <button type="button" class="btn sm gh" onclick="$('fileIn').click()">📁 اختار صورة</button>
       <button type="button" class="btn sm gh only-m" onclick="$('camIn').click()">📸 صوّر هلأ</button>
+      <button type="button" class="btn sm gh" id="imgEd" onclick="handleImg(window._pickImg)">✂️ عدّل الصورة</button>
       <button type="button" class="btn sm gh" id="imgRm" onclick="setPv('')">🗑️ شيل الصورة</button>
     </div>
     <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="handleImg(this.files[0]);this.value=''">
@@ -1081,6 +1084,7 @@ function imgFieldHtml(id, cur, label, shape){
       <div class="imfv ${shape}" id="${id}V" onclick="$('${id}F').click()">${cur?`<img src="${esc(cur)}" alt="">`:'🖼️'}</div>
       <div class="imfb">
         <button type="button" class="btn sm gh" onclick="$('${id}F').click()">📁 اختار صورة</button>
+        <button type="button" class="btn sm gh" onclick="if($('${id}').value) imgFieldFile('${id}', $('${id}').value, '${shape}')">✂️ عدّل</button>
         <button type="button" class="btn sm gh" onclick="imgFieldSet('${id}','')">🗑️ شيل</button>
       </div>
       <input type="file" id="${id}F" accept="image/*" style="display:none" onchange="imgFieldFile('${id}', this.files[0], '${shape}'); this.value=''">
@@ -1104,22 +1108,25 @@ async function imgFieldFile(id, f, shape){
 /* ========= أداة قص الصورة (سحب + تكبير) ========= */
 function loadImgFile(f){
   return new Promise((res, rej) => {
-    const url = URL.createObjectURL(f), im = new Image();
+    const isStr = typeof f === 'string';
+    const url = isStr ? f : URL.createObjectURL(f), im = new Image();
+    if(isStr && !f.startsWith('data:')) im.crossOrigin = 'anonymous';
     im.onload = () => res({im, url});
-    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('الملف مش صورة أو نوعه مش مدعوم')); };
+    im.onerror = () => { if(!isStr) URL.revokeObjectURL(url); rej(new Error(isStr ? 'ما قدرت أفتح الصورة الحالية — اختار الصورة من جديد' : 'الملف مش صورة أو نوعه مش مدعوم')); };
     im.src = url;
   });
 }
 /* بترجع canvas بالجزء المقصوص، أو null إذا لغى */
 async function cropDialog(f, aspect, title){
   const {im, url} = await loadImgFile(f);
-  const alpha = /png|webp/i.test(f.type || f.name || '');
+  const alpha = typeof f === 'string' ? /^data:image\/(png|webp)|\.png(\?|$)/i.test(f) : /png|webp/i.test(f.type || f.name || '');
   return new Promise(resolve => {
     const W = im.naturalWidth, H = im.naturalHeight;
     const maxW = Math.min(window.innerWidth - 48, 460), maxH = Math.min(window.innerHeight * 0.5, 360);
     let FW = maxW, FH = FW / aspect;
     if(FH > maxH){ FH = maxH; FW = FH * aspect; }
     const s0 = Math.max(FW / W, FH / H);
+    const zMin = Math.min(1, Math.min(FW / W, FH / H) / s0);   // تصغير لحد ما الصورة تدخل كلها
     let z = 1, s = s0, ox = (FW - W * s) / 2, oy = (FH - H * s) / 2;
 
     const wrap = document.createElement('div');
@@ -1128,7 +1135,11 @@ async function cropDialog(f, aspect, title){
       <div class="crop-h">${esc(title || 'ظبّط الصورة')}</div>
       <div class="crop-tip">اسحب الصورة لتختار شو يبيّن، واستعمل الشريط للتكبير</div>
       <div class="crop-fr ${alpha ? 'chk' : ''}" style="width:${FW}px;height:${FH}px"><img alt="" draggable="false"></div>
-      <div class="crop-z"><span>➖</span><input type="range" min="1" max="4" step="0.01" value="1"><span>➕</span></div>
+      <div class="crop-z"><span>➖</span><input type="range" min="${zMin.toFixed(3)}" max="4" step="0.01" value="1"><span>➕</span></div>
+      <div class="crop-q">
+        <button type="button" class="btn sm gh" data-a="fit">⤢ كلها بالإطار</button>
+        <button type="button" class="btn sm gh" data-a="fill">⛶ عبّي الإطار</button>
+      </div>
       <div class="crop-a">
         <button type="button" class="btn gh" data-a="x">إلغاء</button>
         <button type="button" class="btn red" data-a="ok">✓ تمام</button>
@@ -1137,12 +1148,13 @@ async function cropDialog(f, aspect, title){
     const fr = wrap.querySelector('.crop-fr'), img = fr.querySelector('img'), rng = wrap.querySelector('input');
     img.src = url;
     const clamp = () => {
-      ox = Math.min(0, Math.max(FW - W * s, ox));
-      oy = Math.min(0, Math.max(FH - H * s, oy));
+      const iw = W * s, ih = H * s;
+      ox = iw >= FW ? Math.min(0, Math.max(FW - iw, ox)) : Math.max(0, Math.min(FW - iw, ox));
+      oy = ih >= FH ? Math.min(0, Math.max(FH - ih, oy)) : Math.max(0, Math.min(FH - ih, oy));
     };
     const draw = () => { clamp(); img.style.width = (W * s) + 'px'; img.style.height = (H * s) + 'px'; img.style.transform = `translate(${ox}px,${oy}px)`; };
     const zoomTo = (nz, cx = FW / 2, cy = FH / 2) => {
-      nz = Math.max(1, Math.min(4, nz));
+      nz = Math.max(zMin, Math.min(4, nz));
       const ns = s0 * nz;
       ox = cx - (cx - ox) * ns / s; oy = cy - (cy - oy) * ns / s;
       z = nz; s = ns; rng.value = z; draw();
@@ -1166,19 +1178,22 @@ async function cropDialog(f, aspect, title){
     const done = ok => {
       let out = null;
       if(ok){
-        const sx = -ox / s, sy = -oy / s, sw = FW / s, sh = FH / s;
-        const ow = Math.max(1, Math.round(Math.min(sw, 1600))), oh = Math.max(1, Math.round(ow / aspect));
+        const sw = FW / s;
+        const ow = Math.max(1, Math.round(Math.min(Math.max(sw, FW), 1600))), oh = Math.max(1, Math.round(ow / aspect));
+        const k = ow / FW;   // من بكسل الإطار لبكسل الصورة النهائية
         out = document.createElement('canvas'); out.width = ow; out.height = oh;
         const x = out.getContext('2d');
         if(!alpha){ x.fillStyle = '#fff'; x.fillRect(0, 0, ow, oh); }
         x.imageSmoothingQuality = 'high';
-        x.drawImage(im, sx, sy, sw, sh, 0, 0, ow, oh);
+        x.drawImage(im, ox * k, oy * k, W * s * k, H * s * k);
         out._alpha = alpha;
       }
-      URL.revokeObjectURL(url); wrap.remove(); resolve(out);
+      if(typeof f !== 'string') URL.revokeObjectURL(url); wrap.remove(); resolve(out);
     };
     wrap.querySelector('[data-a="ok"]').onclick = () => done(true);
     wrap.querySelector('[data-a="x"]').onclick = () => done(false);
+    wrap.querySelector('[data-a="fit"]').onclick = () => { zoomTo(zMin); ox = (FW - W * s) / 2; oy = (FH - H * s) / 2; draw(); };
+    wrap.querySelector('[data-a="fill"]').onclick = () => { zoomTo(1); ox = (FW - W * s) / 2; oy = (FH - H * s) / 2; draw(); };
   });
 }
 /* تصغير canvas وترميزه */
@@ -1217,7 +1232,7 @@ async function makeImg(f, smallMax, q, aspect, title){
 
 async function handleImg(f){
   if(!f) return;
-  if(!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||'')){ alert('اختار صورة'); return; }
+  if(typeof f !== 'string' && !/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name||'')){ alert('اختار صورة'); return; }
   const prev = window._pickImg || '';
   const box = $('pvBox');
   try{
@@ -1384,8 +1399,9 @@ let _ogBtn = null;
 function pickOgImg(btn){
   const row = btn.closest('.ogrow');
   if(row.dataset.img){
-    const c = prompt('اكتب 1 لتغيير الصورة، أو 2 لحذفها', '1');
-    if(c === '2'){ row.dataset.img = ''; btn.innerHTML = '📷'; return; }
+    const c = prompt('اكتب:\n1 = صورة جديدة\n2 = عدّل القص والحجم\n3 = احذف الصورة', '2');
+    if(c === '3'){ row.dataset.img = ''; btn.innerHTML = '📷'; return; }
+    if(c === '2'){ ogImgFile(btn, row.dataset.img); return; }
     if(c !== '1') return;
   }
   _ogBtn = btn;
