@@ -154,6 +154,7 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
     <button class="tb"    data-v="cats"    onclick="tab('cats')">🗂️ الأقسام</button>
     <button class="tb"    data-v="groups"  onclick="tab('groups')">⚙️ الخيارات</button>
     <button class="tb"    data-v="deals"   onclick="tab('deals')">🎯 العروض</button>
+    <button class="tb"    data-v="cpn"     onclick="tab('cpn')">🎟️ الكوبونات</button>
     <button class="tb"    data-v="set"     onclick="tab('set')">🏪 الإعدادات</button>
   </div>
 </header>
@@ -165,6 +166,7 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
   <div id="vCats"   style="display:none"></div>
   <div id="vGroups" style="display:none"></div>
   <div id="vDeals"  style="display:none"></div>
+  <div id="vCpn"    style="display:none"></div>
   <div id="vSet"    style="display:none"></div>
 </div>
 
@@ -184,7 +186,7 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 /* ========= الحالة (كلها هون — لا تنقل let لتحت) ========= */
 let db = null, auth = null;
 let SET = Object.assign({}, (window.FALLBACK || {}));
-let CATS = [], ITEMS = [], GROUPS = [], DEALS = [], ORDERS = [];
+let CATS = [], ITEMS = [], GROUPS = [], DEALS = [], ORDERS = [], CPNS = [];
 let view = 'orders';
 let qItems = '', qCat = '';
 let ordFilter = 'live';
@@ -211,11 +213,22 @@ if(!configFilled()){
   $('loginErr').style.display = 'block';
   $('loginErr').innerHTML = '⚠️ <b>Firebase مش مربوط بعد.</b><br>افتح ملف <code>firebase-config.js</code> وحط المفاتيح، وبعدين ارفعه على GitHub.';
   $('lgBtn').disabled = true;
+}else if(typeof firebase === 'undefined'){
+  $('loginErr').style.display = 'block';
+  $('loginErr').innerHTML = '⚠️ <b>ما قدرنا نحمّل مكتبة Firebase.</b><br>تأكد إنك متصل بالإنترنت وحدّث الصفحة.';
+  $('lgBtn').disabled = true;
 }else{
-  firebase.initializeApp(window.FB_CONFIG);
-  auth = firebase.auth();
-  db = firebase.firestore();
-  auth.onAuthStateChanged(u => { if(u) onLogin(u); else $('login').style.display='grid'; });
+  try{
+    firebase.initializeApp(window.FB_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    auth.onAuthStateChanged(u => { if(u) onLogin(u); else $('login').style.display='grid'; });
+  }catch(err){
+    console.error(err);
+    $('loginErr').style.display = 'block';
+    $('loginErr').textContent = 'صار خطأ بالاتصال: ' + err.message;
+    $('lgBtn').disabled = true;
+  }
 }
 
 function doLogin(){
@@ -265,6 +278,10 @@ function onLogin(u){
     DEALS = s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
     if(view==='deals') render();
   });
+  db.collection('coupons').onSnapshot(s => {
+    CPNS = s.docs.map(d=>({id:d.id,...d.data()}));
+    if(view==='cpn') render();
+  }, err => console.error('coupons', err));
   db.collection('orders').orderBy('createdAtStr','desc').limit(120).onSnapshot(s => {
     ORDERS = s.docs.map(d=>({id:d.id,...d.data()}));
     const nNew = ORDERS.filter(o=>o.status==='new').length;
@@ -298,8 +315,8 @@ function ding(){
 function tab(v){
   view = v; armed = null;
   document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-  ['Orders','Items','Cats','Groups','Deals','Set'].forEach(k=>{
-    $('v'+k).style.display = (v === k.toLowerCase() || (v==='set'&&k==='Set')) ? '' : 'none';
+  ['Orders','Items','Cats','Groups','Deals','Cpn','Set'].forEach(k=>{
+    $('v'+k).style.display = (v === k.toLowerCase()) ? '' : 'none';
   });
   render(); window.scrollTo({top:0});
 }
@@ -309,6 +326,7 @@ function render(){
   if(view==='cats')   renderCats();
   if(view==='groups') renderGroups();
   if(view==='deals')  renderDeals();
+  if(view==='cpn')    renderCpns();
   if(view==='set')    renderSet();
 }
 
@@ -394,7 +412,9 @@ async function seed(){
 
     const s = await db.collection('settings').doc('main').get();
     if(!s.exists){
-      await db.collection('settings').doc('main').set(Object.assign({}, window.FALLBACK, {phone: window.WHATSAPP || ''}));
+      await db.collection('settings').doc('main').set(Object.assign({}, window.FALLBACK, {
+        phone: window.WHATSAPP || '', tagline: 'مذاق لا يُقاوم',
+        heroTitle: 'خصم 20%', heroSub: 'على جميع البيتزا'}));
     }
     toast('تم ✓ المنيو جاهز');
   }catch(e){ console.error(e); alert('صار خطأ: ' + e.message); }
@@ -582,6 +602,10 @@ function editItem(id){
       ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(c.name)}</option>`).join('')}
     </select></div>
     <div class="f"><label>شارة (مثلاً: شائع / الأكثر طلباً)</label><input id="iTag" value="${esc(it.tag||'')}"></div>
+    <div class="f2">
+      <div class="f"><label>التقييم (اختياري)</label><input id="iRate" value="${esc(it.rate||'')}" placeholder="4.8"></div>
+      <div class="f"><label>عدد التقييمات</label><input id="iRateN" value="${esc(it.rateN||'')}" placeholder="320"></div>
+    </div>
     <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
       <label style="font-weight:800;font-size:14px">مجموعات الخيارات</label>
       <div class="muted" style="margin-bottom:4px">اختار الأحجام والإضافات اللي بتنطبق على هاض الصنف</div>
@@ -599,7 +623,7 @@ function editItem(id){
       name, desc: val('iDesc'), price,
       sale: num('iSale') || null,
       catId: val('iCat'), img: window._pickImg || '',
-      tag: val('iTag'),
+      tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
       best: $('iBest').checked, available: $('iAvail').checked
     };
@@ -771,7 +795,7 @@ function renderDeals(){
     <div class="bar"><button class="btn sm red" onclick="editDeal()">+ عرض جديد</button></div>
     ${DEALS.length ? DEALS.map(d=>`
       <div class="card"><div class="it">
-        <div class="ph" style="display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>
+        <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
         <div class="mid"><div class="nm">${esc(d.title)}</div><div class="muted">${esc(d.desc||'')}</div></div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
         <button class="menu-btn" onclick="editDeal('${d.id}')">✏️</button>
@@ -780,9 +804,11 @@ function renderDeals(){
       : `<div class="empty"><div class="e">🎯</div><div>ما في عروض</div></div>`}`;
 }
 function editDeal(id){
-  const d = id ? DEALS.find(x=>x.id===id) : {title:'',desc:'',price:'',emoji:'🍕'};
+  const d = id ? DEALS.find(x=>x.id===id) : {title:'',desc:'',price:'',emoji:'🍕',img:''};
   if(!d) return;
+  window._pickImg = d.img || '';
   openModal(id?'تعديل عرض':'عرض جديد', `
+    ${imgPickHtml(d.img)}
     <div class="f"><label>العنوان *</label><input id="dTitle" value="${esc(d.title)}" placeholder="العرض العائلي"></div>
     <div class="f"><label>التفاصيل</label><input id="dDesc" value="${esc(d.desc||'')}" placeholder="2 بيتسا كبيرة + مقبلات + مشروب"></div>
     <div class="f2">
@@ -792,13 +818,65 @@ function editDeal(id){
   `, async () => {
     const t = val('dTitle'), p = num('dPrice');
     if(!t || !p){ alert('العنوان والسعر مطلوبين'); return false; }
-    const data = {title:t, desc:val('dDesc'), price:p, emoji:val('dEmoji')||'🍕'};
+    const data = {title:t, desc:val('dDesc'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || ''};
     if(id) await db.collection('deals').doc(id).update(data);
     else await db.collection('deals').add(Object.assign(data,{order:(DEALS.length+1)*10}));
     return true;
   });
 }
 function delDeal(id){ if(confirm('حذف العرض؟')) db.collection('deals').doc(id).delete(); }
+
+/* ========= الكوبونات ========= */
+function renderCpns(){
+  $('vCpn').innerHTML = `
+    <h2 class="sec">كوبونات الخصم</h2>
+    <div class="muted" style="margin-bottom:12px">الزبون بكتب الرمز بالسلة وبنخصم عليه. الرمز بحروف إنجليزية وأرقام بس.</div>
+    <div class="bar"><button class="btn sm red" onclick="editCpn()">+ كوبون جديد</button></div>
+    ${CPNS.length ? CPNS.map(c=>`
+      <div class="card"><div class="it">
+        <div class="ph" style="width:56px;height:56px;display:grid;place-items:center;font-size:22px;background:#f4f2f0">🎟️</div>
+        <div class="mid">
+          <div class="nm ltr" style="font-size:16px">${esc(c.id)}</div>
+          <div class="tags">
+            <span class="pill ${c.active===false?'':'g'}">${c.active===false?'موقوف':'فعّال'}</span>
+            ${c.minOrder?`<span class="pill">فوق <span class="ltr">${Number(c.minOrder)} ₪</span></span>`:''}
+          </div>
+        </div>
+        <div class="pr">${c.type==='percent' ? Number(c.value)+'%' : '<span class="ltr">'+Number(c.value)+' ₪</span>'}</div>
+        <button class="menu-btn" onclick="editCpn('${c.id}')">✏️</button>
+        <button class="menu-btn" onclick="delCpn('${c.id}')">🗑️</button>
+      </div></div>`).join('')
+      : `<div class="empty"><div class="e">🎟️</div><div>ما في كوبونات</div></div>`}`;
+}
+function editCpn(id){
+  const c = id ? CPNS.find(x=>x.id===id) : {id:'',type:'percent',value:'',minOrder:'',active:true};
+  if(!c) return;
+  openModal(id?('تعديل كوبون '+id):'كوبون جديد', `
+    <div class="f"><label>الرمز *</label>
+      <input id="kCode" class="ltr" value="${esc(c.id||'')}" ${id?'disabled':''} placeholder="PIZZA20"
+        style="text-transform:uppercase;font-weight:800;letter-spacing:1px">
+      <div class="muted" style="margin-top:5px">حروف إنجليزية وأرقام بس — بدون مسافات. ما بتقدر تغيره بعدين.</div></div>
+    <div class="f2">
+      <div class="f"><label>نوع الخصم</label><select id="kType">
+        <option value="percent" ${c.type!=='fixed'?'selected':''}>نسبة %</option>
+        <option value="fixed" ${c.type==='fixed'?'selected':''}>مبلغ ثابت ₪</option></select></div>
+      <div class="f"><label>القيمة *</label><input id="kVal" type="number" inputmode="decimal" value="${c.value||''}"></div>
+    </div>
+    <div class="f"><label>أقل طلبية لتفعيل الكوبون</label>
+      <input id="kMin" type="number" inputmode="decimal" value="${c.minOrder||''}" placeholder="اتركه فاضي = بدون شرط"></div>
+    <label class="chk"><input type="checkbox" id="kAct" ${c.active!==false?'checked':''}><span>✅ فعّال</span></label>
+  `, async () => {
+    const code = (val('kCode')||'').toUpperCase().replace(/\s+/g,'');
+    const v = num('kVal');
+    if(!code || !v){ alert('الرمز والقيمة مطلوبين'); return false; }
+    if(!/^[A-Z0-9_-]{3,20}$/.test(code)){ alert('الرمز: حروف إنجليزية وأرقام فقط (3-20 خانة)'); return false; }
+    if(val('kType')==='percent' && v > 90){ alert('نسبة الخصم كبيرة كثير'); return false; }
+    const data = {type: val('kType'), value: v, minOrder: num('kMin')||0, active: $('kAct').checked};
+    await db.collection('coupons').doc(id || code).set(data, {merge:true});
+    return true;
+  });
+}
+function delCpn(id){ if(confirm('حذف الكوبون ' + id + '؟')) db.collection('coupons').doc(id).delete(); }
 
 /* ========= الإعدادات ========= */
 function renderSet(){
@@ -808,6 +886,8 @@ function renderSet(){
     <div class="card">
       <div class="f"><label>اسم المطعم</label><input id="sName" value="${esc(SET.name||'')}"></div>
       <div class="f"><label>العنوان</label><input id="sAddr" value="${esc(SET.addr||'')}"></div>
+      <div class="f"><label>الشعار الصغير (تحت الاسم بالغلاف)</label>
+        <input id="sTag" value="${esc(SET.tagline||'')}" placeholder="مذاق لا يُقاوم"></div>
       <div class="f"><label>واتساب (بصيغة 972…)</label><input id="sPhone" class="ltr" value="${esc(SET.phone||window.WHATSAPP||'')}"></div>
       <div class="f2">
         <div class="f"><label>رابط اللوجو</label><input id="sLogo" value="${esc(SET.logo||'')}" placeholder="اختياري"></div>
@@ -841,7 +921,13 @@ function renderSet(){
       <div class="muted">لو المطعم بسكّر بعد منتصف الليل اكتب مثلاً <span class="ltr">00:30</span> بخانة السكر.</div>
     </div>
     <div class="card">
-      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">شرايط العروض (تحت المعلومات)</label>
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">بطاقة العرض على الغلاف</label>
+      <div class="f"><label>العنوان</label><input id="sHt" value="${esc(SET.heroTitle||'')}" placeholder="خصم 20%"></div>
+      <div class="f"><label>السطر الثاني</label><input id="sHs" value="${esc(SET.heroSub||'')}" placeholder="على جميع البيتزا"></div>
+      <div class="muted">خليهن فاضيين إذا ما بدك البطاقة تظهر.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">شرايط العروض (صفحة المعلومات)</label>
       <div class="f2">
         <div class="f"><label>إيموجي 1</label><input id="p0i" value="${esc((SET.promos&&SET.promos[0]&&SET.promos[0].icon)||'🏷️')}" style="text-align:center;font-size:20px"></div>
         <div class="f"><label>النص 1</label><input id="p0t" value="${esc((SET.promos&&SET.promos[0]&&SET.promos[0].text)||'')}"></div>
@@ -869,6 +955,7 @@ async function saveSet(){
   [0,1].forEach(i => { const t = val('p'+i+'t'); if(t) promos.push({icon: val('p'+i+'i')||'🏷️', text:t}); });
   const data = {
     name: val('sName'), addr: val('sAddr'), phone: val('sPhone'),
+    tagline: val('sTag'), heroTitle: val('sHt'), heroSub: val('sHs'),
     logo: val('sLogo'), cover: val('sCover'),
     deliveryFee: num('sFee'), freeishOver: num('sOver'), reducedFee: num('sRed'),
     minOrder: num('sMin'), prepTime: val('sPrep'),
