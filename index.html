@@ -321,6 +321,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tile .ti{width:64px;height:64px;margin:0 auto 7px;border-radius:13px;overflow:hidden;background:#f4f2f0}
 .tile .ti img{width:100%;height:100%;object-fit:cover}
 .tile.sel .ti{box-shadow:0 0 0 2px #fff}
+/* معاينة البيتسا */
+.pzview{position:sticky;top:0;z-index:6;background:linear-gradient(var(--bg) 88%,rgba(247,246,245,0));margin:0 -16px 6px;padding:8px 16px 12px;text-align:center}
+.pzview svg{width:min(52vw,205px);height:auto;display:block;margin:0 auto}
+.pzview .gd{stroke:#fff;stroke-width:1.6;stroke-dasharray:4 4;opacity:.85}
+.pzcap{font-size:12.5px;font-weight:800;color:var(--ink-2);margin-top:4px}
+.tp.drop .pc{animation:pzdrop .42s cubic-bezier(.3,1.5,.5,1) both}
+.pc{transform-box:fill-box;transform-origin:center}
+@keyframes pzdrop{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.tp.drop .pc{animation:none}}
 </style>
 </head>
 <body>
@@ -705,7 +714,7 @@ function openCat(id){
 /* ============ صفحة المنتج ============ */
 function openP(id){
   cur = byId(id); if(!cur) return;
-  qty = 1; note = ''; sel = {}; side = {};
+  qty = 1; note = ''; sel = {}; side = {}; pzShown = {};
   (cur.opts||[]).forEach(g => {
     const G = grp(g); if(!G) return;
     sel[g] = G.type === 'one' ? (G.items[0]||{}).id : [];
@@ -755,10 +764,152 @@ function unit(){
   });
   return p;
 }
+/* ============ معاينة البيتسا الحيّة ============ */
+let pzShown = {};
+function seedRand(str){
+  let h = 2166136261;
+  for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+/* شكل مرسوم لكل إضافة حسب اسمها، بيستعمل بس إذا الإضافة ما إلها صورة */
+function toppingKind(label){
+  const t = String(label||'');
+  if(/زيتون\s*(اسود|أسود)/.test(t)) return 'olB';
+  if(/زيتون/.test(t)) return 'olG';
+  if(/فطر|مشروم/.test(t)) return 'mush';
+  if(/ذر[ةه]/.test(t)) return 'corn';
+  if(/بصل/.test(t)) return 'onion';
+  if(/هالبينو|حار|حر\b/.test(t) && /فلفل|هالبينو/.test(t)) return 'jal';
+  if(/فلفل/.test(t)) return 'pep';
+  if(/طون/.test(t)) return 'tuna';
+  if(/سلامي|نقانق|سجق|ببروني|بيبروني/.test(t)) return 'sal';
+  if(/دجاج|شاورما|فاهيتا/.test(t)) return 'chk';
+  if(/كباب|لحم|انتريكوت|إنتريكوت|برقيت|برجيت|بيف|همبرغر/.test(t)) return 'beef';
+  if(/جبن/.test(t)) return 'chz';
+  if(/بندور|طماط/.test(t)) return 'tom';
+  if(/اناناس|أناناس/.test(t)) return 'pine';
+  if(/ريحان|سبانخ|جرجير/.test(t)) return 'leaf';
+  return 'dot';
+}
+function pieceSvg(k){
+  switch(k){
+    case 'olB': return '<circle r="6.5" fill="#1d1a19"/><circle r="2.6" fill="#5c4a3c"/><circle cx="-2.4" cy="-2.6" r="1.3" fill="#fff" opacity=".35"/>';
+    case 'olG': return '<circle r="6.5" fill="#6d8a25"/><circle r="2.6" fill="#c44a2c"/><circle cx="-2.4" cy="-2.6" r="1.3" fill="#fff" opacity=".35"/>';
+    case 'mush': return '<path d="M-8 1 Q-8 -8 0 -8 Q8 -8 8 1 Z" fill="#d9c1a0" stroke="#a5875f" stroke-width="1"/><rect x="-2.6" y="0" width="5.2" height="7" rx="1.5" fill="#e9d8bd" stroke="#a5875f" stroke-width="1"/>';
+    case 'corn': return '<ellipse cx="-3" cy="0" rx="2.6" ry="3.2" fill="#f2c12e"/><ellipse cx="3" cy="-1" rx="2.6" ry="3.2" fill="#f5cc45"/><ellipse cx="0" cy="3.6" rx="2.6" ry="3.2" fill="#e9b522"/>';
+    case 'onion': return '<path d="M-8 2 Q0 -9 8 2" fill="none" stroke="#a75b97" stroke-width="2.6" stroke-linecap="round"/><path d="M-5 3 Q0 -4 5 3" fill="none" stroke="#e9d4ea" stroke-width="1.6" stroke-linecap="round"/>';
+    case 'pep': return '<path d="M-9 3 Q0 -7 9 3" fill="none" stroke="#2f7d2a" stroke-width="4" stroke-linecap="round"/>';
+    case 'jal': return '<circle r="6" fill="#3f8f2f"/><circle r="3.6" fill="#cfe5a5"/><circle cx="1" cy="-1" r=".9" fill="#f5f0c8"/><circle cx="-1.2" cy="1" r=".9" fill="#f5f0c8"/>';
+    case 'tuna': return '<path d="M-7 -2 Q-3 -7 3 -5 Q8 -3 6 3 Q2 7 -4 5 Q-9 2 -7 -2 Z" fill="#c9a185" stroke="#a7806a" stroke-width=".8"/>';
+    case 'sal': return '<circle r="8.5" fill="#b3302a"/><circle r="8.5" fill="none" stroke="#7d1c18" stroke-width="1"/><circle cx="-3" cy="-2" r="1.3" fill="#f0b3a8"/><circle cx="3" cy="2" r="1.1" fill="#f0b3a8"/><circle cx="2" cy="-4" r=".9" fill="#f0b3a8"/><circle cx="-2" cy="4" r="1" fill="#f0b3a8"/>';
+    case 'chk': return '<path d="M-7 -3 L-1 -7 L7 -4 L6 4 L-2 7 L-7 3 Z" fill="#e3b77e" stroke="#b07a3c" stroke-width="1"/><path d="M-4 -2 L3 -3" stroke="#c8935a" stroke-width="1"/>';
+    case 'beef': return '<path d="M-7 -4 L0 -7 L7 -3 L6 5 L-3 7 L-7 2 Z" fill="#6e3d22" stroke="#4a2614" stroke-width="1"/><circle cx="-2" cy="-1" r="1.2" fill="#8d5636"/><circle cx="3" cy="2" r="1" fill="#8d5636"/>';
+    case 'chz': return '<path d="M-9 0 Q-7 -8 0 -7 Q8 -8 9 0 Q8 8 0 7 Q-8 8 -9 0 Z" fill="#fff4cf" opacity=".95"/>';
+    case 'tom': return '<circle r="8" fill="#d9362b"/><circle r="5.6" fill="#ef6a55"/><circle cx="-2" cy="-1" r="1" fill="#f7d26a"/><circle cx="2" cy="1" r="1" fill="#f7d26a"/><circle cx="0" cy="-3" r="1" fill="#f7d26a"/>';
+    case 'pine': return '<path d="M-7 -5 L7 -5 L4 6 L-4 6 Z" fill="#f4d35e" stroke="#d8ad2c" stroke-width="1"/>';
+    case 'leaf': return '<path d="M-8 0 Q0 -8 8 0 Q0 8 -8 0 Z" fill="#3c8d3a"/><path d="M-7 0 L7 0" stroke="#2a6a28" stroke-width="1"/>';
+    default: return '<circle r="6" fill="#e07b39"/><circle r="6" fill="none" stroke="#a9541e" stroke-width="1"/>';
+  }
+}
+function inRegion(x, y, k){
+  const g = 5;
+  switch(k){
+    case 'r':  return x > g;
+    case 'l':  return x < -g;
+    case 'rt': return x > g && y < -g;
+    case 'lt': return x < -g && y < -g;
+    case 'rb': return x > g && y > g;
+    case 'lb': return x < -g && y > g;
+    default:   return true;
+  }
+}
+/* بيرجع قائمة الإضافات المختارة مع مكانها */
+function chosenToppings(){
+  const out = [];
+  (cur.opts||[]).forEach(g => {
+    const G = grp(g); if(!halvesOn(G)) return;
+    (sel[g]||[]).forEach(o => {
+      const O = G.items.find(x => x.id === o); if(!O) return;
+      out.push({key: g + ':' + o, label: O.label, img: O.img || '', reg: side[g + ':' + o] || 'f'});
+    });
+  });
+  // الجبنة تحت، وبعدين الباقي
+  return out.sort((a,b) => (toppingKind(b.label) === 'chz') - (toppingKind(a.label) === 'chz'));
+}
+function pizzaPreview(){
+  const tops = chosenToppings();
+  const R = 84;
+  let defs = '', body = '', n = 0;
+  const regs = {};
+  tops.forEach(tp => {
+    regs[tp.reg] = 1;
+    const rnd = seedRand(tp.key);
+    const isQ = tp.reg.length === 2, isH = tp.reg === 'r' || tp.reg === 'l';
+    const want = isQ ? 5 : isH ? 8 : 14, pts = [];
+    for(let tries = 0; pts.length < want && tries < 600; tries++){
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * R;
+      const x = Math.cos(a) * r, y = Math.sin(a) * r;
+      if(!inRegion(x, y, tp.reg)) continue;
+      if(pts.some(p => (p[0]-x)*(p[0]-x) + (p[1]-y)*(p[1]-y) < 320)) continue;
+      pts.push([x, y, rnd() * 360]);
+    }
+    const isNew = !pzShown[tp.key + '@' + tp.reg];
+    pzShown[tp.key + '@' + tp.reg] = 1;
+    let g = '';
+    if(tp.img){
+      const id = 'pzc' + (n++);
+      const png = /^data:image\/(png|webp)|\.png(\?|$)/i.test(tp.img);
+      if(!png) defs += '<clipPath id="' + id + '"><circle r="9"/></clipPath>';
+      pts.forEach((p,i) => {
+        g += '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ')"' +
+          '><g class="pc" style="animation-delay:' + (i * 35) + 'ms">' +
+          '<image href="' + esc(tp.img) + '" x="-10" y="-10" width="20" height="20" preserveAspectRatio="xMidYMid slice"' +
+          (png ? '' : ' clip-path="url(#' + id + ')"') + '/>' +
+          (png ? '' : '<circle r="9" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1"/>') + '</g></g>';
+      });
+    }else{
+      const shape = pieceSvg(toppingKind(tp.label));
+      pts.forEach((p,i) => {
+        g += '<g transform="translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + p[2].toFixed(0) + ')"' +
+          '><g class="pc" style="animation-delay:' + (i * 35) + 'ms">' + shape + '</g></g>';
+      });
+    }
+    body += '<g class="tp ' + (isNew ? 'drop' : '') + '" filter="url(#pzsh)">' + g + '</g>';
+  });
+  const showH = regs.r || regs.l || regs.rt || regs.lt || regs.rb || regs.lb;
+  const showQ = regs.rt || regs.lt || regs.rb || regs.lb;
+  const guides = (showH ? '<line x1="0" y1="-96" x2="0" y2="96" class="gd"/>' : '') +
+                 (showQ ? '<line x1="-96" y1="0" x2="96" y2="0" class="gd"/>' : '');
+  // بقع الجبنة المحمّرة — ثابتة لكل صنف
+  const rb = seedRand('base' + (cur.id||'')); let spots = '';
+  for(let i = 0; i < 26; i++){
+    const a = rb() * 6.283, r = Math.sqrt(rb()) * 88;
+    spots += '<ellipse cx="' + (Math.cos(a)*r).toFixed(1) + '" cy="' + (Math.sin(a)*r).toFixed(1) + '" rx="' + (3 + rb()*6).toFixed(1) +
+      '" ry="' + (2 + rb()*4).toFixed(1) + '" fill="' + (rb() < .55 ? '#e3a94a' : '#c97a2c') + '" opacity="' + (.25 + rb()*.35).toFixed(2) + '"/>';
+  }
+  return '<div class="pzview"><svg viewBox="-120 -120 240 240" aria-label="معاينة البيتسا">' +
+    '<defs>' +
+      '<radialGradient id="pzcr" r=".5"><stop offset=".78" stop-color="#e8b36a"/><stop offset=".9" stop-color="#d4943f"/><stop offset="1" stop-color="#a8692a"/></radialGradient>' +
+      '<radialGradient id="pzch" r=".5"><stop offset="0" stop-color="#fbe39a"/><stop offset=".8" stop-color="#f5cf6b"/><stop offset="1" stop-color="#e3a944"/></radialGradient>' +
+      '<filter id="pzsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-opacity=".35"/></filter>' +
+      '<filter id="pzbs" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".28"/></filter>' +
+      '<filter id="pzch2"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>' +
+      defs + '</defs>' +
+    '<circle r="114" fill="url(#pzcr)" filter="url(#pzbs)"/>' +
+    '<circle r="99" fill="#b8321f"/>' +
+    '<circle r="96" fill="url(#pzch)" filter="url(#pzch2)"/>' +
+    '<g filter="url(#pzch2)">' + spots + '</g>' +
+    guides + body +
+    '</svg>' +
+    '<div class="pzcap">' + (tops.length ? '🍕 بيتسيتك — ' + tops.length + ' إضافة' : '🍕 اختار إضافات وشوفها على البيتسا') + '</div></div>';
+}
+
 function drawP(){
   const it = cur;
+  let pzDone = false;
   const groups = (it.opts||[]).map(g => {
     const G = grp(g); if(!G) return '';
+    const pzv = (!pzDone && halvesOn(G)) ? (pzDone = true, pizzaPreview()) : '';
     let inner;
     if(G.type === 'one' && (G.style === 'tiles' || G.items.length <= 3)){
       const full = G.priceMode === 'full';
@@ -783,7 +934,7 @@ function drawP(){
           })() : '');
       }).join('') + '</div>';
     }
-    return '<div class="og"><div class="t"><span>' + esc(G.title) + '</span>' +
+    return pzv + '<div class="og"><div class="t"><span>' + esc(G.title) + '</span>' +
       '<span class="' + (G.required?'rq':'op') + '">' + (G.required?'إلزامي':'اختياري') + '</span></div>' + inner + '</div>';
   }).join('');
 
