@@ -218,6 +218,10 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .ch2{background:#fafafa;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px}
 .ch2 .top{display:flex;justify-content:space-between;gap:8px;margin-bottom:3px}
 .ord .meta a{margin-inline-end:6px}
+.ogi{display:flex;align-items:center;gap:6px;border-bottom:1px solid #f1f1f1;transition:background .3s}
+.ogi .chk{flex:1;margin:0}
+.ogi .mv{width:30px;height:30px;border-radius:8px;background:#f1efed;font-size:12px;flex:none}
+.ogi.flash{background:#fff3e0}
 </style>
 </head>
 <body>
@@ -396,10 +400,16 @@ const HE = {
   'التوصيل حسب المناطق مفعّل — سعر التوصيل بينحسب من تاب 🗺️ التوصيل. أقل طلبية هون بتضل للمناطق اللي ما إلها أقل طلبية خاصة.':'משלוח לפי אזורים מופעל — המחיר נקבע בלשונית 🗺️ משלוח. מינימום ההזמנה כאן חל על אזורים בלי מינימום משלהם.',
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
-  'معدل الطلب:':'ממוצע הזמנה:','عدد طلبات هالزبون':'מספר ההזמנות של הלקוח','طلبات':'הזמנות','عنوان المطعم':'כתובת המסעדה','عنوان المطعم بالعبري':'כתובת המסעדה בעברית','اتركه فاضي = بدون شرط':'השאירו ריק = בלי תנאי','العرض العائلي':'מבצע משפחתי','2 بيتسا كبيرة + مقبلات + مشروب':'2 פיצות גדולות + מנות פתיחה + שתייה'
+  'معدل الطلب:':'ממוצע הזמנה:',
+  'رتّبهم بالترتيب اللي بدك الزبون يشوفه':'סדרו לפי הסדר שהלקוח יראה','حسب الترتيب العام':'לפי הסדר הכללי',
+  'طبّق هالترتيب على كل الأصناف':'החל את הסדר על כל הפריטים','لفوق':'למעלה','لتحت':'למטה',
+  'الترتيب هون هو الترتيب اللي بيشوفه الزبون. بعد ما ترتّب اكبس "طبّق على كل الأصناف".':'הסדר כאן הוא הסדר שהלקוח רואה. אחרי הסידור לחצו "החל על כל הפריטים".',
+  'كل الأصناف مرتبة ✓':'כל הפריטים מסודרים ✓','عدد طلبات هالزبون':'מספר ההזמנות של הלקוח','طلبات':'הזמנות','عنوان المطعم':'כתובת המסעדה','عنوان المطعم بالعبري':'כתובת המסעדה בעברית','اتركه فاضي = بدون شرط':'השאירו ריק = בלי תנאי','العرض العائلي':'מבצע משפחתי','2 بيتسا كبيرة + مقبلات + مشروب':'2 פיצות גדולות + מנות פתיחה + שתייה'
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^بنرتّب الخيارات بـ(\d+) صنف حسب هالترتيب\. متأكد؟$/, m => 'נסדר את האפשרויות ב־' + m[1] + ' פריטים לפי הסדר הזה. בטוחים?'],
+  [/^تم ✓ رتّبنا (\d+) صنف$/, m => 'בוצע ✓ סודרו ' + m[1] + ' פריטים'],
   [/^منطقة (\d+)$/, m => 'אזור ' + m[1]],
   [/^منطقة: (.*)$/, m => 'אזור: ' + m[1]],
   [/^ملاحظة الطلب: ([\s\S]*)$/, m => 'הערת הזמנה: ' + m[1]],
@@ -1148,6 +1158,26 @@ function delItem(id){
   db.collection('items').doc(id).delete(); closeModal(); toast('تم الحذف');
 }
 
+/* ترتيب المجموعات بشباك الصنف: المعلّمة بترتيبها المحفوظ، وبعدين الباقي بالترتيب العام */
+function itemGroupOrder(it){
+  const sel = (it.opts||[]).map(id => GROUPS.find(g => g.id === id)).filter(Boolean);
+  return sel.concat(GROUPS.filter(g => !(it.opts||[]).includes(g.id)));
+}
+function ogMove(btn, d){
+  const row = btn.closest('.ogi'), sib = d < 0 ? row.previousElementSibling : row.nextElementSibling;
+  if(!sib) return;
+  if(d < 0) row.parentNode.insertBefore(row, sib); else row.parentNode.insertBefore(sib, row);
+  row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 400);
+}
+function ogResetOrder(){
+  const box = $('ogList'); if(!box) return;
+  const rows = [...box.children], idx = id => GROUPS.findIndex(g => g.id === id);
+  rows.sort((x, y) => {
+    const cx = x.querySelector('.ogchk').checked, cy = y.querySelector('.ogchk').checked;
+    if(cx !== cy) return cx ? -1 : 1;
+    return idx(x.querySelector('.ogchk').value) - idx(y.querySelector('.ogchk').value);
+  }).forEach(r => box.appendChild(r));
+}
 function editItem(id){
   const it = id ? ITEMS.find(x=>x.id===id) : {name:'',desc:'',price:'',sale:'',catId:(CATS[0]||{}).id||'',img:'',opts:[],best:false,tag:'',available:true};
   if(!it) return;
@@ -1173,9 +1203,11 @@ function editItem(id){
     <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
       <label style="font-weight:800;font-size:14px">مجموعات الخيارات</label>
       <div class="muted" style="margin-bottom:4px">اختار الأحجام والإضافات اللي بتنطبق على هاض الصنف</div>
-      ${GROUPS.length ? GROUPS.map(g=>`<label class="chk">
-        <input type="checkbox" class="ogchk" value="${g.id}" ${(it.opts||[]).includes(g.id)?'checked':''}>
-        <span>${esc(LX(g,'title'))} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>`).join('')
+      ${GROUPS.length ? `<div class="muted" style="margin-bottom:6px">⬆️⬇️ رتّبهم بالترتيب اللي بدك الزبون يشوفه</div><div id="ogList">` + itemGroupOrder(it).map(g=>`<div class="ogi">
+        <label class="chk"><input type="checkbox" class="ogchk" value="${g.id}" ${(it.opts||[]).includes(g.id)?'checked':''}>
+        <span>${esc(LX(g,'title'))} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>
+        <button type="button" class="mv" onclick="ogMove(this,-1)">▲</button><button type="button" class="mv" onclick="ogMove(this,1)">▼</button></div>`).join('') +
+        `</div><button type="button" class="btn sm gh" style="margin-top:6px" onclick="ogResetOrder()">↺ حسب الترتيب العام</button>`
         : '<div class="muted">ما في مجموعات — أنشئها من تبويب الخيارات</div>'}
     </div>
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
@@ -1830,7 +1862,9 @@ function renderGroups(){
   $('vGroups').innerHTML = `
     <h2 class="sec">مجموعات الخيارات</h2>
     <div class="muted" style="margin-bottom:12px">الأحجام، نوع العجينة، الإضافات، الصلصات… بتعملها مرة وبتربطها بأي صنف.</div>
-    <div class="bar"><button class="btn sm red" onclick="editGroup()">+ مجموعة جديدة</button></div>
+    <div class="bar"><button class="btn sm red" onclick="editGroup()">+ مجموعة جديدة</button>
+      ${GROUPS.length > 1 ? '<button class="btn sm gh" onclick="applyGroupOrder()">🔁 طبّق هالترتيب على كل الأصناف</button>' : ''}</div>
+    ${GROUPS.length > 1 ? '<div class="muted" style="margin:-4px 0 10px">⬆️⬇️ الترتيب هون هو الترتيب اللي بيشوفه الزبون. بعد ما ترتّب اكبس "طبّق على كل الأصناف".</div>' : ''}
     ${GROUPS.length ? GROUPS.map(g=>`
       <div class="card">
         <div class="row" style="margin-bottom:9px">
@@ -1840,6 +1874,8 @@ function renderGroups(){
               ${g.required?'<span class="pill r">إلزامي</span>':'<span class="pill">اختياري</span>'}
               <span class="pill">${ITEMS.filter(i=>(i.opts||[]).includes(g.id)).length} صنف</span>
             </div></div>
+          <button class="menu-btn" onclick="moveGroup('${g.id}',-1)" title="لفوق">▲</button>
+          <button class="menu-btn" onclick="moveGroup('${g.id}',1)" title="لتحت">▼</button>
           <button class="menu-btn" onclick="editGroup('${g.id}')">✏️</button>
           <button class="menu-btn" onclick="delGroup('${g.id}')">🗑️</button>
         </div>
@@ -1959,6 +1995,32 @@ async function ogImgFile(btn, f){
     btn.innerHTML = `<img src="${esc(url)}" alt="">`;
     if($('gHalves') && $('gHalves').checked) ogPreview(row);
   }catch(e){ btn.innerHTML = row.dataset.img ? `<img src="${esc(row.dataset.img)}" alt="">` : '📷'; alert('ما زبطت: ' + e.message); }
+}
+async function moveGroup(id, d){
+  const i = GROUPS.findIndex(g => g.id === id), j = i + d;
+  if(i < 0 || j < 0 || j >= GROUPS.length) return;
+  const arr = GROUPS.slice(); [arr[i], arr[j]] = [arr[j], arr[i]];
+  GROUPS = arr; render();
+  const b = db.batch();
+  arr.forEach((g, k) => { g.order = (k + 1) * 10; b.update(db.collection('optionGroups').doc(g.id), {order: g.order}); });
+  try{ await b.commit(); }catch(e){ alert(e.message); }
+}
+async function applyGroupOrder(){
+  const idx = id => { const k = GROUPS.findIndex(g => g.id === id); return k < 0 ? 999 : k; };
+  const todo = ITEMS.filter(it => (it.opts||[]).length > 1).map(it => {
+    const s = (it.opts||[]).slice().sort((x, y) => idx(x) - idx(y));
+    return s.join() !== (it.opts||[]).join() ? [it, s] : null;
+  }).filter(Boolean);
+  if(!todo.length){ toast('كل الأصناف مرتبة ✓'); return; }
+  if(!confirm('بنرتّب الخيارات بـ' + todo.length + ' صنف حسب هالترتيب. متأكد؟')) return;
+  try{
+    for(let k = 0; k < todo.length; k += 400){
+      const b = db.batch();
+      todo.slice(k, k + 400).forEach(([it, s]) => b.update(db.collection('items').doc(it.id), {opts: s}));
+      await b.commit();
+    }
+    toast('تم ✓ رتّبنا ' + todo.length + ' صنف');
+  }catch(e){ alert(e.message); }
 }
 function delGroup(id){
   const n = ITEMS.filter(i=>(i.opts||[]).includes(id)).length;
