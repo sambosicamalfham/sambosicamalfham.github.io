@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#141414">
 <title>لوحة التحكم - مكسيكاني وبيتسا أم الفحم</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --red:#e01a2b;--red-dark:#b3121f;--ink:#141414;--ink-2:#4a4a4a;--muted:#8a8a8a;
@@ -188,6 +188,10 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .ogprev svg{width:150px;height:150px;flex:none}
 .ogpc{font-size:13px;line-height:1.7}.ogpc span{color:var(--muted);font-size:12px}
 .crop-q{display:flex;gap:7px;justify-content:center;margin-top:8px}
+.hef label{color:#2b5bb5}
+.hef input,.hef textarea{background:#f5f8ff}
+.ogrow input.lh{flex:1;min-width:110px;background:#f5f8ff}
+body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 </style>
 </head>
 <body>
@@ -201,13 +205,14 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
     <div class="f"><label>البريد الإلكتروني</label><input id="lgEmail" type="email" autocomplete="username"></div>
     <div class="f"><label>كلمة المرور</label><input id="lgPass" type="password" autocomplete="current-password"></div>
     <button class="btn red full" id="lgBtn" onclick="doLogin()">دخول</button>
+    <button class="btn gh full langsw" style="margin-top:8px" onclick="toggleLang()">עברית</button>
   </div>
 </div>
 
 <header>
   <div class="hrow">
     <div class="t">لوحة التحكم<small id="hSub">—</small></div>
-    <button class="hbtn" onclick="doLogout()">خروج</button>
+    <div style="display:flex;gap:7px"><button class="hbtn langsw" onclick="toggleLang()">עברית</button><button class="hbtn" onclick="doLogout()">خروج</button></div>
   </div>
   <div class="tabs">
     <button class="tb on" data-v="orders"  onclick="tab('orders')">🧾 الطلبات<span class="n" id="nNew" style="display:none">0</span></button>
@@ -244,6 +249,219 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
+const HE = {
+  // عام
+  'لوحة التحكم':'לוח בקרה','لوحة التحكم - مكسيكاني وبيتسا أم الفحم':'לוח בקרה','خروج':'יציאה','دخول':'כניסה',
+  'البريد الإلكتروني':'אימייל','كلمة المرور':'סיסמה','اكتب البريد وكلمة المرور':'הזינו אימייל וסיסמה',
+  'البريد أو كلمة المرور غلط':'אימייל או סיסמה שגויים','كلمة المرور غلط':'סיסמה שגויה','صيغة البريد غلط':'פורמט אימייל שגוי',
+  'ما في حساب بهاض البريد':'אין חשבון עם האימייל הזה','محاولات كثيرة — استنى شوي وجرب كمان مرة':'יותר מדי ניסיונות — חכו רגע ונסו שוב',
+  'جاري الدخول':'מתחבר','صار خطأ بالاتصال':'שגיאת חיבור','صار خطأ':'אירעה שגיאה','ما في اتصال بالإنترنت':'אין חיבור לאינטרנט',
+  'تأكد إنك متصل بالإنترنت وحدّث الصفحة':'ודאו שיש חיבור לאינטרנט ורעננו את הדף','ما قدرنا نحمّل مكتبة':'לא הצלחנו לטעון את ספריית',
+  'الطلبات':'הזמנות','المنيو':'תפריט','الأقسام':'קטגוריות','الخيارات':'אפשרויות','العروض':'מבצעים','الكوبونات':'קופונים','الإعدادات':'הגדרות',
+  'حفظ':'שמירה','إلغاء':'ביטול','حذف':'מחיקה','تعديل':'עריכה','إغلاق':'סגירה','تمام':'אישור','تم':'בוצע','نسخة':'שכפול','نسخة منه':'שכפול',
+  'تم الحفظ':'נשמר','تم الحذف':'נמחק','جاري الحفظ':'שומר','ما زبطت':'לא הצליח','الاسم مطلوب':'חובה למלא שם',
+  'الاسم':'שם','الوصف':'תיאור','السعر':'מחיר','القسم':'קטגוריה','الصنف':'פריט','صنف':'פריטים','الكل':'הכל','النوع':'סוג','الشكل':'תצוגה',
+  'العنوان':'כותרת','إجراءات':'פעולות','التفاصيل':'פרטים','أهلاً':'שלום',
+  // الطلبات
+  'الحالية':'פעילות','جرّب الصوت':'בדיקת צליל','جديد':'חדשה','قيد التحضير':'בהכנה','جاهز':'מוכנה','تم التسليم':'נמסרה','ملغي':'בוטלה',
+  'ابدأ التحضير':'התחל הכנה','طباعة':'הדפסה','بلّغ الزبون':'עדכן לקוח','ما في طلبات':'אין הזמנות',
+  'الطباعة:':'הדפסה:','الطباعة':'הדפסה','تلقائية':'אוטומטית','ورقة مطبخ':'דף מטבח','فاتورة':'חשבונית',
+  'توصيل':'משלוח','استلام':'איסוף','استلام من المحل':'איסוף עצמי','توصيل:':'משלוח:','واتساب':'וואטסאפ',
+  'طلبات اليوم':'הזמנות היום','دخل اليوم':'הכנסות היום','معدل الطلب':'ממוצע הזמנה','الأكثر طلباً':'הכי מוזמן','توصيل / استلام':'משלוח / איסוף',
+  'رقم الواتساب لسا وهمي — الطلبات ما رح توصلك! صلّحه من 🏪 الإعدادات.':'מספר הוואטסאפ עדיין פיקטיבי — ההזמנות לא יגיעו אליך! תקנו ב־🏪 הגדרות.',
+  'د':'דק׳','س':'שע׳',
+  // الطباعة
+  'مطبخ':'מטבח','على كلها:':'על כולה:','على كلها':'על כולה','يمين':'ימין','يسار':'שמאל','ملاحظة الطلب:':'הערת הזמנה:',
+  'المجموع':'סכום','خصم':'הנחה','الإجمالي':'סה״כ','طلب':'הזמנה',
+  'نص يمين':'חצי ימין','نص يسار':'חצי שמאל','ربع يمين فوق':'רבע ימין למעלה','ربع يسار فوق':'רבע שמאל למעלה','ربع يمين تحت':'רבע ימין למטה','ربع يسار تحت':'רבע שמאל למטה',
+  // المنيو
+  'صنف جديد':'פריט חדש','تعديل صنف':'עריכת פריט','كل الأقسام':'כל הקטגוריות','بحث...':'חיפוש...','ما في أصناف':'אין פריטים',
+  'سعر بعد الخصم':'מחיר אחרי הנחה','اتركه فاضي':'השאירו ריק','متوفر للطلب':'זמין להזמנה','يظهر بالأكثر مبيعاً':'מופיע בנמכרים ביותר',
+  'شارة (مثلاً':'תגית (למשל','شائع / الأكثر طلباً':'פופולרי / הכי מוזמן','بدون صورة':'בלי תמונה','غير متوفر':'לא זמין','مخفي':'מוסתר',
+  'اختار الأحجام والإضافات اللي بتنطبق على هاض الصنف':'בחרו את הגדלים והתוספות שמתאימים לפריט הזה',
+  'الاسم والسعر مطلوبين':'חובה למלא שם ומחיר','اضغط ⠿ عند الصنف اللي بدك':'לחצו ⠿ ליד הפריט הרצוי','الصنف المحدد للتحريك':'הפריט שנבחר להזזה',
+  'متوفر':'זמין','مش متوفر':'לא זמין','الأكثر مبيعاً':'הנמכרים ביותר','إخفاء':'הסתרה','إظهار':'הצגה',
+  'أهلاً! المنيو لسا فاضي':'שלום! התפריט עדיין ריק','عبّي المنيو التجريبي':'מלא תפריט לדוגמה','جاري التعبئة':'ממלא',
+  'اضغط الزر وبنعبّيلك منيو كامل جاهز (أقسام، أصناف، أحجام، إضافات، عرض عائلي':'לחצו על הכפתור ונמלא לך תפריט מלא (קטגוריות, פריטים, גדלים, תוספות, מבצע משפחתי',
+  'وبعدين بتعدّل عليه وبتبدّل الأسعار والصور':'ואחר כך תערכו ותחליפו מחירים ותמונות',
+  'بنضيف أقسام وأصناف جاهزة. متأكد؟':'נוסיף קטגוריות ופריטים לדוגמה. בטוחים?','تم ✓ المنيو جاهز':'בוצע ✓ התפריט מוכן',
+  // الصور
+  'اختار صورة':'בחירת תמונה','صوّر هلأ':'צלמו עכשיו','شيل الصورة':'הסרת תמונה','شيل':'הסרה','عدّل الصورة':'עריכת תמונה','عدّل':'עריכה',
+  'اكبس أو اسحب صورة لهون':'לחצו או גררו תמונה לכאן','بتقدر كمان تعمل':'אפשר גם','للصق صورة نسختها':'כדי להדביק תמונה שהעתקתם',
+  'حفظ داخلي':'שמירה פנימית','أو حط رابط صورة':'או הדביקו קישור לתמונה','الصورة جاهزة ✓ — لا تنسى تكبس حفظ':'התמונה מוכנה ✓ — אל תשכחו ללחוץ שמירה',
+  'جاري التجهيز':'מכין','جاري الرفع':'מעלה','فشل الرفع':'ההעלאה נכשלה','اختار صورة':'בחירת תמונה',
+  'الملف مش صورة أو نوعه مش مدعوم':'הקובץ אינו תמונה או שהסוג לא נתמך','الصورة كبيرة كثير حتى بعد التصغير':'התמונה גדולה מדי גם אחרי הקטנה',
+  'ما قدرت أجهّز الصورة':'לא הצלחתי להכין את התמונה','ما قدرت أفتح الصورة الحالية — اختار الصورة من جديد':'לא הצלחתי לפתוח את התמונה — בחרו אותה מחדש',
+  'ظبّط الصورة':'כוונון תמונה','ظبّط صورة الصنف':'כוונון תמונת הפריט','ظبّط صورة القسم':'כוונון תמונת הקטגוריה','ظبّط صورة العرض':'כוונון תמונת המבצע',
+  'ظبّط صورة الغلاف':'כוונון תמונת השער','ظبّط اللوجو':'כוונון הלוגו','ظبّط صورة الخيار — للإضافات خلّي القطعة تعبّي المربع':'כוונון תמונת האפשרות — בתוספות מלאו את הריבוע בפריט',
+  'اسحب الصورة لتختار شو يبيّن، واستعمل الشريط للتكبير':'גררו את התמונה כדי לבחור מה יוצג, והשתמשו בפס להגדלה',
+  'كلها بالإطار':'כולה במסגרת','عبّي الإطار':'מילוי המסגרת','صورة للخيار':'תמונה לאפשרות','اختار صورة':'בחירת תמונה',
+  'اكتب:\n1 = صورة جديدة\n2 = عدّل القص والحجم\n3 = احذف الصورة':'הקלידו:\n1 = תמונה חדשה\n2 = עריכת חיתוך וגודל\n3 = מחיקת התמונה',
+  // الأقسام
+  'قسم جديد':'קטגוריה חדשה','تعديل قسم':'עריכת קטגוריה','ما في أقسام':'אין קטגוריות','حذف القسم؟':'למחוק את הקטגוריה?',
+  'الأيقونة (إيموجي) — بتطلع إذا ما في صورة':'אייקון (אימוג׳י) — מוצג אם אין תמונה','ما بتقدر تحذف القسم — فيه':'אי אפשר למחוק את הקטגוריה — יש בה',
+  'صنف. انقلهم أو احذفهم أول.':'פריטים. העבירו או מחקו אותם קודם.',
+  // الخيارات
+  'مجموعات الخيارات':'קבוצות אפשרויות','مجموعة جديدة':'קבוצה חדשה','تعديل مجموعة':'עריכת קבוצה','ما في مجموعات':'אין קבוצות',
+  'الأحجام، نوع العجينة، الإضافات، الصلصات… بتعملها مرة وبتربطها بأي صنف':'גדלים, סוג בצק, תוספות, רטבים… יוצרים פעם אחת ומחברים לכל פריט',
+  'اسم المجموعة':'שם הקבוצה','مثلاً: اختيار الحجم':'למשל: בחירת גודל','اختيار واحد فقط':'בחירה אחת בלבד','اختيار متعدد':'בחירה מרובה',
+  'قائمة':'רשימה','مربعات':'ריבועים','طريقة عرض السعر':'תצוגת מחיר','زيادة على السعر':'תוספת למחיר','السعر الكامل':'מחיר מלא','السعر الكامل (للأحجام':'מחיר מלא (לגדלים',
+  'للأحجام اختار':'לגדלים בחרו','عشان الزبون يشوف':'כדי שהלקוח יראה',
+  'إلزامي (لازم يختار':'חובה (חייבים לבחור','إلزامي':'חובה','اختياري':'אופציונלי',
+  'الزبون بيختار وين تنحط (كاملة / نص / ربع':'הלקוח בוחר איפה לשים (שלמה / חצי / רבע',
+  'فعّلها بس لإضافات البيتسا — مش للمشروبات أو الصوصات':'הפעילו רק לתוספות פיצה — לא למשקאות או לרטבים',
+  'خيار':'אפשרות','اسم الخيار':'שם האפשרות','ضيف خيار واحد على الأقل':'הוסיפו לפחות אפשרות אחת','مش مربوط بعد':'עדיין לא מחובר',
+  'هاي المجموعة مربوطة بـ':'הקבוצה הזו מחוברת ל־','صنف. تحذفها؟':'פריטים. למחוק?','حذف المجموعة؟':'למחוק את הקבוצה?',
+  'حجم القطعة':'גודל החתיכה','الكمية':'כמות','شوف':'הצג','على البيتسا كاملة':'על כל הפיצה','حرّك الشريطين لحد ما يعجبك الشكل':'הזיזו את שני הפסים עד שהמראה מוצא חן',
+  'إضافة':'תוספת',
+  // العروض
+  'العروض الخاصة':'מבצעים מיוחדים','عرض جديد':'מבצע חדש','تعديل عرض':'עריכת מבצע','ما في عروض':'אין מבצעים','حذف العرض؟':'למחוק את המבצע?',
+  'العنوان والسعر مطلوبين':'חובה למלא כותרת ומחיר','إيموجي':'אימוג׳י',
+  // الكوبونات
+  'كوبونات الخصم':'קופוני הנחה','كوبون جديد':'קופון חדש','تعديل كوبون':'עריכת קופון','ما في كوبونات':'אין קופונים',
+  'الزبون بكتب الرمز بالسلة وبنخصم عليه. الرمز بحروف إنجليزية وأرقام بس':'הלקוח מקליד את הקוד בסל ומקבל הנחה. הקוד באותיות אנגליות ומספרים בלבד',
+  'الرمز':'קוד','القيمة':'ערך','نوع الخصم':'סוג הנחה','نسبة':'אחוז','مبلغ ثابت':'סכום קבוע','فعّال':'פעיל','مش فعّال':'לא פעיל',
+  'أقل طلبية لتفعيل الكوبون':'מינימום הזמנה להפעלת הקופון','الرمز والقيمة مطلوبين':'חובה למלא קוד וערך','نسبة الخصم كبيرة كثير':'אחוז ההנחה גבוה מדי',
+  'حروف إنجليزية وأرقام فقط (3-20 خانة':'אותיות אנגליות ומספרים בלבד (3-20 תווים','حروف إنجليزية وأرقام بس — بدون مسافات. ما بتقدر تغيره بعدين':'אותיות אנגליות ומספרים בלבד — בלי רווחים. אי אפשר לשנות אחר כך',
+  'حذف الكوبون':'למחוק את הקופון','نهائياً؟':'לצמיתות?',
+  // الإعدادات
+  'إعدادات المطعم':'הגדרות המסעדה','اسم المطعم':'שם המסעדה','الشعار الصغير (تحت الاسم بالغلاف':'סלוגן (מתחת לשם בשער',
+  'واتساب (بصيغة':'וואטסאפ (בפורמט','اللوجو':'לוגו','صورة الغلاف':'תמונת שער','التوصيل والأسعار':'משלוח ומחירים',
+  'رسوم التوصيل':'דמי משלוח','فوق مبلغ':'מעל סכום','تصير الرسوم':'הדמים יורדים ל־','أقل طلبية':'מינימום הזמנה','وقت التحضير':'זמן הכנה',
+  'التقييم':'דירוג','التقييم (اختياري':'דירוג (אופציונלי','عدد التقييمات':'מספר דירוגים','ساعات الدوام':'שעות פתיחה','مغلق':'סגור',
+  'لو المطعم بسكّر بعد منتصف الليل اكتب مثلاً':'אם המסעדה נסגרת אחרי חצות כתבו למשל',
+  'بطاقة العرض على الغلاف':'כרטיס מבצע בשער','السطر الثاني':'שורה שנייה','خليهن فاضيين إذا ما بدك البطاقة تظهر':'השאירו ריק אם לא רוצים שהכרטיס יופיע',
+  'شرايط العروض (صفحة المعلومات':'פסי מבצעים (דף המידע','بيظهر كبانر كبير بالصفحة الرئيسية. الأول بس بيظهر':'מוצג כבאנר גדול בדף הראשי. רק הראשון מוצג',
+  'النص':'טקסט','حفظ الإعدادات':'שמירת הגדרות','مذاق لا يُقاوم':'טעם שאי אפשר לעמוד בפניו','على جميع البيتزا':'על כל הפיצות',
+  'الأحد':'ראשון','الإثنين':'שני','الثلاثاء':'שלישי','الأربعاء':'רביעי','الخميس':'חמישי','الجمعة':'שישי','السبت':'שבת',
+  'اختياري':'אופציונלי',
+  // خانات العبري
+  'بالعبري':'בעברית','الاسم بالعبري':'שם בעברית','الوصف بالعبري':'תיאור בעברית','العنوان بالعبري':'כותרת בעברית',
+  'الشارة بالعبري':'תגית בעברית','الاسم بالعبري (اختياري)':'שם בעברית (אופציונלי)',
+  'إذا تركتها فاضية بيطلع العربي':'אם משאירים ריק — יוצג בערבית','اللغة':'שפה',
+  // قيم شائعة
+  'بيتسا':'פיצה','بيتزا':'פיצה','سندويشات':'כריכים','مقبلات':'מנות פתיחה','مشروبات':'משקאות','مكسيكاني':'מקסיקני','سلطات':'סלטים','حلويات':'קינוחים',
+  'اضافات جانبية':'תוספות','اختيار الحجم':'בחירת גודל','الحجم':'גודל','العجينة':'בצק','الصلصات':'רטבים','إضافات إضافية':'תוספות','إضافات بيتزا':'תוספות לפיצה',
+  'صغير':'קטנה','وسط':'בינונית','كبير':'גדולה','عادية':'רגיל','رفيعة':'דק','عادي':'רגיל','شخصية':'אישית','عائليه':'משפחתית','عائلية':'משפחתית',
+  'اسم المطعم بالعبري':'שם המסעדה בעברית','الشعار بالعبري':'סלוגן בעברית','وقت التحضير بالعبري':'זמן הכנה בעברית',
+  'السطر الثاني بالعبري':'שורה שנייה בעברית','اسم المجموعة بالعبري':'שם הקבוצה בעברית','التفاصيل بالعبري':'פרטים בעברית',
+  '— إذا تركتها فاضية بيطلع العربي':'— אם משאירים ריק, יוצג בערבית',
+  'بخانة السكر.':'בשדה הסגירה.','بخانة السكر':'בשדה הסגירה',
+  'شارة (مثلاً: شائع / الأكثر طلباً)':'תגית (למשל: פופולרי / הכי מוזמן)',
+  'للأحجام اختار "السعر الكامل" عشان الزبون يشوف':'לגדלים בחרו "מחיר מלא" כדי שהלקוח יראה',
+  'بحث':'חיפוש','عنوان المطعم':'כתובת המסעדה','عنوان المطعم بالعبري':'כתובת המסעדה בעברית','اتركه فاضي = بدون شرط':'השאירו ריק = בלי תנאי','العرض العائلي':'מבצע משפחתי','2 بيتسا كبيرة + مقبلات + مشروب':'2 פיצות גדולות + מנות פתיחה + שתייה'
+};
+const HE_RULES = [
+  [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^ملاحظة الطلب: ([\s\S]*)$/, m => 'הערת הזמנה: ' + m[1]],
+  [/^(\S+) على البيتسا كاملة$/, m => m[1] + ' על כל הפיצה'],
+  [/^ما بتقدر تحذف القسم — فيه (\d+) صنف\. انقلهم أو احذفهم أول$/, m => 'אי אפשר למחוק את הקטגוריה — יש בה ' + m[1] + ' פריטים. העבירו או מחקו אותם קודם'],
+  [/^هاي المجموعة مربوطة بـ(\d+) صنف\. تحذفها؟$/, m => 'הקבוצה הזו מחוברת ל־' + m[1] + ' פריטים. למחוק?'],
+  [/^(\d+) س (\d+) د$/, m => m[1] + ' שע׳ ' + m[2] + ' דק׳'],
+  [/^مطبخ · (.*)$/, m => 'מטבח · ' + m[1]],
+  [/^خصم \((.*)\)$/, m => 'הנחה (' + m[1] + ')'],
+  [/^خصم (.+)$/, m => 'הנחה ' + m[1]]
+];
+
+/* ============ اللغات: عربي / עברית ============
+   النصوص الثابتة بتترجم لحالها من القاموس.
+   بيانات المنيو (أسماء، وصف...) بتيجي من خانات _he باللوحة، وإذا فاضية بيطلع العربي. */
+const I18N_KEY = 'pz_admin_lang';
+let LANG = 'ar';
+try{
+  const sv = localStorage.getItem(I18N_KEY);
+  LANG = sv === 'he' || sv === 'ar' ? sv : (/^he|^iw/i.test(navigator.language || '') ? 'he' : 'ar');
+}catch(e){}
+function L(o, f){
+  if(!o) return '';
+  if(LANG === 'he'){ const h = o[f + '_he']; if(h != null && String(h).trim() !== '') return h; }
+  return o[f] == null ? '' : o[f];
+}
+const AR_RE = /[؀-ۿ]/;
+/* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
+Object.keys(HE).forEach(k => {
+  const m = k.match(/^([^؀-ۿ]*)([\s\S]*?)([^؀-ۿ]*)$/);
+  if(!m || m[2] === k || Object.prototype.hasOwnProperty.call(HE, m[2])) return;
+  let v = HE[k];
+  if(m[1] && v.startsWith(m[1])) v = v.slice(m[1].length);
+  if(m[3] && v.endsWith(m[3])) v = v.slice(0, -m[3].length);
+  HE[m[2]] = v;
+});
+function trCore(core){
+  if(Object.prototype.hasOwnProperty.call(HE, core)) return HE[core];
+  for(const [re, fn] of HE_RULES){ const m = core.match(re); if(m) return fn(m); }
+  return null;
+}
+/* بيترجم نص كامل مع الحفاظ على الإيموجي والأرقام بالأطراف */
+function trText(s){
+  if(LANG !== 'he' || !s || !AR_RE.test(s)) return s;
+  const m = s.match(/^([^؀-ۿ]*)([\s\S]*?)([^؀-ۿ]*)$/);
+  if(!m) return s;
+  const t = trCore(m[2]);
+  return t == null ? s : m[1] + t + m[3];
+}
+function trNode(root){
+  if(LANG !== 'he' || !root) return;
+  if(root.nodeType === 3){
+    if(root.parentNode && (root.parentNode.tagName === 'TEXTAREA' || (root.parentNode.closest && root.parentNode.closest('[data-nt]')))) return;
+    const t = trText(root.nodeValue); if(t !== root.nodeValue) root.nodeValue = t; return;
+  }
+  if(root.nodeType !== 1) return;
+  if(root.closest && root.closest('[data-nt]')) return;
+  ['placeholder', 'title', 'aria-label'].forEach(a => {
+    const v = root.getAttribute && root.getAttribute(a);
+    if(v){ const t = trText(v); if(t !== v) root.setAttribute(a, t); }
+  });
+  const w = (root.ownerDocument || document).createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n;
+  while((n = w.nextNode())){
+    if(n.nodeType === 1){
+      if(n.hasAttribute('data-nt')){ continue; }
+      ['placeholder', 'title', 'aria-label'].forEach(a => {
+        const v = n.getAttribute(a);
+        if(v){ const t = trText(v); if(t !== v) n.setAttribute(a, t); }
+      });
+    }else if(!(n.parentNode && (n.parentNode.tagName === 'TEXTAREA' || n.parentNode.closest('[data-nt]')))){
+      const t = trText(n.nodeValue); if(t !== n.nodeValue) n.nodeValue = t;
+    }
+  }
+}
+const _alert = window.alert.bind(window), _confirm = window.confirm.bind(window), _prompt = window.prompt.bind(window);
+window.alert = m => _alert(trText(String(m)));
+window.confirm = m => _confirm(trText(String(m)));
+window.prompt = (m, d) => _prompt(trText(String(m)), d);
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = 'rtl';
+  document.body.classList.toggle('lang-he', LANG === 'he');
+  document.querySelectorAll('.langsw').forEach(b => b.textContent = LANG === 'he' ? 'العربية' : 'עברית');
+  trNode(document.body);
+}
+function setLang(l){
+  LANG = l;
+  try{ localStorage.setItem(I18N_KEY, l); }catch(e){}
+  location.reload();
+}
+function toggleLang(){ setLang(LANG === 'he' ? 'ar' : 'he'); }
+new MutationObserver(ms => {
+  if(LANG !== 'he') return;
+  ms.forEach(m => {
+    if(m.type === 'characterData') trNode(m.target);
+    else if(m.type === 'attributes') trNode(m.target);
+    else m.addedNodes.forEach(trNode);
+  });
+}).observe(document.documentElement, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:['placeholder','title','aria-label']});
+document.addEventListener('DOMContentLoaded', applyLang);
+if(document.readyState !== 'loading') setTimeout(applyLang, 0);
+
+/* خانة عبري جنب الخانة العربية */
+function heField(id, val, label, area){
+  return `<div class="f hef"><label>🇮🇱 ${label || 'بالعبري'} <span class="muted">— إذا تركتها فاضية بيطلع العربي</span></label>` +
+    (area ? `<textarea id="${id}" rows="2" dir="rtl" lang="he">${esc(val||'')}</textarea>` : `<input id="${id}" value="${esc(val||'')}" dir="rtl" lang="he">`) + `</div>`;
+}
+/* اسم الصنف/الخيار حسب لغة اللوحة (للطلبات والطباعة) */
+const iName = i => LANG === 'he' && i.name_he ? i.name_he : i.name;
+const iLabels = i => (LANG === 'he' && i.labels_he && i.labels_he.length ? i.labels_he : (i.labels || []));
 /* ========= الحالة (كلها هون — لا تنقل let لتحت) ========= */
 let db = null, auth = null;
 let SET = Object.assign({}, (window.FALLBACK || {}));
@@ -515,10 +733,10 @@ function renderOrders(){
     const st = ST[o.status] || ST.done;
     const cls = o.status==='new'?'new':o.status==='prep'?'prep':o.status==='ready'?'done':'closed';
     const d = o.createdAtStr ? new Date(o.createdAtStr) : null;
-    const when = d ? d.toLocaleDateString('ar-EG') + ' · ' + d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
+    const when = d ? d.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') + ' · ' + d.toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
     const lines = (o.items||[]).map(i =>
-      `<div><b>${Number(i.qty)||0}×</b> ${esc(i.name)} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>` +
-      ((i.labels||[]).length ? `<div class="o">${esc(i.labels.join(' · '))}</div>` : '') +
+      `<div><b>${Number(i.qty)||0}×</b> ${esc(iName(i))} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>` +
+      (iLabels(i).length ? `<div class="o">${esc(iLabels(i).join(' · '))}</div>` : '') +
       (i.note ? `<div class="o">📝 ${esc(i.note)}</div>` : '') + `</div>`).join('');
     const c = o.customer || {};
     const wa = String(c.phone||'').replace(/\D/g,'').replace(/^0/,'972');
@@ -554,17 +772,19 @@ function setStatus(id, s){
 const clean = t => String(t||'').replace(/[\p{Extended_Pictographic}️‍]/gu,'').trim();
 function splitLabels(labels){
   const KEYS = {'نص يمين':['rt','rb'], 'نص يسار':['lt','lb'], 'ربع يمين فوق':['rt'],
-                'ربع يسار فوق':['lt'], 'ربع يمين تحت':['rb'], 'ربع يسار تحت':['lb']};
+                'ربع يسار فوق':['lt'], 'ربع يمين تحت':['rb'], 'ربع يسار تحت':['lb'],
+                'חצי ימין':['rt','rb'], 'חצי שמאל':['lt','lb'], 'רבע ימין למעלה':['rt'],
+                'רבע שמאל למעלה':['lt'], 'רבע ימין למטה':['rb'], 'רבע שמאל למטה':['lb']};
   const r = {opts:[], all:[], rt:[], lt:[], rb:[], lb:[], half:false, quarter:false};
   (labels||[]).forEach(t => {
     t = String(t);
     if(!t.startsWith('+ ')){ r.opts.push(t); return; }
     t = t.slice(2);
-    const m = t.match(/ \(((?:نص|ربع) [^)]+)\)$/);
+    const m = t.match(/ \(((?:نص|ربع|חצי|רבע) [^)]+)\)$/);
     if(m && KEYS[m[1]]){
       const nm = clean(t.slice(0, m.index));
       KEYS[m[1]].forEach(k => { if(r[k].indexOf(nm) < 0) r[k].push(nm); });
-      if(m[1].startsWith('ربع')) r.quarter = true; else r.half = true;
+      if(m[1].startsWith('ربع') || m[1].startsWith('רבע')) r.quarter = true; else r.half = true;
     }else r.all.push(clean(t));
   });
   return r;
@@ -617,6 +837,7 @@ const PRINT_CSS = `
   .pz .r{border-left:2px dashed #000;padding-right:14px}.pz .l{padding-left:14px}
   .pz .hl{font-size:10px;font-weight:400;border:1px solid #000;border-radius:8px;padding:0 6px;margin-bottom:3px}
   .pz .emp,.pz4 .emp{color:#999;font-weight:400}
+  .pz,.pz4{direction:rtl}
   .pz4{display:grid;grid-template-columns:1fr 1fr;width:200px;height:200px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
   .pz4 .q{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;font-size:12px;font-weight:700;text-align:center;line-height:1.25}
   .pz4 .rt{border-left:2px dashed #000;border-bottom:2px dashed #000;padding:22px 4px 2px 10px}
@@ -627,16 +848,16 @@ const PRINT_CSS = `
 function ticketHtml(o){
   const c = o.customer || {};
   const d = o.createdAtStr ? new Date(o.createdAtStr) : new Date();
-  const time = d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  const time = d.toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG',{hour:'2-digit',minute:'2-digit'});
   const no = '#' + ordNo(o);
   const del = o.type !== 'pickup';
   const parts = [];
 
   if(PRN.kitchen){
     const lines = (o.items||[]).map(i => {
-      const pz = pizzaPrint(i);
-      return `<div class="k"><div class="n">${Number(i.qty)||0} × ${esc(i.name)}</div>` +
-        (pz ? `<div class="lb">${pz}</div>` : ((i.labels||[]).length ? `<div class="lb">${esc(i.labels.map(clean).join(' · '))}</div>` : '')) +
+      const pz = pizzaPrint({labels: iLabels(i)});
+      return `<div class="k"><div class="n">${Number(i.qty)||0} × ${esc(iName(i))}</div>` +
+        (pz ? `<div class="lb">${pz}</div>` : (iLabels(i).length ? `<div class="lb">${esc(iLabels(i).map(clean).join(' · '))}</div>` : '')) +
         (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
     }).join('');
     parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
@@ -646,11 +867,11 @@ function ticketHtml(o){
 
   if(PRN.receipt || !PRN.kitchen){
     const rows = (o.items||[]).map(i =>
-      `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(i.name)}</b>${(i.labels||[]).length?'<br><small>'+esc(i.labels.map(clean).join(' · '))+'</small>':''}</td>
+      `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(iName(i))}</b>${iLabels(i).length?'<br><small>'+esc(iLabels(i).map(clean).join(' · '))+'</small>':''}</td>
        <td style="text-align:left">${(Number(i.unit)*Number(i.qty)||0).toFixed(2)}</td></tr>`).join('');
     const sub = Number(o.subtotal||0), disc = Number(o.discount||0);
     parts.push(`<div class="tk"><h3>${esc(SET.name||'')}</h3>
-      <div class="c">${d.toLocaleDateString('ar-EG')} · ${esc(time)}</div>
+      <div class="c">${d.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG')} · ${esc(time)}</div>
       <div class="no" style="font-size:26px">${no}</div>
       <table>${rows}</table>
       ${sub ? `<div class="sm"><span>المجموع</span><span>${sub.toFixed(2)} ₪</span></div>` : ''}
@@ -661,7 +882,7 @@ function ticketHtml(o){
         ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
         ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
   }
-  return `<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${PRINT_CSS}</style></head><body>${parts.join('')}</body></html>`;
+  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${PRINT_CSS}</style></head><body>${parts.join('')}</body></html>`;
 }
 
 /* بتطبع عن طريق إطار مخفي، فما في نافذة بتنفتح وما بينحجب من المتصفح */
@@ -676,6 +897,7 @@ function printOrder(id){
   document.body.appendChild(f);
   const doc = f.contentWindow.document;
   doc.open(); doc.write(ticketHtml(o)); doc.close();
+  trNode(doc.documentElement);
   setTimeout(() => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ console.error(e); } }, 400);
 }
 let printQ = [];
@@ -742,6 +964,14 @@ function notifyReady(id){
   const c = o.customer || {}, wa = waPhone(c.phone);
   if(!wa) return;
   const first = String(c.name||'').trim().split(/\s+/)[0] || '';
+  const nm = (c.lang === 'he' && SET.name_he) ? SET.name_he : (SET.name || '');
+  if(c.lang === 'he'){
+    const mh = o.type === 'pickup'
+      ? `שלום ${first} 👋\nההזמנה שלך מס׳ #${ordNo(o)} מוכנה לאיסוף מהמסעדה 🍕\nבתיאבון!\n${nm}`
+      : `שלום ${first} 👋\nההזמנה שלך מס׳ #${ordNo(o)} מוכנה ויצאה עם השליח 🛵\nלתשלום: ${Number(o.total||0).toFixed(2)} ₪\n${nm}`;
+    window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(mh), '_blank');
+    return;
+  }
   const msg = o.type === 'pickup'
     ? `أهلاً ${first} 👋\nطلبك رقم #${ordNo(o)} جاهز للاستلام من المحل 🍕\nبالهنا والشفا!\n${SET.name||''}`
     : `أهلاً ${first} 👋\nطلبك رقم #${ordNo(o)} جاهز وطالع مع السائق 🛵\nالمبلغ: ${Number(o.total||0).toFixed(2)} ₪\n${SET.name||''}`;
@@ -754,7 +984,7 @@ function todaySummary(){
   const t = ORDERS.filter(o => o.createdAtStr && dayKey(o.createdAtStr) === k && o.status !== 'cancel');
   const rev = t.reduce((s,o) => s + Number(o.total||0), 0);
   const cnt = {};
-  t.forEach(o => (o.items||[]).forEach(i => { cnt[i.name] = (cnt[i.name]||0) + (Number(i.qty)||0); }));
+  t.forEach(o => (o.items||[]).forEach(i => { const k = iName(i); cnt[k] = (cnt[k]||0) + (Number(i.qty)||0); }));
   const top = Object.entries(cnt).sort((a,b) => b[1]-a[1])[0];
   const del = t.filter(o => o.type !== 'pickup').length;
   const box = (v,l) => `<div class="stt"><div class="v">${v}</div><div class="l">${l}</div></div>`;
@@ -795,7 +1025,7 @@ function renderItems(){
       <input type="search" placeholder="بحث..." value="${esc(qItems)}" oninput="qItems=this.value;renderItems()">
       <select onchange="qCat=this.value;renderItems()">
         <option value="">كل الأقسام</option>
-        ${CATS.map(c=>`<option value="${c.id}" ${qCat===c.id?'selected':''}>${esc(c.icon||'')} ${esc(c.name)}</option>`).join('')}
+        ${CATS.map(c=>`<option value="${c.id}" ${qCat===c.id?'selected':''}>${esc(c.icon||'')} ${esc(L(c,'name'))}</option>`).join('')}
       </select>
       <button class="btn sm red" onclick="editItem()">+ صنف جديد</button>
     </div>
@@ -806,7 +1036,7 @@ function renderItems(){
       <button class="handle ${armed===it.id?'arm':''}" onclick="tapHandle('${it.id}')">⠿</button>
       <div class="ph">${thumb(it)}</div>
       <div class="mid">
-        <div class="nm">${esc(it.name)}</div>
+        <div class="nm">${esc(L(it,'name'))}</div>
         <div class="tags">
           <span class="pill">${esc(catName(it.catId))}</span>
           ${it.best?'<span class="pill a">🔥 مميز</span>':''}
@@ -870,15 +1100,18 @@ function editItem(id){
   openModal(id?'تعديل صنف':'صنف جديد', `
     ${imgPickHtml(it.img)}
     <div class="f"><label>الاسم *</label><input id="iName" value="${esc(it.name)}"></div>
+    ${heField('iNameHe', it.name_he, 'الاسم بالعبري')}
     <div class="f"><label>الوصف</label><textarea id="iDesc" rows="2">${esc(it.desc||'')}</textarea></div>
+    ${heField('iDescHe', it.desc_he, 'الوصف بالعبري', true)}
     <div class="f2">
       <div class="f"><label>السعر *</label><input id="iPrice" type="number" inputmode="decimal" value="${it.price||''}"></div>
       <div class="f"><label>سعر بعد الخصم</label><input id="iSale" type="number" inputmode="decimal" value="${it.sale||''}" placeholder="اتركه فاضي"></div>
     </div>
     <div class="f"><label>القسم *</label><select id="iCat">
-      ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(c.name)}</option>`).join('')}
+      ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(L(c,'name'))}</option>`).join('')}
     </select></div>
     <div class="f"><label>شارة (مثلاً: شائع / الأكثر طلباً)</label><input id="iTag" value="${esc(it.tag||'')}"></div>
+    ${heField('iTagHe', it.tag_he, 'الشارة بالعبري')}
     <div class="f2">
       <div class="f"><label>التقييم (اختياري)</label><input id="iRate" value="${esc(it.rate||'')}" placeholder="4.8"></div>
       <div class="f"><label>عدد التقييمات</label><input id="iRateN" value="${esc(it.rateN||'')}" placeholder="320"></div>
@@ -888,7 +1121,7 @@ function editItem(id){
       <div class="muted" style="margin-bottom:4px">اختار الأحجام والإضافات اللي بتنطبق على هاض الصنف</div>
       ${GROUPS.length ? GROUPS.map(g=>`<label class="chk">
         <input type="checkbox" class="ogchk" value="${g.id}" ${(it.opts||[]).includes(g.id)?'checked':''}>
-        <span>${esc(g.title)} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>`).join('')
+        <span>${esc(L(g,'title'))} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>`).join('')
         : '<div class="muted">ما في مجموعات — أنشئها من تبويب الخيارات</div>'}
     </div>
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
@@ -897,7 +1130,7 @@ function editItem(id){
     const name = val('iName'), price = num('iPrice');
     if(!name || !price){ alert('الاسم والسعر مطلوبين'); return false; }
     const data = {
-      name, desc: val('iDesc'), price,
+      name, desc: val('iDesc'), price, name_he: val('iNameHe'), desc_he: val('iDescHe'), tag_he: val('iTagHe'),
       sale: num('iSale') || null,
       catId: val('iCat'), img: window._pickImg || '',
       tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
@@ -1251,7 +1484,7 @@ function renderCats(){
     ${CATS.length ? CATS.map((c,i)=>`
       <div class="card"><div class="it">
         <div class="ph" style="width:52px;height:52px;display:grid;place-items:center;font-size:26px;background:#f4f2f0;overflow:hidden">${c.img?`<img src="${esc(c.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc(c.icon||'🍽️')}</div>
-        <div class="mid"><div class="nm">${esc(c.name)}</div>
+        <div class="mid"><div class="nm">${esc(L(c,'name'))}</div>
           <div class="muted">${ITEMS.filter(x=>x.catId===c.id).length} صنف</div></div>
         <button class="btn sm gh" onclick="moveCat(${i},-1)" ${i===0?'disabled':''}>▲</button>
         <button class="btn sm gh" onclick="moveCat(${i},1)" ${i===CATS.length-1?'disabled':''}>▼</button>
@@ -1275,11 +1508,12 @@ function editCat(id){
   openModal(id?'تعديل قسم':'قسم جديد', `
     ${imgPickHtml(c.img||'', 1, 'القسم')}
     <div class="f"><label>الاسم *</label><input id="cName2" value="${esc(c.name)}"></div>
+    ${heField('cNameHe', c.name_he, 'الاسم بالعبري')}
     <div class="f"><label>الأيقونة (إيموجي) — بتطلع إذا ما في صورة</label><input id="cIcon" value="${esc(c.icon||'')}" style="font-size:24px;text-align:center">
       <div class="muted" style="margin-top:7px">🍕 🌯 🍔 🍟 🥗 🥤 🍫 🍗 🥪 🧃 🍰 🌮</div></div>
   `, async () => {
     const name = val('cName2'); if(!name){ alert('الاسم مطلوب'); return false; }
-    const data = {name, icon: val('cIcon') || '🍽️', img: window._pickImg || ''};
+    const data = {name, name_he: val('cNameHe'), icon: val('cIcon') || '🍽️', img: window._pickImg || ''};
     if(id) await db.collection('categories').doc(id).update(data);
     else await db.collection('categories').add(Object.assign(data,{order:(CATS.length+1)*10}));
     return true;
@@ -1301,7 +1535,7 @@ function renderGroups(){
     ${GROUPS.length ? GROUPS.map(g=>`
       <div class="card">
         <div class="row" style="margin-bottom:9px">
-          <div style="flex:1"><div class="nm" style="font-weight:800;font-size:15.5px">${esc(g.title)}</div>
+          <div style="flex:1"><div class="nm" style="font-weight:800;font-size:15.5px">${esc(L(g,'title'))}</div>
             <div class="tags" style="margin-top:5px">
               <span class="pill ${g.type==='one'?'b':''}">${g.type==='one'?'اختيار واحد':'اختيار متعدد'}</span>
               ${g.required?'<span class="pill r">إلزامي</span>':'<span class="pill">اختياري</span>'}
@@ -1311,7 +1545,7 @@ function renderGroups(){
           <button class="menu-btn" onclick="delGroup('${g.id}')">🗑️</button>
         </div>
         <div class="muted" style="line-height:2">${(g.items||[]).map(o=>
-          `${esc(o.label)}${Number(o.delta)?` <span class="ltr">(+${Number(o.delta)} ₪)</span>`:''}`).join(' · ')}</div>
+          `${esc(L(o,'label'))}${Number(o.delta)?` <span class="ltr">(+${Number(o.delta)} ₪)</span>`:''}`).join(' · ')}</div>
       </div>`).join('')
       : `<div class="empty"><div class="e">⚙️</div><div>ما في مجموعات</div></div>`}`;
 }
@@ -1321,6 +1555,7 @@ function editGroup(id){
   if(!g) return;
   openModal(id?'تعديل مجموعة':'مجموعة جديدة', `
     <div class="f"><label>اسم المجموعة *</label><input id="gTitle" value="${esc(g.title)}" placeholder="مثلاً: اختيار الحجم"></div>
+    ${heField('gTitleHe', g.title_he, 'اسم المجموعة بالعبري')}
     <div class="f2">
       <div class="f"><label>النوع</label><select id="gType">
         <option value="one" ${g.type==='one'?'selected':''}>اختيار واحد فقط</option>
@@ -1341,17 +1576,18 @@ function editGroup(id){
       <div id="gRows">${(g.items||[]).map(o=>ogRow(o)).join('')}</div>
       <button class="btn sm gh" onclick="addOgRow()">+ خيار</button></div>
   `, async () => {
-    const title = val('gTitle'); if(!title){ alert('الاسم مطلوب'); return false; }
+    const title = val('gTitle'), title_he = val('gTitleHe'); if(!title){ alert('الاسم مطلوب'); return false; }
     const items = Array.from(document.querySelectorAll('#gRows .ogrow')).map((r,i)=>{
       const lb = r.querySelector('.l').value.trim();
       const dl = Number(r.querySelector('.d').value || 0);
       const im = r.dataset.img || '';
       const ps = Number(r.querySelector('.ps').value) || 1, pn = Number(r.querySelector('.pn').value) || 1;
-      return lb ? Object.assign({id:'o'+(i+1), label:lb, delta:dl}, im ? {img:im} : {},
+      const lh = (r.querySelector('.lh') || {value:''}).value.trim();
+      return lb ? Object.assign({id:'o'+(i+1), label:lb, delta:dl}, lh ? {label_he:lh} : {}, im ? {img:im} : {},
         ps !== 1 ? {ps} : {}, pn !== 1 ? {pn} : {}) : null;
     }).filter(Boolean);
     if(!items.length){ alert('ضيف خيار واحد على الأقل'); return false; }
-    const data = {title, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
+    const data = {title, title_he, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
     if(id) await db.collection('optionGroups').doc(id).update(data);
     else await db.collection('optionGroups').add(Object.assign(data,{order:(GROUPS.length+1)*10}));
     return true;
@@ -1362,6 +1598,7 @@ function ogRow(o){
   return `<div class="ogrow" data-img="${esc(im)}">
     <button type="button" class="oimg" title="صورة للخيار" onclick="pickOgImg(this)">${im?`<img src="${esc(im)}" alt="">`:'📷'}</button>
     <input class="l" placeholder="اسم الخيار" value="${esc((o&&o.label)||'')}">
+    <input class="lh" placeholder="🇮🇱 בעברית" dir="rtl" lang="he" value="${esc((o&&o.label_he)||'')}">
     <input class="d" type="number" inputmode="decimal" placeholder="+₪" value="${(o&&o.delta)||0}">
     <button class="x" onclick="this.parentNode.remove()">✕</button>
     <div class="ogsz">
@@ -1439,7 +1676,7 @@ function renderDeals(){
     ${DEALS.length ? DEALS.map(d=>`
       <div class="card"><div class="it">
         <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
-        <div class="mid"><div class="nm">${esc(d.title)}</div><div class="muted">${esc(d.desc||'')}</div></div>
+        <div class="mid"><div class="nm">${esc(L(d,'title'))}</div><div class="muted">${esc(L(d,'desc'))}</div></div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
         <button class="menu-btn" onclick="editDeal('${d.id}')">✏️</button>
         <button class="menu-btn" onclick="delDeal('${d.id}')">🗑️</button>
@@ -1454,6 +1691,8 @@ function editDeal(id){
     ${imgPickHtml(d.img, 1, 'العرض')}
     <div class="f"><label>العنوان *</label><input id="dTitle" value="${esc(d.title)}" placeholder="العرض العائلي"></div>
     <div class="f"><label>التفاصيل</label><input id="dDesc" value="${esc(d.desc||'')}" placeholder="2 بيتسا كبيرة + مقبلات + مشروب"></div>
+    ${heField('dTitleHe', d.title_he, 'العنوان بالعبري')}
+    ${heField('dDescHe', d.desc_he, 'التفاصيل بالعبري')}
     <div class="f2">
       <div class="f"><label>السعر *</label><input id="dPrice" type="number" inputmode="decimal" value="${d.price||''}"></div>
       <div class="f"><label>إيموجي</label><input id="dEmoji" value="${esc(d.emoji||'🍕')}" style="font-size:22px;text-align:center"></div>
@@ -1461,7 +1700,7 @@ function editDeal(id){
   `, async () => {
     const t = val('dTitle'), p = num('dPrice');
     if(!t || !p){ alert('العنوان والسعر مطلوبين'); return false; }
-    const data = {title:t, desc:val('dDesc'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || ''};
+    const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || ''};
     if(id) await db.collection('deals').doc(id).update(data);
     else await db.collection('deals').add(Object.assign(data,{order:(DEALS.length+1)*10}));
     return true;
@@ -1528,9 +1767,12 @@ function renderSet(){
     <h2 class="sec">إعدادات المطعم</h2>
     <div class="card">
       <div class="f"><label>اسم المطعم</label><input id="sName" value="${esc(SET.name||'')}"></div>
-      <div class="f"><label>العنوان</label><input id="sAddr" value="${esc(SET.addr||'')}"></div>
+      ${heField('sNameHe', SET.name_he, 'اسم المطعم بالعبري')}
+      <div class="f"><label>عنوان المطعم</label><input id="sAddr" value="${esc(SET.addr||'')}"></div>
+      ${heField('sAddrHe', SET.addr_he, 'عنوان المطعم بالعبري')}
       <div class="f"><label>الشعار الصغير (تحت الاسم بالغلاف)</label>
         <input id="sTag" value="${esc(SET.tagline||'')}" placeholder="مذاق لا يُقاوم"></div>
+      ${heField('sTagHe', SET.tagline_he, 'الشعار بالعبري')}
       <div class="f"><label>واتساب (بصيغة 972…)</label><input id="sPhone" class="ltr" value="${esc(SET.phone||window.WHATSAPP||'')}"></div>
       <div class="f2">
         ${imgFieldHtml('sLogo', SET.logo, 'اللوجو', 'sq')}
@@ -1547,6 +1789,7 @@ function renderSet(){
       <div class="f3">
         <div class="f"><label>أقل طلبية</label><input id="sMin" type="number" value="${SET.minOrder||0}"></div>
         <div class="f"><label>وقت التحضير</label><input id="sPrep" value="${esc(SET.prepTime||'')}"></div>
+        ${heField('sPrepHe', SET.prepTime_he, 'وقت التحضير بالعبري')}
         <div class="f"><label>التقييم</label><input id="sRate" value="${esc(SET.rating||'')}"></div>
       </div>
       <div class="f"><label>عدد التقييمات</label><input id="sRateN" value="${esc(SET.ratingCount||'')}" placeholder="+2,000"></div>
@@ -1567,6 +1810,8 @@ function renderSet(){
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">بطاقة العرض على الغلاف</label>
       <div class="f"><label>العنوان</label><input id="sHt" value="${esc(SET.heroTitle||'')}" placeholder="خصم 20%"></div>
       <div class="f"><label>السطر الثاني</label><input id="sHs" value="${esc(SET.heroSub||'')}" placeholder="على جميع البيتزا"></div>
+      ${heField('sHtHe', SET.heroTitle_he, 'العنوان بالعبري')}
+      ${heField('sHsHe', SET.heroSub_he, 'السطر الثاني بالعبري')}
       <div class="muted">خليهن فاضيين إذا ما بدك البطاقة تظهر.</div>
     </div>
     <div class="card">
@@ -1602,6 +1847,8 @@ async function saveSet(){
     logo: val('sLogo'), cover: val('sCover'),
     deliveryFee: num('sFee'), freeishOver: num('sOver'), reducedFee: num('sRed'),
     minOrder: num('sMin'), prepTime: val('sPrep'),
+    name_he: val('sNameHe'), addr_he: val('sAddrHe'), tagline_he: val('sTagHe'), prepTime_he: val('sPrepHe'),
+    heroTitle_he: val('sHtHe'), heroSub_he: val('sHsHe'),
     rating: val('sRate'), ratingCount: val('sRateN'),
     hours, promos
   };
