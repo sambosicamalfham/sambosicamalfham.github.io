@@ -192,6 +192,32 @@ h2.sec{font-size:18px;font-weight:900;margin:20px 0 12px}
 .hef input,.hef textarea{background:#f5f8ff}
 .ogrow input.lh{flex:1;min-width:110px;background:#f5f8ff}
 body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
+.zbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 8px}
+.zhint{background:#fff3e0;border:1.5px solid var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:8px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.zmap{height:min(62vh,480px);border-radius:16px;overflow:hidden;background:#e9e6e1;margin-bottom:12px;position:relative;z-index:0}
+.zmap.drawing{cursor:crosshair;box-shadow:0 0 0 3px var(--amber)}
+.zmap.drawing .leaflet-container,.zmap.drawing.leaflet-container{cursor:crosshair}
+.zload{display:grid;place-items:center;height:100%;color:var(--muted);font-weight:700}
+.ztip{background:rgba(255,255,255,.92);border:none;box-shadow:0 2px 8px rgba(0,0,0,.2);font-weight:800;font-family:inherit;font-size:12.5px;border-radius:8px}
+.zvtx{background:#fff;border:3px solid #111;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.zshop{font-size:24px;line-height:30px;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.zrow.on{box-shadow:0 0 0 2px var(--red)}
+.zrow .zh{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.zrow .zh input[type=color]{width:38px;height:38px;border:none;padding:0;background:none;flex:none}
+.zrow .zh input:not([type=color]){flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;outline:none}
+.zrow .zh .zhe{background:#f5f8ff}
+.z4{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))!important}
+.zrow .acts{display:flex;gap:7px;flex-wrap:wrap}
+.cst .ch{display:flex;gap:11px;align-items:center;cursor:pointer}
+.cst .av{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:900;font-size:17px;flex:none}
+.cst .nm{font-weight:900;font-size:15px}
+.cst .cs{text-align:center;min-width:58px}.cst .cs b{display:block;font-size:15px}.cst .cs span{font-size:11px;color:var(--muted)}
+.cst .cd{margin-top:11px;border-top:1px dashed #e5e5e5;padding-top:10px}
+.cst .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px}
+.cst .meta a{color:var(--blue);font-weight:800}
+.ch2{background:#fafafa;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px}
+.ch2 .top{display:flex;justify-content:space-between;gap:8px;margin-bottom:3px}
+.ord .meta a{margin-inline-end:6px}
 </style>
 </head>
 <body>
@@ -221,6 +247,8 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
     <button class="tb"    data-v="groups"  onclick="tab('groups')">⚙️ الخيارات</button>
     <button class="tb"    data-v="deals"   onclick="tab('deals')">🎯 العروض</button>
     <button class="tb"    data-v="cpn"     onclick="tab('cpn')">🎟️ الكوبونات</button>
+    <button class="tb"    data-v="zones"   onclick="tab('zones')">🗺️ التوصيل</button>
+    <button class="tb"    data-v="cust"    onclick="tab('cust')">👥 الزبائن</button>
     <button class="tb"    data-v="set"     onclick="tab('set')">🏪 الإعدادات</button>
   </div>
 </header>
@@ -234,6 +262,8 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
   <div id="vDeals"  style="display:none"></div>
   <div id="vCpn"    style="display:none"></div>
   <div id="vSet"    style="display:none"></div>
+  <div id="vZones"  style="display:none"></div>
+  <div id="vCust"   style="display:none"></div>
 </div>
 
 <div class="mbg" id="mbg" onclick="closeModal()"></div>
@@ -349,10 +379,29 @@ const HE = {
   'بخانة السكر.':'בשדה הסגירה.','بخانة السكر':'בשדה הסגירה',
   'شارة (مثلاً: شائع / الأكثر طلباً)':'תגית (למשל: פופולרי / הכי מוזמן)',
   'للأحجام اختار "السعر الكامل" عشان الزبون يشوف':'לגדלים בחרו "מחיר מלא" כדי שהלקוח יראה',
-  'بحث':'חיפוש','عنوان المطعم':'כתובת המסעדה','عنوان المطعم بالعبري':'כתובת המסעדה בעברית','اتركه فاضي = بدون شرط':'השאירו ריק = בלי תנאי','العرض العائلي':'מבצע משפחתי','2 بيتسا كبيرة + مقبلات + مشروب':'2 פיצות גדולות + מנות פתיחה + שתייה'
+  'بحث':'חיפוש',
+  'التوصيل':'משלוח','مناطق التوصيل':'אזורי משלוח','تفعيل سعر التوصيل حسب المنطقة':'הפעלת מחיר משלוח לפי אזור',
+  'لما تكون مفعّلة: الزبون بيحدد موقعه على الخريطة، والسعر بيطلع حسب المنطقة اللي هو فيها. برا كل المناطق ما في توصيل.':'כשמופעל: הלקוח מסמן את מיקומו במפה, והמחיר נקבע לפי האזור. מחוץ לכל האזורים אין משלוח.',
+  'لما تكون مطفية: بيشتغل سعر التوصيل الثابت من 🏪 الإعدادات.':'כשכבוי: חל מחיר המשלוח הקבוע מ־🏪 הגדרות.',
+  'ارسم منطقة جديدة':'ציור אזור חדש','حط موقع المطعم':'סימון מיקום המסעדה','كل المناطق':'כל האזורים','جاري تحميل الخريطة...':'טוען מפה...',
+  'حفظ المناطق':'שמירת האזורים','ما قدرت أحمّل الخريطة — تأكد من الإنترنت':'לא הצלחתי לטעון את המפה — בדקו את האינטרנט',
+  'اكبس على الخريطة نقطة نقطة حوالين المنطقة.':'לחצו על המפה נקודה אחר נקודה מסביב לאזור.','بعد 3 نقاط أو أكثر اكبس':'אחרי 3 נקודות או יותר לחצו',
+  'خلّص المنطقة':'סיום האזור','تراجع':'ביטול נקודה','اكبس على مكان المطعم بالخريطة.':'לחצו על מיקום המסעדה במפה.',
+  'تم ✓ — لا تنسى تكبس حفظ':'בוצע ✓ — אל תשכחו ללחוץ שמירה','لازم 3 نقاط على الأقل':'צריך לפחות 3 נקודות','استنى الخريطة تتحمّل':'חכו שהמפה תיטען',
+  'حذف المنطقة؟':'למחוק את האזור?','ما في مناطق بعد — اكبس "ارسم منطقة جديدة"':'אין עדיין אזורים — לחצו "ציור אזור חדש"',
+  'اسم المنطقة':'שם האזור','سعر التوصيل ₪':'מחיר משלוח ₪','أقل طلبية ₪':'מינימום הזמנה ₪','فوق مبلغ ₪':'מעל סכום ₪','بيصير التوصيل ₪':'המשלוח יורד ל־₪',
+  'العامة':'הכללי','عدّل الحدود':'עריכת גבולות','خلّصت تعديل الحدود':'סיימתי לערוך גבולות',
+  'اسحب النقاط البيضا على الخريطة لتغيّر الحدود. كبسة يمين على نقطة بتحذفها.':'גררו את הנקודות הלבנות במפה כדי לשנות גבולות. לחיצה ימנית על נקודה מוחקת אותה.',
+  'منطقة':'אזור','منطقة:':'אזור:','الخريطة':'מפה',
+  'التوصيل حسب المناطق مفعّل — سعر التوصيل بينحسب من تاب 🗺️ التوصيل. أقل طلبية هون بتضل للمناطق اللي ما إلها أقل طلبية خاصة.':'משלוח לפי אזורים מופעל — המחיר נקבע בלשונית 🗺️ משלוח. מינימום ההזמנה כאן חל על אזורים בלי מינימום משלהם.',
+  'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
+  'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
+  'معدل الطلب:':'ממוצע הזמנה:','عدد طلبات هالزبون':'מספר ההזמנות של הלקוח','طلبات':'הזמנות','عنوان المطعم':'כתובת המסעדה','عنوان المطعم بالعبري':'כתובת המסעדה בעברית','اتركه فاضي = بدون شرط':'השאירו ריק = בלי תנאי','العرض العائلي':'מבצע משפחתי','2 بيتسا كبيرة + مقبلات + مشروب':'2 פיצות גדולות + מנות פתיחה + שתייה'
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^منطقة (\d+)$/, m => 'אזור ' + m[1]],
+  [/^منطقة: (.*)$/, m => 'אזור: ' + m[1]],
   [/^ملاحظة الطلب: ([\s\S]*)$/, m => 'הערת הזמנה: ' + m[1]],
   [/^(\S+) على البيتسا كاملة$/, m => m[1] + ' על כל הפיצה'],
   [/^ما بتقدر تحذف القسم — فيه (\d+) صنف\. انقلهم أو احذفهم أول$/, m => 'אי אפשר למחוק את הקטגוריה — יש בה ' + m[1] + ' פריטים. העבירו או מחקו אותם קודם'],
@@ -372,7 +421,7 @@ try{
   const sv = localStorage.getItem(I18N_KEY);
   LANG = sv === 'he' || sv === 'ar' ? sv : (/^he|^iw/i.test(navigator.language || '') ? 'he' : 'ar');
 }catch(e){}
-function L(o, f){
+function LX(o, f){
   if(!o) return '';
   if(LANG === 'he'){ const h = o[f + '_he']; if(h != null && String(h).trim() !== '') return h; }
   return o[f] == null ? '' : o[f];
@@ -596,7 +645,8 @@ function ding(){
 function tab(v){
   view = v; armed = null;
   document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-  ['Orders','Items','Cats','Groups','Deals','Cpn','Set'].forEach(k=>{
+  if(v === 'zones') zBuilt = false; else { zCancel && zCancel(); }
+  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust'].forEach(k=>{
     $('v'+k).style.display = (v === k.toLowerCase()) ? '' : 'none';
   });
   render(); window.scrollTo({top:0});
@@ -609,6 +659,8 @@ function render(){
   if(view==='deals')  renderDeals();
   if(view==='cpn')    renderCpns();
   if(view==='set')    renderSet();
+  if(view==='zones')  renderZones();
+  if(view==='cust')   renderCust();
 }
 
 /* ========= تجهيز أول مرة ========= */
@@ -742,7 +794,7 @@ function renderOrders(){
     const wa = String(c.phone||'').replace(/\D/g,'').replace(/^0/,'972');
     return `<div class="card ord ${cls}">
       <div class="top">
-        <div><div class="who"><span class="ono">#${ordNo(o)}</span> ${esc(c.name||'—')} <span class="pill ${st.c}">${st.t}</span></div>
+        <div><div class="who"><span class="ono">#${ordNo(o)}</span> ${esc(c.name||'—')} <span class="pill ${st.c}">${st.t}</span>${(() => { const n = custCount(o); return n >= 2 ? ` <span class="pill a" title="عدد طلبات هالزبون">⭐ ${n} طلبات</span>` : (n === 1 ? ' <span class="pill b">زبون جديد</span>' : ''); })()}</div>
           <div class="when">${esc(when)} ${ageHtml(o)}</div></div>
         <div class="tot">${money(o.total)}</div>
       </div>
@@ -752,6 +804,8 @@ function renderOrders(){
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
         ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
         ${c.addr?`<span>📍 ${esc(c.addr)}</span>`:''}
+        ${c.zone?`<span class="pill">🗺️ ${esc(c.zone)}</span>`:''}
+        ${c.loc?`<a href="${mapsLink(c.loc)}" target="_blank">🗺️ الخريطة</a><a href="${wazeLink(c.loc)}" target="_blank">🚗 Waze</a>`:''}
         <span class="muted">توصيل: <span class="ltr">${Number(o.fee||0)} ₪</span></span>
       </div>
       <div class="acts">
@@ -879,7 +933,7 @@ function ticketHtml(o){
       ${del ? `<div class="sm"><span>توصيل</span><span>${Number(o.fee||0).toFixed(2)} ₪</span></div>` : ''}
       <div class="tot"><span>الإجمالي</span><span>${Number(o.total||0).toFixed(2)} ₪</span></div>
       <div class="inf">👤 ${esc(c.name||'')}<br>📞 ${esc(c.phone||'')}
-        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
+        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
         ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
   }
   return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${PRINT_CSS}</style></head><body>${parts.join('')}</body></html>`;
@@ -1025,7 +1079,7 @@ function renderItems(){
       <input type="search" placeholder="بحث..." value="${esc(qItems)}" oninput="qItems=this.value;renderItems()">
       <select onchange="qCat=this.value;renderItems()">
         <option value="">كل الأقسام</option>
-        ${CATS.map(c=>`<option value="${c.id}" ${qCat===c.id?'selected':''}>${esc(c.icon||'')} ${esc(L(c,'name'))}</option>`).join('')}
+        ${CATS.map(c=>`<option value="${c.id}" ${qCat===c.id?'selected':''}>${esc(c.icon||'')} ${esc(LX(c,'name'))}</option>`).join('')}
       </select>
       <button class="btn sm red" onclick="editItem()">+ صنف جديد</button>
     </div>
@@ -1036,7 +1090,7 @@ function renderItems(){
       <button class="handle ${armed===it.id?'arm':''}" onclick="tapHandle('${it.id}')">⠿</button>
       <div class="ph">${thumb(it)}</div>
       <div class="mid">
-        <div class="nm">${esc(L(it,'name'))}</div>
+        <div class="nm">${esc(LX(it,'name'))}</div>
         <div class="tags">
           <span class="pill">${esc(catName(it.catId))}</span>
           ${it.best?'<span class="pill a">🔥 مميز</span>':''}
@@ -1108,7 +1162,7 @@ function editItem(id){
       <div class="f"><label>سعر بعد الخصم</label><input id="iSale" type="number" inputmode="decimal" value="${it.sale||''}" placeholder="اتركه فاضي"></div>
     </div>
     <div class="f"><label>القسم *</label><select id="iCat">
-      ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(L(c,'name'))}</option>`).join('')}
+      ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(LX(c,'name'))}</option>`).join('')}
     </select></div>
     <div class="f"><label>شارة (مثلاً: شائع / الأكثر طلباً)</label><input id="iTag" value="${esc(it.tag||'')}"></div>
     ${heField('iTagHe', it.tag_he, 'الشارة بالعبري')}
@@ -1121,7 +1175,7 @@ function editItem(id){
       <div class="muted" style="margin-bottom:4px">اختار الأحجام والإضافات اللي بتنطبق على هاض الصنف</div>
       ${GROUPS.length ? GROUPS.map(g=>`<label class="chk">
         <input type="checkbox" class="ogchk" value="${g.id}" ${(it.opts||[]).includes(g.id)?'checked':''}>
-        <span>${esc(L(g,'title'))} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>`).join('')
+        <span>${esc(LX(g,'title'))} <span class="muted">(${g.items?g.items.length:0} خيار)</span></span></label>`).join('')
         : '<div class="muted">ما في مجموعات — أنشئها من تبويب الخيارات</div>'}
     </div>
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
@@ -1265,6 +1319,251 @@ function pizzaSvgFrom(tops, o){
     '<circle r="96" fill="url(#' + idp + 'ch)" filter="url(#' + idp + 'tx)"/>' +
     '<g filter="url(#' + idp + 'tx)">' + spots + '</g>' +
     guides + body + '</svg>';
+}
+
+/* ========= الخريطة (Leaflet) ========= */
+let _lfP = null;
+function loadLeaflet(){
+  if(window.LF) return Promise.resolve(window.LF);
+  if(_lfP) return _lfP;
+  _lfP = new Promise((res, rej) => {
+    const c = document.createElement('link'); c.rel = 'stylesheet';
+    c.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css'; document.head.appendChild(c);
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    s.onload = () => { window.LF = window.L.noConflict ? window.L.noConflict() : window.L; res(window.LF); };
+    s.onerror = () => { _lfP = null; rej(new Error('ما قدرت أحمّل الخريطة — تأكد من الإنترنت')); };
+    document.head.appendChild(s);
+  });
+  return _lfP;
+}
+const RAHAT = [31.3925, 34.7544];
+const ZCOL = ['#e3242b','#1f7ae0','#1e9e5a','#f08c00','#8e44ad','#00a3a3','#c2185b','#6d4c41'];
+function inPoly(pt, poly){
+  const x = pt[1], y = pt[0]; let ins = false;
+  for(let i = 0, j = poly.length - 1; i < poly.length; j = i++){
+    const xi = poly[i][1], yi = poly[i][0], xj = poly[j][1], yj = poly[j][0];
+    if(((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins;
+  }
+  return ins;
+}
+const mapsLink = ll => 'https://www.google.com/maps?q=' + ll[0] + ',' + ll[1];
+const wazeLink = ll => 'https://waze.com/ul?ll=' + ll[0] + ',' + ll[1] + '&navigate=yes';
+
+/* ========= مناطق التوصيل ========= */
+let ZMAP = null, ZONES = [], SHOP = null, ZON = false, zMode = null, zDrawPts = [], zDrawLayer = null, zEdit = -1, zBuilt = false, zLayers = [], zShopMk = null, zVtx = [];
+function renderZones(){
+  if(zBuilt) return;
+  zBuilt = true;
+  ZONES = JSON.parse(JSON.stringify(SET.zones || []));
+  SHOP = SET.shopLoc || null; ZON = !!SET.zonesOn;
+  $('vZones').innerHTML = `
+    <h2 class="sec">🗺️ مناطق التوصيل</h2>
+    <div class="card">
+      <label class="chk"><input type="checkbox" id="zOn" ${ZON?'checked':''} onchange="ZON=this.checked"><span>تفعيل سعر التوصيل حسب المنطقة</span></label>
+      <div class="muted">لما تكون مفعّلة: الزبون بيحدد موقعه على الخريطة، والسعر بيطلع حسب المنطقة اللي هو فيها. برا كل المناطق ما في توصيل.
+        لما تكون مطفية: بيشتغل سعر التوصيل الثابت من 🏪 الإعدادات.</div>
+    </div>
+    <div class="zbar">
+      <button class="btn sm red" onclick="zStartDraw()">➕ ارسم منطقة جديدة</button>
+      <button class="btn sm gh" onclick="zStartShop()">🏪 حط موقع المطعم</button>
+      <button class="btn sm gh" onclick="zFit()">🔍 كل المناطق</button>
+    </div>
+    <div id="zHint" class="zhint" style="display:none"></div>
+    <div id="zMap" class="zmap"><div class="zload">⏳ جاري تحميل الخريطة...</div></div>
+    <div id="zList"></div>
+    <button class="btn red full" style="margin-top:12px" onclick="saveZones()">💾 حفظ المناطق</button>`;
+  zListPaint();
+  loadLeaflet().then(LF => {
+    if(ZMAP){ ZMAP.remove(); ZMAP = null; }
+    ZMAP = LF.map('zMap', {zoomControl:true}).setView(SHOP || RAHAT, 13);
+    LF.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap'}).addTo(ZMAP);
+    ZMAP.on('click', zClick);
+    zPaint(); if(ZONES.length) zFit();
+    setTimeout(() => ZMAP && ZMAP.invalidateSize(), 200);
+  }).catch(e => { $('zMap').innerHTML = '<div class="zload">⚠️ ' + esc(e.message) + '</div>'; });
+}
+function zHint(t){ const h = $('zHint'); if(!h) return; h.style.display = t ? '' : 'none'; h.innerHTML = t || ''; }
+function zPaint(){
+  const LF = window.LF; if(!ZMAP || !LF) return;
+  zLayers.forEach(l => l.remove()); zLayers = [];
+  zVtx.forEach(m => m.remove()); zVtx = [];
+  ZONES.forEach((z, i) => {
+    if(!z.pts || z.pts.length < 3) return;
+    const p = LF.polygon(z.pts, {color: z.color || ZCOL[i % ZCOL.length], weight: zEdit === i ? 4 : 2, fillOpacity: zEdit === i ? .3 : .18}).addTo(ZMAP);
+    p.bindTooltip(esc(LX(z,'name') || ('منطقة ' + (i+1))) + ' — ₪' + Number(z.price||0), {permanent:true, direction:'center', className:'ztip'});
+    p.on('click', ev => { if(zMode) return zClick(ev); LF.DomEvent.stopPropagation(ev); zEditStart(i); });
+    zLayers.push(p);
+  });
+  if(zEdit >= 0 && ZONES[zEdit]){
+    const z = ZONES[zEdit];
+    z.pts.forEach((pt, k) => {
+      const m = LF.marker(pt, {draggable:true, icon: LF.divIcon({className:'zvtx', iconSize:[16,16]})}).addTo(ZMAP);
+      m.on('drag', ev => { const ll = ev.target.getLatLng(); z.pts[k] = [+ll.lat.toFixed(6), +ll.lng.toFixed(6)]; zLayers.forEach(l => l.remove()); zLayers = []; zPaintPolysOnly(); });
+      m.on('dragend', () => zPaint());
+      m.on('contextmenu', () => { if(z.pts.length > 3){ z.pts.splice(k, 1); zPaint(); } });
+      zVtx.push(m);
+    });
+  }
+  if(zShopMk){ zShopMk.remove(); zShopMk = null; }
+  if(SHOP) zShopMk = LF.marker(SHOP, {icon: LF.divIcon({className:'zshop', html:'🏪', iconSize:[30,30]})}).addTo(ZMAP);
+}
+function zPaintPolysOnly(){
+  const LF = window.LF;
+  ZONES.forEach((z, i) => {
+    if(!z.pts || z.pts.length < 3) return;
+    zLayers.push(LF.polygon(z.pts, {color: z.color || ZCOL[i % ZCOL.length], weight: zEdit === i ? 4 : 2, fillOpacity:.3}).addTo(ZMAP));
+  });
+}
+function zFit(){
+  const LF = window.LF; if(!ZMAP || !LF) return;
+  const all = []; ZONES.forEach(z => (z.pts||[]).forEach(p => all.push(p))); if(SHOP) all.push(SHOP);
+  if(all.length) ZMAP.fitBounds(LF.latLngBounds(all), {padding:[20,20]}); else ZMAP.setView(RAHAT, 13);
+}
+function zStartDraw(){
+  if(!ZMAP){ alert('استنى الخريطة تتحمّل'); return; }
+  zEdit = -1; zMode = 'draw'; zDrawPts = []; zPaint();
+  zHint('✏️ <b>اكبس على الخريطة نقطة نقطة حوالين المنطقة.</b> بعد 3 نقاط أو أكثر اكبس <button class="btn sm red" onclick="zFinishDraw()">✓ خلّص المنطقة</button> <button class="btn sm gh" onclick="zUndo()">↶ تراجع</button> <button class="btn sm gh" onclick="zCancel()">إلغاء</button>');
+  $('zMap').classList.add('drawing');
+}
+function zStartShop(){
+  if(!ZMAP){ alert('استنى الخريطة تتحمّل'); return; }
+  zMode = 'shop'; zHint('🏪 <b>اكبس على مكان المطعم بالخريطة.</b> <button class="btn sm gh" onclick="zCancel()">إلغاء</button>');
+  $('zMap').classList.add('drawing');
+}
+function zClick(ev){
+  const LF = window.LF;
+  const ll = [+ev.latlng.lat.toFixed(6), +ev.latlng.lng.toFixed(6)];
+  if(zMode === 'shop'){ SHOP = ll; zCancel(); zPaint(); toast('تم ✓ — لا تنسى تكبس حفظ'); return; }
+  if(zMode !== 'draw'){ if(zEdit >= 0){ zEdit = -1; zPaint(); zListPaint(); } return; }
+  zDrawPts.push(ll); zDraft();
+}
+function zDraft(){
+  const LF = window.LF;
+  if(zDrawLayer){ zDrawLayer.remove(); zDrawLayer = null; }
+  if(!zDrawPts.length) return;
+  zDrawLayer = LF.layerGroup([
+    zDrawPts.length > 2 ? LF.polygon(zDrawPts, {color:'#111', dashArray:'6 6', weight:2, fillOpacity:.1}) : LF.polyline(zDrawPts, {color:'#111', dashArray:'6 6', weight:2}),
+    ...zDrawPts.map(p => LF.circleMarker(p, {radius:6, color:'#111', fillColor:'#fff', fillOpacity:1, weight:2}))
+  ]).addTo(ZMAP);
+}
+function zUndo(){ zDrawPts.pop(); zDraft(); }
+function zCancel(){
+  zMode = null; zDrawPts = []; if(zDrawLayer){ zDrawLayer.remove(); zDrawLayer = null; }
+  zHint(''); const m = $('zMap'); if(m) m.classList.remove('drawing');
+}
+function zFinishDraw(){
+  if(zDrawPts.length < 3){ alert('لازم 3 نقاط على الأقل'); return; }
+  const i = ZONES.length;
+  ZONES.push({id:'z' + Date.now().toString(36), name:'منطقة ' + (i+1), name_he:'', price:Number(SET.deliveryFee||15), min:'', over:'', overPrice:'', color: ZCOL[i % ZCOL.length], pts: zDrawPts.slice()});
+  zCancel(); zEdit = i; zPaint(); zListPaint();
+  setTimeout(() => { const el = document.querySelector('#zList .zrow[data-i="' + i + '"] .zn'); if(el){ el.focus(); el.select(); } }, 50);
+}
+function zEditStart(i){ zEdit = i; zPaint(); zListPaint(); const r = document.querySelector('#zList .zrow[data-i="' + i + '"]'); if(r) r.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+function zDel(i){ if(!confirm('حذف المنطقة؟')) return; ZONES.splice(i, 1); zEdit = -1; zPaint(); zListPaint(); }
+function zSet(i, k, v){ ZONES[i][k] = v; if(k === 'name' || k === 'price' || k === 'color') zPaint(); }
+function zListPaint(){
+  const el = $('zList'); if(!el) return;
+  if(!ZONES.length){ el.innerHTML = '<div class="empty" style="padding:24px"><div class="e">🗺️</div><div>ما في مناطق بعد — اكبس "ارسم منطقة جديدة"</div></div>'; return; }
+  el.innerHTML = ZONES.map((z, i) => `<div class="card zrow ${zEdit===i?'on':''}" data-i="${i}">
+    <div class="zh">
+      <input type="color" value="${esc(z.color || ZCOL[i % ZCOL.length])}" oninput="zSet(${i},'color',this.value)">
+      <input class="zn" value="${esc(z.name||'')}" placeholder="اسم المنطقة" oninput="zSet(${i},'name',this.value)">
+      <input class="zhe" value="${esc(z.name_he||'')}" placeholder="🇮🇱 בעברית" dir="rtl" lang="he" oninput="zSet(${i},'name_he',this.value)">
+    </div>
+    <div class="f2 z4">
+      <div class="f"><label>سعر التوصيل ₪</label><input type="number" inputmode="decimal" value="${esc(z.price)}" oninput="zSet(${i},'price',this.value)"></div>
+      <div class="f"><label>أقل طلبية ₪</label><input type="number" inputmode="decimal" value="${esc(z.min)}" placeholder="العامة" oninput="zSet(${i},'min',this.value)"></div>
+      <div class="f"><label>فوق مبلغ ₪</label><input type="number" inputmode="decimal" value="${esc(z.over)}" placeholder="—" oninput="zSet(${i},'over',this.value)"></div>
+      <div class="f"><label>بيصير التوصيل ₪</label><input type="number" inputmode="decimal" value="${esc(z.overPrice)}" placeholder="—" oninput="zSet(${i},'overPrice',this.value)"></div>
+    </div>
+    <div class="acts">
+      <button class="btn sm ${zEdit===i?'red':'gh'}" onclick="${zEdit===i?'zEdit=-1;zPaint();zListPaint()':'zEditStart(' + i + ')'}">${zEdit===i?'✓ خلّصت تعديل الحدود':'✏️ عدّل الحدود'}</button>
+      <button class="btn sm gh" onclick="zDel(${i})">🗑️ حذف</button>
+    </div>
+    ${zEdit===i?'<div class="muted" style="margin-top:6px">اسحب النقاط البيضا على الخريطة لتغيّر الحدود. كبسة يمين على نقطة بتحذفها.</div>':''}
+  </div>`).join('');
+}
+async function saveZones(){
+  const clean = ZONES.filter(z => z.pts && z.pts.length >= 3).map(z => {
+    const n = v => (v === '' || v == null || isNaN(Number(v))) ? '' : Number(v);
+    return {id: z.id, name: String(z.name||'').trim(), name_he: String(z.name_he||'').trim(), color: z.color || '',
+      price: Number(z.price||0), min: n(z.min), over: n(z.over), overPrice: n(z.overPrice),
+      pts: z.pts.map(p => [Number(p[0]), Number(p[1])])};
+  });
+  try{
+    await db.collection('settings').doc('main').set({zones: clean, shopLoc: SHOP || null, zonesOn: !!ZON}, {merge:true});
+    toast('تم الحفظ ✓');
+  }catch(e){ alert(e.message); }
+}
+
+/* ========= الزبائن ========= */
+let CUST_ORDERS = null, custQ = '', custOpen = '';
+async function loadCustOrders(force){
+  if(CUST_ORDERS && !force) return;
+  $('vCust').innerHTML = '<h2 class="sec">👥 الزبائن</h2><div class="empty"><div class="e">⏳</div><div>جاري تحميل الطلبات...</div></div>';
+  try{
+    const s = await db.collection('orders').orderBy('createdAtStr','desc').limit(3000).get();
+    CUST_ORDERS = s.docs.map(d => ({id:d.id, ...d.data()}));
+  }catch(e){ CUST_ORDERS = ORDERS.slice(); console.error(e); }
+}
+const phKey = p => { let d = String(p||'').replace(/\D/g,''); if(d.startsWith('972')) d = '0' + d.slice(3); return d; };
+function custList(){
+  const src = CUST_ORDERS || ORDERS, by = {};
+  src.forEach(o => {
+    const c = o.customer || {}, k = phKey(c.phone); if(!k) return;
+    const x = by[k] || (by[k] = {phone:k, names:{}, orders:[], spent:0, last:'', addr:'', loc:null, zone:'', lang:''});
+    x.orders.push(o);
+    if(c.name) x.names[c.name] = (x.names[c.name]||0) + 1;
+    if(o.status !== 'cancel') x.spent += Number(o.total||0);
+    if(!x.last || String(o.createdAtStr) > x.last){ x.last = String(o.createdAtStr||''); x.addr = c.addr || x.addr; x.loc = c.loc || x.loc; x.zone = c.zone || x.zone; x.lang = c.lang || x.lang; }
+  });
+  return Object.values(by).map(x => (x.name = Object.entries(x.names).sort((a,b) => b[1]-a[1]).map(e => e[0])[0] || '—', x))
+    .sort((a,b) => b.last.localeCompare(a.last));
+}
+/* كم طلب لهالزبون (للشارة على كرت الطلب) */
+function custCount(o){
+  const k = phKey((o.customer||{}).phone); if(!k) return 0;
+  return (CUST_ORDERS || ORDERS).filter(x => phKey((x.customer||{}).phone) === k && x.status !== 'cancel').length;
+}
+async function renderCust(){
+  await loadCustOrders();
+  if(view !== 'cust') return;
+  const all = custList();
+  const q = custQ.trim().toLowerCase();
+  const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
+  const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
+  $('vCust').innerHTML = `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
+    <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
+      <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
+    ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
+      const wa = waPhone(x.phone), open = custOpen === x.phone;
+      return `<div class="card cst ${open?'on':''}">
+        <div class="ch" onclick="custOpen=custOpen==='${x.phone}'?'':'${x.phone}';renderCust()">
+          <div class="av">${esc((x.name||'?').trim().charAt(0))}</div>
+          <div style="flex:1;min-width:0">
+            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''}</div>
+            <div class="muted ltr" style="text-align:start">${esc(x.phone)}</div>
+          </div>
+          <div class="cs"><b>${x.orders.length}</b><span>طلب</span></div>
+          <div class="cs"><b class="ltr">${x.spent.toFixed(0)} ₪</b><span>المجموع</span></div>
+        </div>
+        ${open ? `<div class="cd">
+          <div class="meta">
+            <a href="tel:${esc(x.phone)}">📞 اتصال</a>
+            ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
+            ${x.addr?`<span>📍 ${esc(x.addr)}</span>`:''}
+            ${x.zone?`<span class="pill">🗺️ ${esc(x.zone)}</span>`:''}
+            ${x.loc?`<a href="${mapsLink(x.loc)}" target="_blank">🗺️ الخريطة</a> <a href="${wazeLink(x.loc)}" target="_blank">🚗 Waze</a>`:''}
+          </div>
+          <div class="muted" style="margin:6px 0">آخر طلب: ${esc(d(x.last))} · معدل الطلب: <span class="ltr">${(x.spent / Math.max(1, x.orders.filter(o=>o.status!=='cancel').length)).toFixed(0)} ₪</span></div>
+          ${x.orders.map(o => `<div class="ch2">
+            <div class="top"><span><b>${esc(d(o.createdAtStr))}</b> <span class="pill ${(ST[o.status]||ST.done).c}">${(ST[o.status]||ST.done).t}</span> ${o.type==='pickup'?'🏪':'🛵'}</span><b class="ltr">${Number(o.total||0).toFixed(2)} ₪</b></div>
+            <div class="muted">${(o.items||[]).map(i => (Number(i.qty)||0) + '× ' + esc(iName(i))).join(' · ')}</div>
+          </div>`).join('')}
+        </div>` : ''}
+      </div>`;
+    }).join('')}`;
 }
 
 /* ========= الصور ========= */
@@ -1484,7 +1783,7 @@ function renderCats(){
     ${CATS.length ? CATS.map((c,i)=>`
       <div class="card"><div class="it">
         <div class="ph" style="width:52px;height:52px;display:grid;place-items:center;font-size:26px;background:#f4f2f0;overflow:hidden">${c.img?`<img src="${esc(c.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc(c.icon||'🍽️')}</div>
-        <div class="mid"><div class="nm">${esc(L(c,'name'))}</div>
+        <div class="mid"><div class="nm">${esc(LX(c,'name'))}</div>
           <div class="muted">${ITEMS.filter(x=>x.catId===c.id).length} صنف</div></div>
         <button class="btn sm gh" onclick="moveCat(${i},-1)" ${i===0?'disabled':''}>▲</button>
         <button class="btn sm gh" onclick="moveCat(${i},1)" ${i===CATS.length-1?'disabled':''}>▼</button>
@@ -1535,7 +1834,7 @@ function renderGroups(){
     ${GROUPS.length ? GROUPS.map(g=>`
       <div class="card">
         <div class="row" style="margin-bottom:9px">
-          <div style="flex:1"><div class="nm" style="font-weight:800;font-size:15.5px">${esc(L(g,'title'))}</div>
+          <div style="flex:1"><div class="nm" style="font-weight:800;font-size:15.5px">${esc(LX(g,'title'))}</div>
             <div class="tags" style="margin-top:5px">
               <span class="pill ${g.type==='one'?'b':''}">${g.type==='one'?'اختيار واحد':'اختيار متعدد'}</span>
               ${g.required?'<span class="pill r">إلزامي</span>':'<span class="pill">اختياري</span>'}
@@ -1545,7 +1844,7 @@ function renderGroups(){
           <button class="menu-btn" onclick="delGroup('${g.id}')">🗑️</button>
         </div>
         <div class="muted" style="line-height:2">${(g.items||[]).map(o=>
-          `${esc(L(o,'label'))}${Number(o.delta)?` <span class="ltr">(+${Number(o.delta)} ₪)</span>`:''}`).join(' · ')}</div>
+          `${esc(LX(o,'label'))}${Number(o.delta)?` <span class="ltr">(+${Number(o.delta)} ₪)</span>`:''}`).join(' · ')}</div>
       </div>`).join('')
       : `<div class="empty"><div class="e">⚙️</div><div>ما في مجموعات</div></div>`}`;
 }
@@ -1676,7 +1975,7 @@ function renderDeals(){
     ${DEALS.length ? DEALS.map(d=>`
       <div class="card"><div class="it">
         <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
-        <div class="mid"><div class="nm">${esc(L(d,'title'))}</div><div class="muted">${esc(L(d,'desc'))}</div></div>
+        <div class="mid"><div class="nm">${esc(LX(d,'title'))}</div><div class="muted">${esc(LX(d,'desc'))}</div></div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
         <button class="menu-btn" onclick="editDeal('${d.id}')">✏️</button>
         <button class="menu-btn" onclick="delDeal('${d.id}')">🗑️</button>
@@ -1781,6 +2080,7 @@ function renderSet(){
     </div>
     <div class="card">
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">التوصيل والأسعار</label>
+      ${SET.zonesOn ? '<div class="warnbox" style="background:#e8f0fe;border-color:#1f7ae0;color:#174ea6">🗺️ التوصيل حسب المناطق مفعّل — سعر التوصيل بينحسب من تاب 🗺️ التوصيل. أقل طلبية هون بتضل للمناطق اللي ما إلها أقل طلبية خاصة.</div>' : ''}
       <div class="f3">
         <div class="f"><label>رسوم التوصيل</label><input id="sFee" type="number" value="${SET.deliveryFee||0}"></div>
         <div class="f"><label>فوق مبلغ</label><input id="sOver" type="number" value="${SET.freeishOver||0}"></div>
