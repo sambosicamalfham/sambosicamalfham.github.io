@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="theme-color" content="#121212">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بيتسا">
 <title>مكسيكاني وبيتسا أم الفحم - رهط</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -432,6 +438,49 @@ a.cta{text-decoration:none;justify-content:center}
 .trk-steps .ts.done{color:var(--ink-2)}.trk-steps .ts.done .dot{background:#1e8e4e;color:#fff;font-weight:900}
 .trk-steps .ts.now{color:var(--ink);font-size:16px}.trk-steps .ts.now .dot{background:var(--red);box-shadow:0 0 0 5px var(--red-soft)}
 .cta.gh2{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+/* تنزيل التطبيق */
+#instBar{display:flex;align-items:center;gap:10px;margin:12px 16px 0;background:linear-gradient(135deg,#1a1a1a,#3a1d12);color:#fff;border-radius:16px;padding:11px 12px}
+#instBar .ic{font-size:26px}
+#instBar .tx{flex:1;display:flex;flex-direction:column}#instBar .tx b{font-size:14.5px}#instBar .tx small{font-size:12px;opacity:.75}
+#instBar .ok{background:var(--red);color:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-family:inherit}
+#instBar .x{color:#fff;opacity:.6;font-size:16px;padding:4px}
+.iosg .st{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:13px;margin-bottom:9px;font-size:14.5px;line-height:1.6}
+.iosg .st>b{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex:none}
+/* اقتراحات */
+.ups h4{margin-bottom:8px}
+.upg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.up{background:#fff;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;padding:0;display:flex;flex-direction:column;text-align:start;font-family:inherit}
+.up .ph{height:62px;background:#eee;overflow:hidden}.up .ph img{width:100%;height:100%;object-fit:cover}
+.up .nm{font-size:11.5px;font-weight:800;padding:5px 7px 0;line-height:1.3;max-height:30px;overflow:hidden}
+.up .pr{display:flex;justify-content:space-between;align-items:center;padding:4px 7px 7px}.up .pr b{color:var(--red);font-size:13px}
+.up .pr i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:900}
+/* ولاء */
+.loy{background:linear-gradient(135deg,#fff7e6,#fff);border:1.5px solid #f5d27a;border-radius:16px;padding:12px 13px;margin-bottom:12px}
+.loy.win{background:linear-gradient(135deg,#e9fbef,#fff);border-color:#1e8e4e}
+.loy .lt{font-size:14px;line-height:1.6}
+.stamps{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.stamps span{width:26px;height:26px;border-radius:50%;border:2px dashed #e0c27a;display:grid;place-items:center;font-size:14px}
+.stamps span.on{border:2px solid #f5b301;background:#fff3cc}
+.usew{display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:800;font-size:14px}
+.usew input{width:20px;height:20px;accent-color:var(--red)}
+/* عجلة */
+.wh-t{font-size:15px;font-weight:700;margin:6px 0 12px;text-align:center}
+.wh{position:relative;width:min(78vw,290px);margin:0 auto}
+.wh svg{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 18px rgba(0,0,0,.25))}
+.wh-pin{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:30px;color:var(--ink);z-index:2;text-shadow:0 2px 0 #fff}
+.wh-r{font-size:20px;font-weight:900;margin-top:16px}
+.reg-hero{font-size:60px;text-align:center}
+.whc{border:1.5px solid #f5b301}
+.prof{cursor:pointer}.prof .chg{color:var(--red);font-weight:800;font-size:13px}
+/* عروض بأوقات */
+.dtimer{display:inline-block;background:#fff;color:var(--red);font-size:11.5px;font-weight:900;border-radius:999px;padding:2px 9px;margin:0 4px 6px 0}
+.dtile .dtimer{position:absolute;bottom:8px;inset-inline-start:8px;margin:0}
+/* تقييم */
+.rate{margin-top:18px;background:#fff;border-radius:16px;padding:14px;text-align:center}
+.rate .rt{font-weight:900;font-size:16px}
+.stars{display:flex;justify-content:center;gap:6px;margin:8px 0}
+.stars button{font-size:34px;color:#ddd;line-height:1}.stars button.on{color:#f5b301}
+.btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
 </style>
 </head>
 <body>
@@ -568,6 +617,19 @@ const HE = {
   'حسب المنطقة':'לפי אזור',
   'طريقة الدفع':'אמצעי תשלום',
   'اختار وجبتك':'בחרו את הארוחה',
+  'بدك معها؟':'רוצים גם?','هدية الولاء':'מתנת מועדון','جائزة العجلة':'פרס הגלגל','مبروك! عندك هدية:':'מזל טוב! מגיעה לך מתנה:',
+  'استعمل هديتك بهالطلب':'לממש את המתנה בהזמנה הזו','اطلب مرة وحدة وبنبلّش نعدّلك 😉':'הזמינו פעם אחת ונתחיל לספור לכם 😉',
+  'هدية لأول طلب!':'מתנה להזמנה הראשונה!','لفّ العجلة واربح هدية على أول طلب إلك 🎁':'סובבו את הגלגל וזכו במתנה להזמנה הראשונה 🎁','لفّ العجلة':'סובבו את הגלגל',
+  'المرة الجاية إن شاء الله!':'בפעם הבאה!','ربحت:':'זכית ב:','الهدية بتنضاف لحالها على أول طلب — صالحة 7 أيام':'המתנה תתווסף אוטומטית להזמנה הראשונה — בתוקף 7 ימים',
+  'يلا نطلب 🍕':'יאללה מזמינים 🍕','جائزتك:':'הפרס שלך:','بتوصلك مع الطلب 🎁':'מגיע עם ההזמנה 🎁','سجّل واربح هدية':'הירשמו וזכו במתנה',
+  'سجّل باسمك ورقمك، ولفّ عجلة الحظ واربح هدية على أول طلب!':'הירשמו עם שם וטלפון, סובבו את גלגל המזל וזכו במתנה להזמנה הראשונה!',
+  'بنستعمل رقمك بس للطلبات ونقاط الولاء.':'נשתמש במספר רק להזמנות ולמועדון.','سجّل ولفّ العجلة':'הרשמה וסיבוב','حفظ':'שמירה','لو سمحت اكتب اسمك':'נא לכתוב שם',
+  'تم الحفظ':'נשמר','سجّل بالموقع':'הרשמה לאתר','عشان نقاط الولاء والطلب الأسرع':'למועדון לקוחות והזמנה מהירה','تعديل':'עריכה','تسجيل':'הרשמה',
+  'نزّل التطبيق على التلفون':'הורידו את האפליקציה לטלפון','كيف كان الأكل؟':'איך היה האוכל?','بدك تحكيلنا إشي؟ (اختياري)':'רוצים לספר לנו משהו? (אופציונלי)',
+  'إرسال التقييم':'שליחת דירוג','شكراً على التقييم 🙏':'תודה על הדירוג 🙏',
+  'نزّل التطبيق':'הורידו את האפליקציה','اطلب بكبسة وحدة من شاشة التلفون':'מזמינים בלחיצה אחת ממסך הטלפון','تنزيل':'התקנה','تم ✓ صار عندك التطبيق':'בוצע ✓ האפליקציה מותקנת',
+  'اكبس على زر المشاركة':'לחצו על כפתור השיתוף','تحت بالمتصفح (Safari)':'בתחתית הדפדפן (Safari)','انزل واختار':'גללו ובחרו','"إضافة إلى الشاشة الرئيسية"':'"הוספה למסך הבית"',
+  'اكبس':'לחצו','"إضافة"':'"הוספה"','— وبيطلع التطبيق على شاشتك 🎉':'— והאפליקציה תופיע במסך 🎉',
   'استلمنا طلبك':'קיבלנו את ההזמנה','عم نحضّره':'מכינים אותה','طالع مع السائق':'יצאה עם השליח','وصل — بالهنا والشفا':'הגיעה — בתיאבון!',
   'جاهز للاستلام':'מוכנה לאיסוף','استلمته — بالهنا والشفا':'נאספה — בתיאבון!','انلغى الطلب':'ההזמנה בוטלה','تابع':'מעקב','طلبك':'ההזמנה שלך',
   'إذا في سؤال اتصل فينا':'לשאלות התקשרו אלינו','طلب رقم':'הזמנה מס׳','بيوصلك تقريباً الساعة':'תגיע בערך בשעה','بيكون جاهز تقريباً الساعة':'תהיה מוכנה בערך בשעה',
@@ -613,6 +675,11 @@ const HE_RULES = [
   [/^(.+) — توصيل$/, m => trText(m[1], true) + ' — משלוח'],
   [/^اختار (\d+) كمان$/, m => 'בחרו עוד ' + m[1]],
   [/^(\d+)\. (.+)$/, m => m[1] + '. ' + trText(m[2], true)],
+  [/^ضلّك (\d+) طلبات وبتاخذ:$/, m => 'עוד ' + m[1] + ' הזמנות ומקבלים:'],
+  [/^كل (\d+) طلبات = (.+)$/, m => 'כל ' + m[1] + ' הזמנות = ' + trText(m[2], true)],
+  [/^ضايل (\d+) س (\d+) د$/, m => 'נותרו ' + m[1] + ' שע׳ ' + m[2] + ' דק׳'],
+  [/^ضايل (\d+) د$/, m => 'נותרו ' + m[1] + ' דק׳'],
+  [/^خصم ₪(.+)$/, m => 'הנחה ₪' + m[1]],
   [/^خصم (.+)$/, m => 'הנחה ' + m[1]]
 ];
 
@@ -885,7 +952,10 @@ function wideCard(it){
 
 /* ============ الرسم ============ */
 let _trkInit = false;
+let _xInit = false;
 function paint(){
+  try{ instBanner(); }catch(e){}
+  if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); }catch(e){} }, 0); }
   if(!_trkInit && typeof trkPill === 'function'){ _trkInit = true; setTimeout(() => { trkListen(); trkPill(); }, 0); }
   try{ const n = activeDeals().length, el = $('tDealsN'); if(el){ el.style.display = n ? '' : 'none'; el.textContent = n; } if(view === 'deals') renderDeals(); }catch(e){}
   $('brandName').textContent = LX(SET,'name');
@@ -972,7 +1042,13 @@ function renderMe(){
       '<button class="ag" onclick="reorder(' + i + ')">🔁 اطلب نفس الطلب</button></div>';
   }).join('') : '<div class="empty" style="padding:34px 20px"><div class="e">🧾</div><div>ما عندك طلبات بعد</div></div>';
 
+  let _nm = '', _ph = ''; try{ _nm = localStorage.getItem('pz_name') || ''; _ph = localStorage.getItem('pz_phone') || ''; }catch(e){}
   $('meBody').innerHTML =
+    '<div class="rowcard prof" onclick="openReg(false)"><div class="hd"><span class="ic">👤</span><span style="flex:1">' +
+      (_ph ? '<b>' + esc(_nm) + '</b><br><span class="ltr" style="color:var(--muted);font-size:12.5px">' + esc(_ph) + '</span>' : '<b>سجّل بالموقع</b><br><span style="color:var(--muted);font-size:12.5px">عشان نقاط الولاء والطلب الأسرع</span>') +
+      '</span><span class="chg">' + (_ph ? 'تعديل' : 'تسجيل') + '</span></div></div>' +
+    loyCard(false) + wheelRowHtml() +
+    (typeof canInstall === 'function' && canInstall() ? '<button class="alldeals" style="width:100%;margin:0 0 12px" onclick="doInstall()"><span>📲 نزّل التطبيق على التلفون</span><span class="ar">←</span></button>' : '') +
     '<div class="rowcard"><div class="hd"><span class="ic">🏪</span>' +
       '<span style="flex:1">' + esc(LX(SET,'name')) + '<br><span style="font-weight:600;color:var(--muted);font-size:12.5px">' + esc(LX(SET,'addr')) + '</span></span>' +
       '<span style="font-weight:800;font-size:13px;color:' + (s.open?'var(--green)':'var(--red)') + '">' + s.label + '</span></div></div>' +
@@ -1404,11 +1480,11 @@ function addDealSimple(d){
     unit: Number(d.price), qty: 1, note: '', labels: [d.desc || ''], lh: [d.desc_he || d.desc || '']});
   save(); paintCart(); toast('أُضيف العرض للسلة ✓');
 }
-const activeDeals = () => DEALS.filter(d => d.active !== false);
+const activeDeals = () => DEALS.filter(d => d.active !== false && dealWindow(d).on);
 function dealBig(d){
   return '<div class="deal" onclick="openDeal(\'' + d.id + '\')">' +
     (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
-    '<div class="txt">' + (d.featured ? '<div class="fbadge">⭐ مميّز</div>' : '') + '<div class="t">' + esc(LX(d,'title')) + '</div>' +
+    '<div class="txt">' + (d.featured ? '<div class="fbadge">⭐ مميّز</div>' : '') + dealTimer(d) + '<div class="t">' + esc(LX(d,'title')) + '</div>' +
     '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
     '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
     '<div class="go">' + (dealSlots(d).length ? 'اختار وجبتك' : 'اطلب الآن') + '</div></div></div>';
@@ -1416,7 +1492,7 @@ function dealBig(d){
 function dealTile(d){
   return '<button class="dtile" onclick="openDeal(\'' + d.id + '\')">' +
     '<span class="ph">' + (d.img ? '<img src="' + esc(d.img) + '" alt="" loading="lazy">' : '<span class="em">' + esc(d.emoji || '🍕') + '</span>') +
-      (d.featured ? '<span class="fb">⭐</span>' : '') + '</span>' +
+      (d.featured ? '<span class="fb">⭐</span>' : '') + dealTimer(d) + '</span>' +
     '<span class="bd"><span class="nm">' + esc(LX(d,'title')) + '</span>' +
     '<span class="ds">' + esc(LX(d,'desc')) + '</span>' +
     '<span class="ft"><b class="ltr">₪' + Number(d.price) + '</b><span class="go">' + (dealSlots(d).length ? 'اختار' : '+') + '</span></span></span></button>';
@@ -1493,9 +1569,217 @@ function trkDraw(){
       (idx < steps.length - 1 ? '<div class="trk-eta">' + (TRK.type === 'delivery' ? 'بيوصلك تقريباً الساعة' : 'بيكون جاهز تقريباً الساعة') + ' <b class="ltr">' + hm(eta) + '</b></div>' : '') +
       '<div class="trk-steps">' + steps.map((s, i) =>
         '<div class="ts ' + (i < idx ? 'done' : i === idx ? 'now' : '') + '"><span class="dot">' + (i < idx ? '✓' : s[1]) + '</span><span class="lb">' + esc(s[2]) + '</span></div>').join('') + '</div>' +
-      '<div class="muted" style="text-align:center;margin-top:10px">الصفحة بتتحدّث لحالها — مش لازم تعمل إشي</div>';
+      (TRK.status === 'done' ? rateHtml() : '<div class="muted" style="text-align:center;margin-top:10px">الصفحة بتتحدّث لحالها — مش لازم تعمل إشي</div>');
   }
   trNode(box);
+}
+
+
+/* ============ تطبيق على الشاشة (PWA) ============ */
+let _instEvt = null;
+const isApp = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); _instEvt = e; instBanner(); });
+window.addEventListener('appinstalled', () => { _instEvt = null; instBanner(); toast('تم ✓ صار عندك التطبيق'); });
+function canInstall(){ return !isApp() && (_instEvt || isIOS()); }
+function instBanner(){
+  let el = $('instBar');
+  let hidden = false; try{ hidden = Number(localStorage.getItem('pz_inst_x') || 0) > Date.now(); }catch(e){}
+  if(!canInstall() || hidden){ if(el) el.remove(); return; }
+  if(!el){ el = document.createElement('div'); el.id = 'instBar'; const h = $('home'); if(h) h.parentNode.insertBefore(el, h); else return; }
+  el.innerHTML = '<span class="ic">📲</span><span class="tx"><b>نزّل التطبيق</b><small>اطلب بكبسة وحدة من شاشة التلفون</small></span>' +
+    '<button class="ok" onclick="doInstall()">تنزيل</button><button class="x" onclick="instHide()">✕</button>';
+  trNode(el);
+}
+function instHide(){ try{ localStorage.setItem('pz_inst_x', Date.now() + 7 * 864e5); }catch(e){} instBanner(); }
+async function doInstall(){
+  if(_instEvt){ _instEvt.prompt(); try{ await _instEvt.userChoice; }catch(e){} _instEvt = null; instBanner(); return; }
+  if(isIOS()){
+    $('sc').innerHTML = '<div class="ctop"><h3>📲 نزّل التطبيق</h3><button onclick="closeSheet()">✕</button></div><div class="cwrap"><div class="iosg">' +
+      '<div class="st"><b>1</b><span>اكبس على زر المشاركة <span class="ico">⬆️</span> تحت بالمتصفح (Safari)</span></div>' +
+      '<div class="st"><b>2</b><span>انزل واختار <b>"إضافة إلى الشاشة الرئيسية"</b> ➕</span></div>' +
+      '<div class="st"><b>3</b><span>اكبس <b>"إضافة"</b> — وبيطلع التطبيق على شاشتك 🎉</span></div></div></div>';
+    $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">تمام</button>';
+    cur = null; show();
+  }
+}
+
+/* ============ 🍟 بدك معها؟ (اقتراحات بالسلة) ============ */
+function upsellHtml(){
+  const inCart = new Set(cart.map(l => l.id));
+  const ups = avail().filter(i => i.upsell && !inCart.has(i.id)).slice(0, 6);
+  if(!ups.length) return '';
+  return '<div class="sum ups"><h4>🍟 بدك معها؟</h4><div class="upg">' + ups.map(it =>
+    '<button class="up" onclick="upAdd(\'' + it.id + '\')"><span class="ph"><img src="' + pic(it) + '" alt="" loading="lazy"></span>' +
+    '<span class="nm">' + esc(LX(it,'name')) + '</span><span class="pr"><b class="ltr">₪' + base(it) + '</b><i>+</i></span></button>').join('') + '</div></div>';
+}
+function upAdd(id){
+  const it = byId(id); if(!it) return;
+  if((it.opts || []).some(g => { const G = grp(g); return G && G.required; })){ openP(id); return; }
+  cart.push({key: Date.now() + '_' + Math.random().toString(36).slice(2, 7), id: it.id, n: it.name, nh: it.name_he || '',
+    img: it.img || '', catId: it.catId, unit: base(it), qty: 1, note: '', labels: [], lh: []});
+  save(); paintCart(); openCart(); toast('أُضيف للسلة ✓');
+}
+
+/* ============ 🎁 نقاط الولاء ============ */
+let LOY = null, useReward = false;
+const loyCfg = () => (SET.loyalty && SET.loyalty.on && Number(SET.loyalty.every) > 1) ? SET.loyalty : null;
+const myPhone = () => { let p = ''; try{ p = localStorage.getItem('pz_phone') || ''; }catch(e){} return normPhone(p); };
+function loyLoad(force){
+  const c = loyCfg(), ph = myPhone();
+  if(!c || !ph || !live || !db){ return; }
+  if(LOY && LOY.ph === ph && !force) return;
+  db.collection('loyalty').doc(ph).get().then(d => {
+    LOY = {ph, count: d.exists ? Number(d.data().count || 0) : 0};
+    if(view === 'me') renderMe();
+    if($('sheet').classList.contains('on') && $('loyBox')) openCart();
+  }).catch(() => { LOY = {ph, count: 0}; });
+}
+const loyHas = () => { const c = loyCfg(); return !!(c && LOY && LOY.count >= Number(c.every)); };
+function loyCard(compact){
+  const c = loyCfg(); if(!c) return '';
+  const every = Number(c.every), n = LOY ? Math.min(LOY.count, every) : 0;
+  const prize = LX(c, 'text') || ('خصم ₪' + Number(c.value || 0));
+  if(!LOY) return compact ? '' : '<div class="loy"><div class="lt">🎁 كل ' + every + ' طلبات = ' + esc(prize) + '</div><div class="muted">اطلب مرة وحدة وبنبلّش نعدّلك 😉</div></div>';
+  const dots = Array.from({length: every}, (_, k) => '<span class="' + (k < n ? 'on' : '') + '">' + (k < n ? '🍕' : '') + '</span>').join('');
+  return '<div class="loy ' + (loyHas() ? 'win' : '') + '" id="loyBox"><div class="lt">' +
+    (loyHas() ? '🎉 مبروك! عندك هدية: <b>' + esc(prize) + '</b>' : '🎁 ضلّك <b>' + (every - n) + '</b> طلبات وبتاخذ: <b>' + esc(prize) + '</b>') + '</div>' +
+    '<div class="stamps">' + dots + '</div>' +
+    (compact && loyHas() ? '<label class="usew"><input type="checkbox" ' + (useReward ? 'checked' : '') + ' onchange="useReward=this.checked;openCart()"> استعمل هديتك بهالطلب' +
+      (Number(c.value) ? ' <b class="ltr">(-₪' + Number(c.value) + ')</b>' : '') + '</label>' : '') + '</div>';
+}
+function rewardDisc(){ const c = loyCfg(); return (useReward && loyHas()) ? Math.min(Number(c.value || 0), sub()) : 0; }
+
+/* ============ 🎡 عجلة الحظ للزبون الجديد ============ */
+let WHEEL = null;
+try{ WHEEL = JSON.parse(localStorage.getItem('pz_wheel') || 'null'); }catch(e){}
+if(WHEEL && (WHEEL.used || Date.now() - new Date(WHEEL.at).getTime() > 7 * 864e5)) WHEEL = WHEEL.used ? WHEEL : null;
+const wheelCfg = () => (SET.wheel && SET.wheel.on && (SET.wheel.prizes || []).filter(p => Number(p.chance) > 0).length >= 2) ? SET.wheel : null;
+const wheelLive = () => !!(WHEEL && !WHEEL.used && Date.now() - new Date(WHEEL.at).getTime() < 7 * 864e5);
+function wheelDisc(){
+  if(!wheelLive()) return 0;
+  const s = sub(), v = Number(WHEEL.value || 0);
+  if(WHEEL.type === 'percent') return Math.round(s * v) / 100;
+  if(WHEEL.type === 'fixed') return Math.min(v, s);
+  return 0;
+}
+function wheelMaybe(){
+  const c = wheelCfg(); if(!c || WHEEL) return;
+  let done = false; try{ done = !!localStorage.getItem('pz_wheel_done'); }catch(e){}
+  if(done || (hist && hist.length)) return;
+  setTimeout(() => { if(!$('sheet').classList.contains('on')) (myPhone() ? openWheel() : openReg(true)); }, 2500);
+}
+/* تسجيل سريع: اسم + تلفون — وبعدها العجلة */
+function openReg(withWheel){
+  let nm = '', ph = '';
+  try{ nm = localStorage.getItem('pz_name') || ''; ph = localStorage.getItem('pz_phone') || ''; }catch(e){}
+  $('sc').innerHTML = '<div class="ctop"><h3>' + (withWheel ? '🎁 سجّل واربح هدية' : '👤 حسابي') + '</h3><button onclick="' + (withWheel ? 'wheelSkip()' : 'closeSheet()') + '">✕</button></div><div class="cwrap">' +
+    (withWheel ? '<div class="reg-hero">🎡</div><div class="wh-t">سجّل باسمك ورقمك، ولفّ عجلة الحظ واربح هدية على أول طلب!</div>' : '') +
+    '<div class="fld"><label>الاسم</label><input class="inp" id="rgN" placeholder="اسمك" value="' + esc(nm) + '"></div>' +
+    '<div class="fld"><label>رقم الهاتف</label><input class="inp" id="rgP" type="tel" inputmode="tel" placeholder="05x-xxxxxxx" value="' + esc(ph) + '"></div>' +
+    '<div class="muted" style="font-size:12px">بنستعمل رقمك بس للطلبات ونقاط الولاء.</div></div>';
+  $('ft').innerHTML = '<button class="cta" onclick="doReg(' + (withWheel ? 'true' : 'false') + ')">' + (withWheel ? '✓ سجّل ولفّ العجلة' : '✓ حفظ') + '</button>';
+  cur = null; show();
+}
+function doReg(withWheel){
+  const nm = ($('rgN').value || '').trim(), ph = normPhone(($('rgP').value || '').trim());
+  if(!nm){ alert('لو سمحت اكتب اسمك'); return; }
+  if(!ph){ alert('رقم التلفون مش صحيح — اكتبه هيك: 05xxxxxxxx'); return; }
+  try{ localStorage.setItem('pz_name', nm); localStorage.setItem('pz_phone', ph); }catch(e){}
+  LOY = null; loyLoad(true);
+  if(withWheel) openWheel(); else { closeSheet(); renderMe(); toast('تم الحفظ ✓'); }
+}
+function openWheel(){
+  const c = wheelCfg(); if(!c) return;
+  const ps = c.prizes.filter(p => Number(p.chance) > 0);
+  const cols = ['#e3242b','#f5b301','#1a1a1a','#ff7a3d','#1e8e4e','#1f7ae0','#8e44ad','#c2185b'];
+  const n = ps.length, seg = 360 / n;
+  const slices = ps.map((p, i) => {
+    const a0 = (i * seg - 90) * Math.PI / 180, a1 = ((i + 1) * seg - 90) * Math.PI / 180;
+    const x0 = 100 + 96 * Math.cos(a0), y0 = 100 + 96 * Math.sin(a0), x1 = 100 + 96 * Math.cos(a1), y1 = 100 + 96 * Math.sin(a1);
+    const mid = (i + .5) * seg - 90, tx = 100 + 60 * Math.cos(mid * Math.PI / 180), ty = 100 + 60 * Math.sin(mid * Math.PI / 180);
+    const lab = String(LX(p, 'label') || '').slice(0, 14);
+    return '<path d="M100 100 L' + x0.toFixed(2) + ' ' + y0.toFixed(2) + ' A96 96 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' Z" fill="' + cols[i % cols.length] + '" stroke="#fff" stroke-width="2"/>' +
+      '<text x="' + tx.toFixed(1) + '" y="' + ty.toFixed(1) + '" transform="rotate(' + (((mid % 360) + 360) % 360 > 90 && ((mid % 360) + 360) % 360 <= 270 ? mid + 180 : mid) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ')" fill="#fff" font-size="10" font-weight="800" text-anchor="middle" dominant-baseline="middle">' + esc(lab) + '</text>';
+  }).join('');
+  $('sc').innerHTML = '<div class="ctop"><h3>🎡 هدية لأول طلب!</h3><button onclick="wheelSkip()">✕</button></div><div class="cwrap" style="text-align:center">' +
+    '<div class="wh-t">لفّ العجلة واربح هدية على أول طلب إلك 🎁</div>' +
+    '<div class="wh"><div class="wh-pin">▼</div><svg id="whSvg" viewBox="0 0 200 200">' + slices + '<circle cx="100" cy="100" r="16" fill="#fff"/><text x="100" y="101" font-size="15" text-anchor="middle" dominant-baseline="middle">🍕</text></svg></div>' +
+    '<div id="whRes"></div></div>';
+  $('ft').innerHTML = '<button class="cta" id="whBtn" onclick="spinWheel()">🎡 لفّ العجلة</button>';
+  cur = null; show();
+}
+function wheelSkip(){ try{ localStorage.setItem('pz_wheel_done', '1'); }catch(e){} closeSheet(); }
+function spinWheel(){
+  const c = wheelCfg(); if(!c) return;
+  const ps = c.prizes.filter(p => Number(p.chance) > 0);
+  const tot = ps.reduce((s, p) => s + Number(p.chance), 0);
+  let r = Math.random() * tot, k = 0;
+  for(; k < ps.length - 1; k++){ r -= Number(ps[k].chance); if(r < 0) break; }
+  const seg = 360 / ps.length, target = 360 * 6 + (360 - (k + .5) * seg);
+  $('whBtn').disabled = true;
+  const svg = $('whSvg');
+  svg.style.transition = 'transform 4.2s cubic-bezier(.17,.67,.16,1)';
+  requestAnimationFrame(() => { svg.style.transform = 'rotate(' + target + 'deg)'; });
+  setTimeout(() => {
+    const p = ps[k];
+    try{ localStorage.setItem('pz_wheel_done', '1'); }catch(e){}
+    if(p.type === 'none'){
+      $('whRes').innerHTML = '<div class="wh-r">😅 ' + esc(LX(p,'label')) + '</div><div class="muted">المرة الجاية إن شاء الله!</div>';
+      $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">تمام</button>';
+    }else{
+      WHEEL = {label: p.label || '', label_he: p.label_he || '', type: p.type, value: Number(p.value || 0), at: new Date().toISOString(), used: false};
+      try{ localStorage.setItem('pz_wheel', JSON.stringify(WHEEL)); }catch(e){}
+      try{ navigator.vibrate && navigator.vibrate([80, 40, 160]); }catch(e){}
+      $('whRes').innerHTML = '<div class="wh-r">🎉 ربحت: <b>' + esc(LX(p,'label')) + '</b></div><div class="muted">الهدية بتنضاف لحالها على أول طلب — صالحة 7 أيام</div>';
+      $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">يلا نطلب 🍕</button>';
+    }
+    trNode($('sc')); trNode($('ft'));
+  }, 4400);
+}
+function wheelRowHtml(){
+  if(!wheelLive()) return '';
+  return '<div class="rowcard whc"><div class="hd"><span class="ic">🎡</span><span style="flex:1">جائزتك: <b>' + esc(LX(WHEEL,'label')) + '</b>' +
+    (WHEEL.type === 'gift' ? '<br><small>بتوصلك مع الطلب 🎁</small>' : '') + '</span></div></div>';
+}
+
+/* ============ ⏰ عروض بأوقات ============ */
+const hm2m = t => { const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+function dealWindow(d){
+  const days = Array.isArray(d.days) && d.days.length ? d.days.map(Number) : null;
+  const f = hm2m(d.from), t = hm2m(d.to);
+  if(!days && f == null && t == null) return {on: true, left: 0};
+  const n = new Date(), day = n.getDay(), m = n.getHours() * 60 + n.getMinutes();
+  if(days && !days.includes(day)) return {on: false};
+  if(f == null || t == null) return {on: true, left: 0};
+  const on = t > f ? (m >= f && m < t) : (m >= f || m < t);
+  if(!on) return {on: false};
+  const left = t > f ? t - m : (m >= f ? 1440 - m + t : t - m);
+  return {on: true, left};
+}
+function dealTimer(d){
+  const w = dealWindow(d); if(!w.on || !w.left) return '';
+  const h = Math.floor(w.left / 60), mm = w.left % 60;
+  return '<span class="dtimer">⏰ ضايل ' + (h ? h + ' س ' : '') + mm + ' د</span>';
+}
+setInterval(() => { try{ if(DEALS.some(d => d.from || d.to)){ if(view === 'home' && !searchQ) renderHome(); if(view === 'deals') renderDeals(); } }catch(e){} }, 60000);
+
+/* ============ ⭐ تقييم بعد الطلب ============ */
+let rateStars = 0;
+function rateHtml(){
+  if(!TRK || TRK.status !== 'done' || TRK.rated) return '';
+  return '<div class="rate" id="rateBox"><div class="rt">كيف كان الأكل؟</div><div class="stars">' +
+    [1,2,3,4,5].map(k => '<button class="' + (k <= rateStars ? 'on' : '') + '" onclick="rateStars=' + k + ';trkDraw()">★</button>').join('') + '</div>' +
+    (rateStars ? '<textarea class="ta" id="rateTxt" placeholder="بدك تحكيلنا إشي؟ (اختياري)"></textarea><button class="btn-rate" onclick="sendRate()">إرسال التقييم</button>' : '') + '</div>';
+}
+function sendRate(){
+  if(!TRK || !rateStars) return;
+  const txt = ($('rateTxt') ? $('rateTxt').value : '').trim().slice(0, 500);
+  let nm = ''; try{ nm = (localStorage.getItem('pz_name') || '').trim().split(/\s+/)[0].slice(0, 30); }catch(e){}
+  const done = () => { TRK.rated = true; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){} trkDraw(); toast('شكراً على التقييم 🙏'); };
+  if(live && db) db.collection('reviews').add({stars: rateStars, text: txt, name: nm, order: TRK.id, at: new Date().toISOString()}).then(done).catch(done);
+  else done();
 }
 
 /* ============ طرق الدفع ============ */
@@ -1667,11 +1951,16 @@ function closeMapPick(){
 }
 
 function sub(){ return cart.reduce((s,l) => s + l.unit*l.qty, 0); }
-function discount(){
+function couponDisc(){
   if(!coupon) return 0;
   const s = sub();
   const v = coupon.type === 'percent' ? s * Number(coupon.value)/100 : Number(coupon.value);
   return Math.min(Math.round(v*100)/100, s);
+}
+/* كل الخصومات: كوبون + هدية الولاء + جائزة العجلة */
+function discount(){
+  const s = sub();
+  return Math.min(s, Math.round((couponDisc() + (typeof rewardDisc === 'function' ? rewardDisc() : 0) + (typeof wheelDisc === 'function' ? wheelDisc() : 0)) * 100) / 100);
 }
 function fee(){
   if(otype === 'pickup') return 0;
@@ -1737,6 +2026,7 @@ function openCart(){
       '<div class="rowcard"><div class="hd"><span class="ic">✏️</span><span>إضافة ملاحظة للطلب</span></div>' +
         '<textarea class="ta" style="margin-top:10px;min-height:54px" placeholder="مثال: الجرس خربان، دق تلفون" ' +
         'oninput="orderNote=this.value">' + esc(orderNote) + '</textarea></div>' +
+      upsellHtml() + loyCard(true) + wheelRowHtml() +
       '<div class="rowcard"><div class="hd"><span class="ic">%</span><span>لديك كوبون خصم؟</span></div>' +
         (coupon
           ? '<div class="cpn-ok"><span>✓ ' + esc(coupon.code) + ' — خصم ' +
@@ -1755,7 +2045,9 @@ function openCart(){
         '<input class="inp" id="ad" placeholder="الحي، الشارع، رقم البيت" value="' + esc(localStorage.getItem('pz_addr')||'') + '"></div>' : '') +
       '<div class="sum"><h4>ملخص الطلب</h4>' +
         '<div class="r"><span>المجموع الفرعي</span><span>' + nis(sub()) + '</span></div>' +
-        (discount() ? '<div class="r disc"><span>خصم</span><span class="ltr">-₪' + discount() + '</span></div>' : '') +
+        (couponDisc() ? '<div class="r disc"><span>خصم</span><span class="ltr">-₪' + couponDisc() + '</span></div>' : '') +
+        (rewardDisc() ? '<div class="r disc"><span>🎁 هدية الولاء</span><span class="ltr">-₪' + rewardDisc() + '</span></div>' : '') +
+        (wheelDisc() ? '<div class="r disc"><span>🎡 جائزة العجلة</span><span class="ltr">-₪' + wheelDisc() + '</span></div>' : '') +
         '<div class="r"><span>رسوم التوصيل</span><span>' + (otype==='pickup' ? 'مجاني' : lb ? '—' : nis(fee())) + '</span></div>' +
         '<div class="tot"><span>المجموع الكلي</span><b>' + nis(total()) + '</b></div></div>' +
       '<div class="inf">' +
@@ -1840,6 +2132,8 @@ function sendOrder(){
       : [Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
           l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})]),
     customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
+      rewardDisc() ? {reward: rewardDisc()} : {},
+      wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0)} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
     coupon: coupon ? coupon.code : '', fee: snapFee, total: snapTot,
@@ -1854,7 +2148,9 @@ function sendOrder(){
     if(l.note) msg += '   📝 ' + l.note + '\n';
   });
   msg += '\nالمجموع: ₪' + snapSub.toFixed(2);
-  if(snapDisc) msg += '\nخصم (' + coupon.code + '): -₪' + snapDisc.toFixed(2);
+  if(snapDisc) msg += '\nخصم' + (coupon ? ' (' + coupon.code + ')' : '') + ': -₪' + snapDisc.toFixed(2);
+  if(wheelLive()) msg += '\n🎡 جائزة: ' + (WHEEL.label || '');
+  if(rewardDisc()) msg += '\n🎁 هدية الولاء';
   msg += '\nالتوصيل: ' + (otype==='pickup' ? 'استلام من المحل' : '₪' + snapFee.toFixed(2));
   msg += '\n*الإجمالي: ₪' + snapTot.toFixed(2) + '*';
   msg += '\n\n👤 ' + name + '\n📞 ' + phone;
@@ -1865,6 +2161,8 @@ function sendOrder(){
   const finish = saved => {
     try{ hist.unshift(order); hist = hist.slice(0,20); localStorage.setItem('pz_orders', JSON.stringify(hist)); }catch(e){}
     window.open('https://wa.me/' + (SET.phone || window.WHATSAPP) + '?text=' + encodeURIComponent(msg), '_blank');
+    if(wheelLive()){ WHEEL.used = true; try{ localStorage.setItem('pz_wheel', JSON.stringify(WHEEL)); }catch(e){} }
+    if(useReward){ useReward = false; LOY = null; }
     cart = []; coupon = null; orderNote = '';
     save(); paintCart(); closeSheet(); renderMe();
     toast(saved ? 'تم إرسال طلبك ✓' : 'تم فتح واتساب — ابعت الرسالة');

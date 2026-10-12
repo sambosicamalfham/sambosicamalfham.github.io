@@ -237,6 +237,16 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .dcat .chk{margin:4px 18px 0 0}
 .subl{padding-inline-start:18px;color:var(--ink-2)}
 #dSlots:empty::after{content:'';display:block}
+.dayz{display:flex;flex-wrap:wrap;gap:6px}
+.dayz label{display:flex;align-items:center;gap:4px;background:#f4f2f0;border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700}
+.whr{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px;background:#fcfbfa}
+.whr input,.whr select{border:1.5px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13.5px;outline:none;font-family:inherit}
+.whr .wl,.whr .wlh{flex:1;min-width:110px}.whr .wlh{background:#f5f8ff}
+.whr .wv{width:70px}.whr .wc{display:flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700}.whr .wch{width:62px}
+.whr .x{width:30px;height:30px;border-radius:8px;background:#ffe9eb;color:var(--red)}
+.ravg{display:flex;align-items:center;gap:10px;margin-bottom:8px}.ravg b{font-size:30px}
+.rs{color:#f5b301;letter-spacing:1px}.rs i{color:#ddd;font-style:normal}
+.rv{border-top:1px solid #f0f0f0;padding:8px 0;font-size:13.5px}.rv .top{display:flex;justify-content:space-between;gap:8px;margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -416,6 +426,18 @@ const HE = {
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
   'معدل الطلب:':'ממוצע הזמנה:',
+  'اقترحه بالسلة ("بدك معها؟")':'להציע בסל ("רוצים גם?")','وقت العرض (اختياري)':'זמני המבצע (אופציונלי)',
+  'إذا ما حددت إشي، العرض بيطلع دايماً. مثلاً "عرض الظهر" من 12:00 لـ 15:00 — والزبون بيشوف عدّاد "ضايل ساعة".':'בלי הגדרה — המבצע מוצג תמיד. למשל "מבצע צהריים" 12:00–15:00 — והלקוח רואה ספירה לאחור.',
+  'من الساعة':'משעה','لحد الساعة':'עד שעה','حط ساعة البداية والنهاية مع بعض':'הגדירו שעת התחלה וסיום יחד','كل يوم':'כל יום',
+  'هدية ولاء':'מתנת מועדון','جائزة:':'פרס:','هدية مع الطلب:':'מתנה עם ההזמנה:',
+  'نقاط الولاء':'מועדון לקוחות','تفعيل نقاط الولاء':'הפעלת מועדון לקוחות','كل كم طلب؟':'כל כמה הזמנות?','قيمة الهدية ₪ (خصم)':'שווי המתנה ₪ (הנחה)',
+  'شو الهدية؟ (بتطلع للزبون)':'מה המתנה? (מוצג ללקוח)','بيتسا شخصية ببلاش':'פיצה אישית בחינם','الهدية بالعبري':'המתנה בעברית',
+  'النقطة بتنحسب لما تكبس "🛵 تم التسليم" على الطلب. الزبون بيشوف كرت الختم بحسابه وبالسلة.':'הנקודה נספרת כשלוחצים "🛵 נמסרה" בהזמנה. הלקוח רואה את כרטיס החותמות בחשבון ובסל.',
+  'عجلة الحظ للزبون الجديد':'גלגל המזל ללקוח חדש','تفعيل العجلة (بتطلع أول مرة الزبون بيدخل وبيسجّل)':'הפעלת הגלגל (מוצג בכניסה ובהרשמה הראשונה)',
+  'إنت بتحدد الجوائز وفرصة كل وحدة. الفرصة نسبية: جائزة فرصتها 50 بتطلع أكثر بـ5 مرات من جائزة فرصتها 10.':'אתם קובעים את הפרסים והסיכוי של כל אחד. הסיכוי יחסי: פרס עם 50 יוצא פי 5 מפרס עם 10.',
+  'جائزة':'פרס','اسم الجائزة':'שם הפרס','خصم %':'הנחה %','خصم ₪':'הנחה ₪','هدية (صنف ببلاش)':'מתנה (פריט חינם)','بدون جائزة':'בלי פרס','فرصة':'סיכוי','القيمة':'ערך',
+  'العجلة بدها جائزتين على الأقل':'הגלגל צריך לפחות שני פרסים','خصم العجلة لازم يكون 50% أو أقل':'הנחת הגלגל חייבת להיות 50% או פחות',
+  'التقييمات':'דירוגים','خصم 10%':'10% הנחה','مشروب ببلاش':'שתייה בחינם','خصم ₪15':'הנחה ₪15','حظ أوفر':'בפעם הבאה',
   'العرض ظاهر للزبائن':'המבצע מוצג ללקוחות','مميّز — بيطلع كبير بالصفحة الرئيسية (أحسن 2-3 عروض)':'מומלץ — מוצג גדול בדף הראשי (2-3 המבצעים הטובים)','مميّز':'מומלץ','بس جوا العروض (مخفي من المنيو)':'רק בתוך מבצעים (מוסתר מהתפריט)',
   'مثلاً مشروب 330 مل اللي بيجي مع العرض بس، وما بينباع لحاله.':'למשל שתייה 330 מ״ל שמגיעה רק עם מבצע ולא נמכרת לבד.','بس للعروض':'רק למבצעים','خطوات العرض (الزبون بيختار)':'שלבי המבצע (הלקוח בוחר)',
   'كل خطوة: الزبون بيختار':'בכל שלב הלקוח בוחר','عدد':'כמות','من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.':'מתוך הפריטים שתסמנו. למשל: "בחרו 3 פיצות" מתוך 5, ואחר כך "בחרו שתייה". בלי שלבים — המבצע נוסף לסל כמו שהוא.',
@@ -439,6 +461,8 @@ const HE = {
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^هدية ولاء -₪(.+)$/, m => 'מתנת מועדון -₪' + m[1]],
+  [/^جائزة: (.+)$/, m => 'פרס: ' + trText(m[1])],
   [/^(\d+) صنف معلّم$/, m => m[1] + ' פריטים מסומנים'],
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين)$/, m => HE[m[1]]],
@@ -861,6 +885,8 @@ function renderOrders(){
         ${c.loc?`<a href="${mapsLink(c.loc)}" target="_blank">🗺️ الخريطة</a><a href="${wazeLink(c.loc)}" target="_blank">🚗 Waze</a>`:''}
         <span class="muted">توصيل: <span class="ltr">${Number(o.fee||0)} ₪</span></span>
         <span class="pill ${o.paid?'g':'a'}">${PAY_T[payOf(o)] || ''} · ${o.paid?'✅ مدفوع':'⏳ مش مدفوع'}</span>
+        ${c.reward ? `<span class="pill r">🎁 هدية ولاء -₪${Number(c.reward)}</span>` : ''}
+        ${c.wheel ? `<span class="pill r">🎡 جائزة: ${esc(c.wheel)}</span>` : ''}
       </div>
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
@@ -873,11 +899,22 @@ function renderOrders(){
   }).join('');
   tickAges();
 }
+/* نقاط الولاء: كل طلب وصل = نقطة. إذا استعمل الهدية بننقص عدد الطلبات المطلوبة */
+async function loyCount(o){
+  const L = SET.loyalty; if(!L || !L.on) return;
+  const k = phKey((o.customer || {}).phone); if(!/^0\d{8,9}$/.test(k)) return;
+  const every = Number(L.every) || 10, used = !!(o.customer || {}).reward;
+  try{
+    await db.collection('loyalty').doc(k).set({count: firebase.firestore.FieldValue.increment(used ? 1 - every : 1)}, {merge:true});
+    await db.collection('orders').doc(o.id).update({lp: true});
+  }catch(e){ console.error('loyalty', e); }
+}
 function setStatus(id, s){
   db.collection('orders').doc(id).update({status:s}).catch(e=>alert(e.message));
   // تتبّع الطلب عند الزبون — بيشتغل بس إذا قواعد Firestore فيها track
   const o = ORDERS.find(x => x.id === id);
   db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
+  if(s === 'done' && o && !o.lp) loyCount(o);
   if(s === 'ready') notifyReady(id);
 }
 /* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
@@ -983,6 +1020,7 @@ function ticketHtml(o){
     parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
       <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${lines}
       <div class="payl">${PAY_T[payOf(o)] || ''} · ${o.paid ? '✅ مدفوع' : 'لسا مش مدفوع'}</div>
+      ${c.wheel && c.wheelType === 'gift' ? `<div class="nt">🎁 هدية مع الطلب: ${esc(c.wheel)}</div>` : ''}
       ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}</div>`);
   }
 
@@ -1278,6 +1316,7 @@ function editItem(id){
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
     <label class="chk"><input type="checkbox" id="iAvail" ${it.available!==false?'checked':''}><span>✅ متوفر للطلب</span></label>
     <label class="chk"><input type="checkbox" id="iDealOnly" ${it.dealOnly?'checked':''}><span>🎯 بس جوا العروض (مخفي من المنيو)</span></label>
+    <label class="chk"><input type="checkbox" id="iUpsell" ${it.upsell?'checked':''}><span>🍟 اقترحه بالسلة ("بدك معها؟")</span></label>
     <div class="muted" style="margin:-4px 0 6px">مثلاً مشروب 330 مل اللي بيجي مع العرض بس، وما بينباع لحاله.</div>
   `, async () => {
     const name = val('iName'), price = num('iPrice');
@@ -1288,7 +1327,7 @@ function editItem(id){
       catId: val('iCat'), img: window._pickImg || '',
       tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
-      best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked
+      best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked, upsell: $('iUpsell').checked
     };
     if(id) await db.collection('items').doc(id).update(data);
     else await db.collection('items').add(Object.assign(data, {order:(ITEMS.length+1)*10}));
@@ -1625,14 +1664,28 @@ function custCount(o){
   const k = phKey((o.customer||{}).phone); if(!k) return 0;
   return (CUST_ORDERS || ORDERS).filter(x => phKey((x.customer||{}).phone) === k && x.status !== 'cancel').length;
 }
+let REVIEWS = null;
+async function loadReviews(){
+  if(REVIEWS) return;
+  try{ const s = await db.collection('reviews').orderBy('at','desc').limit(100).get(); REVIEWS = s.docs.map(d => ({id:d.id, ...d.data()})); }
+  catch(e){ REVIEWS = []; }
+}
+function reviewsHtml(){
+  if(!REVIEWS || !REVIEWS.length) return '';
+  const avg = REVIEWS.reduce((s, r) => s + Number(r.stars || 0), 0) / REVIEWS.length;
+  const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
+  return `<h2 class="sec">⭐ التقييمات <span class="muted">(${REVIEWS.length})</span></h2>
+    <div class="card"><div class="ravg"><b>${avg.toFixed(1)}</b><span class="rs">${'★'.repeat(Math.round(avg))}<i>${'★'.repeat(5 - Math.round(avg))}</i></span></div>
+    ${REVIEWS.slice(0, 30).map(r => `<div class="rv"><div class="top"><span class="rs">${'★'.repeat(Number(r.stars)||0)}<i>${'★'.repeat(5-(Number(r.stars)||0))}</i></span><span class="muted">${esc(r.name||'')} · ${esc(d(r.at))}</span></div>${r.text?`<div>${esc(r.text)}</div>`:''}</div>`).join('')}</div>`;
+}
 async function renderCust(){
-  await loadCustOrders();
+  await loadCustOrders(); await loadReviews();
   if(view !== 'cust') return;
   const all = custList();
   const q = custQ.trim().toLowerCase();
   const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
-  $('vCust').innerHTML = `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
+  $('vCust').innerHTML = reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
       <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
@@ -2105,6 +2158,7 @@ function renderDeals(){
       <div class="card"><div class="it">
         <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
         <div class="mid"><div class="nm">${esc(LX(d,'title'))} ${d.featured?'<span class="pill a">⭐ مميّز</span>':''} ${d.active===false?'<span class="pill">مخفي</span>':''}</div><div class="muted">${esc(LX(d,'desc'))}</div>
+          ${(d.from && d.to) || (d.days||[]).length ? `<div class="muted" style="margin-top:3px">⏰ ${(d.days||[]).length ? d.days.map(k=>['أحد','إثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'][k]).join('، ') : 'كل يوم'}${d.from&&d.to?' · <span class="ltr">'+esc(d.from)+'–'+esc(d.to)+'</span>':''}</div>` : ''}
           ${(d.slots||[]).length ? `<div class="tags" style="margin-top:4px">${d.slots.map((s,i)=>`<span class="pill b">${i+1}. ${esc(LX(s,'title')||'اختار')} ×${Number(s.count)||1}</span>`).join(' ')} <span class="pill">${d.extrasFree?'إضافات ببلاش':'إضافات بتنحسب'}</span></div>` : ''}</div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
         <button class="menu-btn" onclick="moveDeal('${d.id}',-1)" title="لفوق">▲</button>
@@ -2163,6 +2217,15 @@ function editDeal(id){
     <label class="chk"><input type="checkbox" id="dActive" ${d.active!==false?'checked':''}><span>✅ العرض ظاهر للزبائن</span></label>
     <label class="chk"><input type="checkbox" id="dFeat" ${d.featured?'checked':''}><span>⭐ مميّز — بيطلع كبير بالصفحة الرئيسية (أحسن 2-3 عروض)</span></label>
     <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
+      <label style="font-weight:800;font-size:15px">⏰ وقت العرض (اختياري)</label>
+      <div class="muted" style="margin:3px 0 8px">إذا ما حددت إشي، العرض بيطلع دايماً. مثلاً "عرض الظهر" من 12:00 لـ 15:00 — والزبون بيشوف عدّاد "ضايل ساعة".</div>
+      <div class="dayz">${['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'].map((n,k)=>`<label><input type="checkbox" class="dday" value="${k}" ${(d.days||[]).map(Number).includes(k)?'checked':''}><span>${n}</span></label>`).join('')}</div>
+      <div class="f2" style="margin-top:8px">
+        <div class="f"><label>من الساعة</label><input id="dFrom" type="time" value="${esc(d.from||'')}"></div>
+        <div class="f"><label>لحد الساعة</label><input id="dTo" type="time" value="${esc(d.to||'')}"></div>
+      </div>
+    </div>
+    <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
       <label style="font-weight:800;font-size:15px">🧩 خطوات العرض (الزبون بيختار)</label>
       <div class="muted" style="margin:3px 0 10px">كل خطوة: الزبون بيختار <b>عدد</b> من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.</div>
       <div id="dSlots">${(d.slots||[]).map((s,i) => dealSlotRow(s, i)).join('')}</div>
@@ -2185,7 +2248,9 @@ function editDeal(id){
     if(bad && !confirm('في خطوة ما علّمت فيها ولا صنف — رح تنحذف. تكمّل؟')) return false;
     const exEl = document.querySelector('input[name="dEx"]:checked');
     const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || '',
-      slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked, featured: $('dFeat').checked};
+      slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked, featured: $('dFeat').checked,
+      days: [...document.querySelectorAll('.dday:checked')].map(c => Number(c.value)), from: val('dFrom'), to: val('dTo')};
+    if((data.from && !data.to) || (!data.from && data.to)){ alert('حط ساعة البداية والنهاية مع بعض'); return false; }
     if(id) await db.collection('deals').doc(id).update(data);
     else await db.collection('deals').add(Object.assign(data,{order:(DEALS.length+1)*10}));
     return true;
@@ -2321,7 +2386,37 @@ function renderSet(){
       <div class="f"><label>🌐 رابط صفحة الدفع أونلاين (من شركة البطاقات)</label><input id="sOnline" dir="ltr" value="${esc(SET.onlineUrl||'')}" placeholder="https://...?sum={sum}">
         <div class="muted" style="margin-top:5px">بتحطه لما تفتح حساب عند Tranzila / Cardcom / PayPlus / Grow. اكتب <b dir="ltr">{sum}</b> مكان المبلغ و<b dir="ltr">{order}</b> مكان رقم الطلب. لحد ما تحطه، خيار "بطاقة أونلاين" ما بيطلع للزبون.</div></div>
     </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎁 نقاط الولاء</label>
+      <label class="chk"><input type="checkbox" id="lyOn" ${(SET.loyalty||{}).on?'checked':''}><span>تفعيل نقاط الولاء</span></label>
+      <div class="f3">
+        <div class="f"><label>كل كم طلب؟</label><input id="lyEvery" type="number" min="2" value="${(SET.loyalty||{}).every||10}"></div>
+        <div class="f"><label>قيمة الهدية ₪ (خصم)</label><input id="lyVal" type="number" min="0" value="${(SET.loyalty||{}).value||25}"></div>
+      </div>
+      <div class="f"><label>شو الهدية؟ (بتطلع للزبون)</label><input id="lyTxt" value="${esc((SET.loyalty||{}).text||'')}" placeholder="بيتسا شخصية ببلاش"></div>
+      ${heField('lyTxtHe', (SET.loyalty||{}).text_he, 'الهدية بالعبري')}
+      <div class="muted">النقطة بتنحسب لما تكبس "🛵 تم التسليم" على الطلب. الزبون بيشوف كرت الختم بحسابه وبالسلة.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎡 عجلة الحظ للزبون الجديد</label>
+      <label class="chk"><input type="checkbox" id="whOn" ${(SET.wheel||{}).on?'checked':''}><span>تفعيل العجلة (بتطلع أول مرة الزبون بيدخل وبيسجّل)</span></label>
+      <div class="muted" style="margin-bottom:8px">إنت بتحدد الجوائز وفرصة كل وحدة. الفرصة نسبية: جائزة فرصتها 50 بتطلع أكثر بـ5 مرات من جائزة فرصتها 10.</div>
+      <div id="whRows">${((SET.wheel||{}).prizes && SET.wheel.prizes.length ? SET.wheel.prizes : [
+        {label:'خصم 10%', type:'percent', value:10, chance:40}, {label:'مشروب ببلاش', type:'gift', value:0, chance:30},
+        {label:'خصم ₪15', type:'fixed', value:15, chance:20}, {label:'حظ أوفر', type:'none', value:0, chance:10}]).map(whRow).join('')}</div>
+      <button type="button" class="btn sm gh" onclick="$('whRows').insertAdjacentHTML('beforeend', whRow({}))">+ جائزة</button>
+    </div>
     <button class="btn red full" style="margin-bottom:20px" onclick="saveSet()">💾 حفظ الإعدادات</button>`;
+}
+function whRow(p){
+  p = p || {};
+  return `<div class="whr">
+    <input class="wl" value="${esc(p.label||'')}" placeholder="اسم الجائزة">
+    <input class="wlh" value="${esc(p.label_he||'')}" placeholder="🇮🇱 בעברית" dir="rtl" lang="he">
+    <select class="wt">${[['percent','خصم %'],['fixed','خصم ₪'],['gift','هدية (صنف ببلاش)'],['none','بدون جائزة']].map(([k,t])=>`<option value="${k}" ${p.type===k?'selected':''}>${t}</option>`).join('')}</select>
+    <input class="wv" type="number" min="0" value="${p.value||0}" title="القيمة">
+    <label class="wc">فرصة <input class="wch" type="number" min="0" value="${p.chance==null?10:p.chance}"></label>
+    <button type="button" class="x" onclick="this.parentNode.remove()">✕</button></div>`;
 }
 function togDay(d, closed){
   $('h'+d+'a').disabled = closed; $('h'+d+'b').disabled = closed;
@@ -2348,8 +2443,14 @@ async function saveSet(){
     rating: val('sRate'), ratingCount: val('sRateN'),
     hours, promos,
     payMethods: Object.fromEntries(Object.keys(PAY_T).map(k => [k, !!($('pm_' + k) && $('pm_' + k).checked)])),
-    bitPhone: val('sBit').replace(/[^\d]/g, ''), payboxLink: val('sPaybox'), onlineUrl: val('sOnline')
+    bitPhone: val('sBit').replace(/[^\d]/g, ''), payboxLink: val('sPaybox'), onlineUrl: val('sOnline'),
+    loyalty: {on: $('lyOn').checked, every: Math.max(2, num('lyEvery') || 10), value: num('lyVal') || 0, text: val('lyTxt'), text_he: val('lyTxtHe')},
+    wheel: {on: $('whOn').checked, prizes: [...document.querySelectorAll('#whRows .whr')].map(r => ({
+      label: r.querySelector('.wl').value.trim(), label_he: r.querySelector('.wlh').value.trim(), type: r.querySelector('.wt').value,
+      value: Number(r.querySelector('.wv').value) || 0, chance: Math.max(0, Number(r.querySelector('.wch').value) || 0)})).filter(p => p.label)}
   };
+  if(data.wheel.on && data.wheel.prizes.filter(p => p.chance > 0).length < 2){ alert('العجلة بدها جائزتين على الأقل'); return; }
+  if(data.wheel.prizes.some(p => p.type === 'percent' && p.value > 50)){ alert('خصم العجلة لازم يكون 50% أو أقل'); return; }
   if(data.onlineUrl && !/^https:\/\//i.test(data.onlineUrl)){ alert('رابط الدفع لازم يبلّش بـ https://'); return; }
   if(data.payboxLink && !/^https:\/\//i.test(data.payboxLink)){ alert('رابط PayBox لازم يبلّش بـ https://'); return; }
   try{ await db.collection('settings').doc('main').set(data, {merge:true}); toast('تم الحفظ ✓'); }
