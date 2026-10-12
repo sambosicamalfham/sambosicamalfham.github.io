@@ -362,6 +362,19 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .mp-info.ok b{color:var(--ink)}.mp-info.bad{color:var(--red)}
 .ztip{background:rgba(255,255,255,.92);border:none;box-shadow:0 2px 8px rgba(0,0,0,.2);font-weight:800;font-family:inherit;font-size:12px;border-radius:8px}
 .zshop{font-size:24px;line-height:30px;text-align:center}
+/* الدفع */
+.pays{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.pay{display:flex;align-items:center;gap:11px;width:100%;text-align:start;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;font-family:inherit}
+.pay .pi{font-size:22px;width:30px;text-align:center}
+.pay .pt{flex:1;display:flex;flex-direction:column;gap:1px}.pay .pt b{font-size:14px}.pay .pt small{font-size:12px;color:var(--muted)}
+.pay .pr{width:20px;height:20px;border-radius:50%;border:2px solid #d6d6d6;flex:none}
+.pay.on{border-color:var(--red);background:var(--red-soft)}
+.pay.on .pr{border:6px solid var(--red)}
+.payok{font-size:22px;font-weight:900;margin:14px 0 6px}
+.payamt{font-size:15px;margin-bottom:16px}.payamt b{font-size:24px;color:var(--red)}
+.paystep{font-size:14.5px;margin-bottom:8px}
+.payph{display:inline-block;font-size:24px;font-weight:900;background:#fff;border:2px dashed var(--red);border-radius:14px;padding:10px 18px;margin-bottom:10px;cursor:pointer}
+a.cta{text-decoration:none;justify-content:center}
 </style>
 </head>
 <body>
@@ -488,7 +501,12 @@ const HE = {
   // معلومات
   'ساعات الدوام':'שעות פתיחה','وقت التحضير':'זמן הכנה','تمام':'אישור','تم نسخ الرابط':'הקישור הועתק',
   'اللغة':'שפה',
-  'حسب المنطقة':'לפי אזור','موقع التوصيل':'מיקום משלוח','حدد موقعك على الخريطة عشان نحسب التوصيل':'סמנו את המיקום במפה כדי לחשב משלוח',
+  'حسب المنطقة':'לפי אזור',
+  'طريقة الدفع':'אמצעי תשלום','كاش':'מזומן','بتدفع للسائق أو بالمحل':'משלמים לשליח או במסעדה','بطاقة عند الاستلام':'אשראי במסירה',
+  'السائق أو المحل معه جهاز بطاقات':'לשליח או למסעדה יש מסוף אשראי','بتحوّل المبلغ بـ':'מעבירים את הסכום ב־','بتدفع بـ':'משלמים ב־',
+  'بطاقة أونلاين':'אשראי אונליין','دفع آمن بالبطاقة هلأ':'תשלום מאובטח באשראי עכשיו','الدفع':'תשלום','طلبك وصل!':'ההזמנה התקבלה!',
+  'المبلغ للدفع':'סכום לתשלום','حوّل المبلغ بـ':'העבירו את הסכום ב־','لرقم:':'למספר:','بالملاحظة اكتب اسمك. الطلب بيتجهّز أول ما يوصل التحويل.':'כתבו את שמכם בהערה. ההזמנה תוכן מיד כשההעברה תתקבל.',
+  'ادفع بـ':'שלמו ב־','من الرابط:':'מהקישור:','ادفع بالبطاقة بصفحة الدفع الآمنة:':'שלמו באשראי בדף התשלום המאובטח:','ادفع هلأ':'שלמו עכשיו','افتح PayBox':'פתיחת PayBox','تم النسخ':'הועתק','موقع التوصيل':'מיקום משלוח','حدد موقعك على الخريطة عشان نحسب التوصيل':'סמנו את המיקום במפה כדי לחשב משלוח',
   'خارج منطقة التوصيل':'מחוץ לאזור המשלוח','تغيير':'שינוי','حدد':'בחירה','حدد موقع التوصيل':'בחירת מיקום משלוח',
   'جاري تحميل الخريطة...':'טוען מפה...','موقعي':'המיקום שלי','حرّك الخريطة لحد ما يصير الدبوس على بيتك':'הזיזו את המפה עד שהסיכה על הבית שלכם',
   'تأكيد الموقع':'אישור מיקום','ما بنوصّل لهون — بتقدر تختار استلام من المحل':'אין משלוח לכאן — אפשר לבחור איסוף עצמי',
@@ -1222,6 +1240,50 @@ function fav(b){ b.textContent = b.textContent.trim() === '🤍' ? '❤️' : '�
 
 /* ============ السلة ============ */
 function save(){ try{ localStorage.setItem('pz_cart', JSON.stringify(cart)); }catch(e){} }
+
+/* ============ طرق الدفع ============ */
+const PAY_ALL = {
+  cash:   {ic:'💵', t:'كاش',                  d:'بتدفع للسائق أو بالمحل'},
+  card:   {ic:'💳', t:'بطاقة عند الاستلام',    d:'السائق أو المحل معه جهاز بطاقات'},
+  bit:    {ic:'📱', t:'Bit',                   d:'بتحوّل المبلغ بـ Bit'},
+  paybox: {ic:'📲', t:'PayBox',                d:'بتدفع بـ PayBox'},
+  online: {ic:'🌐', t:'بطاقة أونلاين',          d:'دفع آمن بالبطاقة هلأ'}
+};
+function payMethods(){
+  const m = SET.payMethods || {cash:true, card:true};
+  return Object.keys(PAY_ALL).filter(k => m[k] && (k !== 'bit' || SET.bitPhone) && (k !== 'paybox' || SET.payboxLink) && (k !== 'online' || SET.onlineUrl));
+}
+let pay = '';
+try{ pay = localStorage.getItem('pz_pay') || ''; }catch(e){}
+function curPay(){ const ms = payMethods(); return ms.includes(pay) ? pay : (ms[0] || 'cash'); }
+function setPay(k){ pay = k; try{ localStorage.setItem('pz_pay', k); }catch(e){} openCart(); }
+function payHtml(){
+  const ms = payMethods(); if(!ms.length) return '';
+  const cp = curPay();
+  return '<div class="sum"><h4>طريقة الدفع</h4><div class="pays">' + ms.map(k =>
+    '<button class="pay ' + (cp === k ? 'on' : '') + '" onclick="setPay(\'' + k + '\')"><span class="pi">' + PAY_ALL[k].ic + '</span>' +
+    '<span class="pt"><b>' + PAY_ALL[k].t + '</b><small>' + PAY_ALL[k].d + '</small></span><span class="pr"></span></button>').join('') + '</div></div>';
+}
+/* بعد إرسال الطلب: تعليمات الدفع لـ Bit / PayBox / أونلاين */
+function payAfter(order){
+  const k = (order.customer || {}).pay, amt = Number(order.total || 0).toFixed(2);
+  if(!['bit','paybox','online'].includes(k)) return;
+  const link = k === 'online' ? SET.onlineUrl.replace(/\{sum\}/g, amt).replace(/\{order\}/g, encodeURIComponent(order.createdAt || '')) : k === 'paybox' ? SET.payboxLink : '';
+  const ph = String(SET.bitPhone || '').replace(/\D/g, '');
+  $('sc').innerHTML = '<div class="ctop"><h3>' + PAY_ALL[k].ic + ' الدفع</h3><button onclick="closeSheet()">✕</button></div><div class="cwrap" style="text-align:center">' +
+    '<div class="payok">✅ طلبك وصل!</div>' +
+    '<div class="payamt">المبلغ للدفع <b class="ltr">₪' + amt + '</b></div>' +
+    (k === 'bit' ? '<div class="paystep">حوّل المبلغ بـ <b>Bit</b> لرقم:</div><div class="payph ltr" onclick="copyTxt(\'' + ph + '\')">' + esc(ph) + ' 📋</div>' +
+                   '<div class="muted">بالملاحظة اكتب اسمك. الطلب بيتجهّز أول ما يوصل التحويل.</div>' : '') +
+    (k === 'paybox' ? '<div class="paystep">ادفع بـ <b>PayBox</b> من الرابط:</div>' : '') +
+    (k === 'online' ? '<div class="paystep">ادفع بالبطاقة بصفحة الدفع الآمنة:</div>' : '') +
+    '</div>';
+  $('ft').innerHTML = link ? '<a class="cta" href="' + esc(link) + '" target="_blank" rel="noopener">' + (k === 'online' ? '💳 ادفع هلأ' : '📲 افتح PayBox') + '</a>'
+    : '<button class="cta" onclick="closeSheet()">تمام</button>';
+  cur = null; show();
+}
+function copyTxt(t){ try{ navigator.clipboard.writeText(t); toast('تم النسخ ✓'); }catch(e){} }
+
 /* ============ مناطق التوصيل والخريطة ============ */
 let _lfP = null;
 function loadLeaflet(){
@@ -1442,7 +1504,7 @@ function openCart(){
       '<div class="inf">' +
         '<div class="r"><div class="ic">🕐</div><div class="tx"><b>وقت التوصيل المتوقع</b><span class="hot">' + esc(LX(SET,'prepTime')||'25 - 35 دقيقة') + '</span></div></div>' +
         (otype==='delivery' && !lb ? '<div class="r"><div class="ic">🛵</div><div class="tx"><b>رسوم التوصيل</b><span class="ltr">₪' + Number(fee()) + '</span></div></div>' : '') +
-        '<div class="r"><div class="ic">💳</div><div class="tx"><b>الدفع عند الاستلام</b><span>متاح دائماً</span></div></div></div>' +
+        '</div>' + payHtml() +
       (otype==='delivery' && over && sub() < over
         ? '<div style="text-align:center;color:var(--muted);font-size:12.5px;margin-top:12px;line-height:1.7">كمّل لـ <span class="ltr">₪' +
           over + '</span> وخلّي التوصيل <span class="ltr">₪' + (zonesOn() ? Number(zc.overPrice) : Number(SET.reducedFee)) + '</span> بدل <span class="ltr">₪' + (zonesOn() ? Number(zc.price) : Number(SET.deliveryFee)) + '</span></div>'
@@ -1516,7 +1578,7 @@ function sendOrder(){
   const order = {
     items: cart.map(l => Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
       l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})),
-    customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG},
+    customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
     coupon: coupon ? coupon.code : '', fee: snapFee, total: snapTot,
@@ -1536,6 +1598,7 @@ function sendOrder(){
   msg += '\n\n👤 ' + name + '\n📞 ' + phone;
   if(otype === 'delivery') msg += '\n📍 ' + addr + (curZone() ? ' (' + (curZone().name||'') + ')' : '') + (CLOC ? '\n🗺️ https://www.google.com/maps?q=' + CLOC[0] + ',' + CLOC[1] : '');
   if(orderNote.trim()) msg += '\n📝 ' + orderNote.trim();
+  msg += '\n💰 الدفع: ' + PAY_ALL[curPay()].t;
 
   const finish = saved => {
     try{ hist.unshift(order); hist = hist.slice(0,20); localStorage.setItem('pz_orders', JSON.stringify(hist)); }catch(e){}
@@ -1543,6 +1606,7 @@ function sendOrder(){
     cart = []; coupon = null; orderNote = '';
     save(); paintCart(); closeSheet(); renderMe();
     toast(saved ? 'تم إرسال طلبك ✓' : 'تم فتح واتساب — ابعت الرسالة');
+    setTimeout(() => payAfter(order), 450);
   };
   if(live && db){
     db.collection('orders').add(Object.assign({}, order,

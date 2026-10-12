@@ -222,6 +222,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .ogi .chk{flex:1;margin:0}
 .ogi .mv{width:30px;height:30px;border-radius:8px;background:#f1efed;font-size:12px;flex:none}
 .ogi.flash{background:#fff3e0}
+.stt .pm{display:inline-block;font-size:13px;margin-inline-end:8px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -401,6 +402,14 @@ const HE = {
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
   'معدل الطلب:':'ממוצע הזמנה:',
+  'كاش':'מזומן','بطاقة عند الاستلام':'אשראי במסירה','بطاقة أونلاين':'אשראי אונליין','مدفوع':'שולם','مش مدفوع':'לא שולם','لسا مش مدفوع':'עדיין לא שולם',
+  'علّم مدفوع':'סמן כשולם','إلغاء "مدفوع"':'ביטול "שולם"','الدفع':'תשלום','لازم تجمع:':'לגבות:','حسب طريقة الدفع':'לפי אמצעי תשלום',
+  'عرض ورق الطابعة':'רוחב נייר המדפסת','ملم':'מ״מ','طرق الدفع':'אמצעי תשלום','علّم الطرق اللي بتقبلها. الزبون بيختار وحدة منهن بالسلة.':'סמנו את האמצעים שאתם מקבלים. הלקוח בוחר אחד מהם בסל.',
+  'رقم Bit (اللي الزبون بحوّل عليه)':'מספר Bit (שאליו הלקוח מעביר)','رابط PayBox (رابط الدفع تبعك)':'קישור PayBox (קישור התשלום שלך)',
+  'رابط صفحة الدفع أونلاين (من شركة البطاقات)':'קישור לדף תשלום אונליין (מחברת הסליקה)',
+  'بتحطه لما تفتح حساب عند Tranzila / Cardcom / PayPlus / Grow. اكتب':'מוסיפים אחרי פתיחת חשבון ב־Tranzila / Cardcom / PayPlus / Grow. כתבו',
+  'مكان المبلغ و':'במקום הסכום ו־','مكان رقم الطلب. لحد ما تحطه، خيار "بطاقة أونلاين" ما بيطلع للزبون.':'במקום מספר ההזמנה. עד שמוסיפים, האפשרות "אשראי אונליין" לא מוצגת ללקוח.',
+  'رابط الدفع لازم يبلّش بـ https://':'קישור התשלום חייב להתחיל ב־https://','رابط PayBox لازم يبلّش بـ https://':'קישור PayBox חייב להתחיל ב־https://',
   'رتّبهم بالترتيب اللي بدك الزبون يشوفه':'סדרו לפי הסדר שהלקוח יראה','حسب الترتيب العام':'לפי הסדר הכללי',
   'طبّق هالترتيب على كل الأصناف':'החל את הסדר על כל הפריטים','لفوق':'למעלה','لتحت':'למטה',
   'الترتيب هون هو الترتيب اللي بيشوفه الزبون. بعد ما ترتّب اكبس "طبّق على كل الأصناف".':'הסדר כאן הוא הסדר שהלקוח רואה. אחרי הסידור לחצו "החל על כל הפריטים".',
@@ -408,6 +417,9 @@ const HE = {
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
+  [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين)$/, m => HE[m[1]]],
+  [/^· (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => '· ' + HE[m[1]]],
   [/^بنرتّب الخيارات بـ(\d+) صنف حسب هالترتيب\. متأكد؟$/, m => 'נסדר את האפשרויות ב־' + m[1] + ' פריטים לפי הסדר הזה. בטוחים?'],
   [/^تم ✓ رتّبنا (\d+) صنف$/, m => 'בוצע ✓ סודרו ' + m[1] + ' פריטים'],
   [/^منطقة (\d+)$/, m => 'אזור ' + m[1]],
@@ -793,6 +805,7 @@ function renderOrders(){
       <button class="tg ${PRN.auto?'on':''}" onclick="setPrn('auto')">تلقائية</button>
       <button class="tg ${PRN.kitchen?'on':''}" onclick="setPrn('kitchen')">ورقة مطبخ</button>
       <button class="tg ${PRN.receipt?'on':''}" onclick="setPrn('receipt')">فاتورة</button>
+      <button class="tg on" onclick="PRN.w = PRN.w === 58 ? 80 : 58; setPrn('_')" title="عرض ورق الطابعة">📏 ${PRN.w === 58 ? '58' : '80'} ملم</button>
     </div>`;
   if(!list.length){
     $('vOrders').innerHTML = head + `<div class="empty"><div class="e">🧾</div><div>ما في طلبات</div></div>`;
@@ -824,11 +837,13 @@ function renderOrders(){
         ${c.zone?`<span class="pill">🗺️ ${esc(c.zone)}</span>`:''}
         ${c.loc?`<a href="${mapsLink(c.loc)}" target="_blank">🗺️ الخريطة</a><a href="${wazeLink(c.loc)}" target="_blank">🚗 Waze</a>`:''}
         <span class="muted">توصيل: <span class="ltr">${Number(o.fee||0)} ₪</span></span>
+        <span class="pill ${o.paid?'g':'a'}">${PAY_T[payOf(o)] || ''} · ${o.paid?'✅ مدفوع':'⏳ مش مدفوع'}</span>
       </div>
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
         <button class="btn sm gh" onclick="printOrder('${o.id}')">🖨️ طباعة${PRINTED.indexOf(o.id)>=0?' ✓':''}</button>
         ${o.status==='ready'&&c.phone?`<button class="btn sm gh" onclick="notifyReady('${o.id}')">💬 بلّغ الزبون</button>`:''}
+        <button class="btn sm ${o.paid?'gh':'gh'}" onclick="togglePaid('${o.id}')">${o.paid?'↩️ إلغاء "مدفوع"':'💰 علّم مدفوع'}</button>
         ${o.status!=='cancel'&&o.status!=='done'?`<button class="btn sm gh" onclick="setStatus('${o.id}','cancel')">إلغاء</button>`:''}
       </div>
     </div>`;
@@ -875,9 +890,15 @@ function pizzaPrint(i){
     '<div class="h l"><span class="hl">يسار</span>' + list(L) + '</div></div>';
 }
 /* ========= الطباعة ========= */
-let PRN = {auto:false, kitchen:true, receipt:true};
+const PAY_T = {cash:'💵 كاش', card:'💳 بطاقة عند الاستلام', bit:'📱 Bit', paybox:'📲 PayBox', online:'🌐 بطاقة أونلاين'};
+const payOf = o => (o.customer || {}).pay || 'cash';
+async function togglePaid(id){
+  const o = ORDERS.find(x => x.id === id); if(!o) return;
+  try{ await db.collection('orders').doc(id).update({paid: !o.paid}); }catch(e){ alert(e.message); }
+}
+let PRN = {auto:false, kitchen:true, receipt:true, w:80};
 try{ Object.assign(PRN, JSON.parse(localStorage.getItem('pz_prn')||'{}')); }catch(e){}
-function setPrn(k){ PRN[k] = !PRN[k]; try{ localStorage.setItem('pz_prn', JSON.stringify(PRN)); }catch(e){} render(); }
+function setPrn(k){ if(k !== '_') PRN[k] = !PRN[k]; try{ localStorage.setItem('pz_prn', JSON.stringify(PRN)); }catch(e){} render(); }
 let PRINTED = [];
 try{ PRINTED = JSON.parse(localStorage.getItem('pz_printed')||'[]'); }catch(e){}
 function markPrinted(id){
@@ -901,6 +922,7 @@ const PRINT_CSS = `
   table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px dashed #999;vertical-align:top}
   small{color:#333}.sm{display:flex;justify-content:space-between;font-size:13px;margin-top:4px}
   .tot{margin-top:8px;font-size:16px;font-weight:bold;display:flex;justify-content:space-between;border-top:2px solid #000;padding-top:6px}
+  .payl{margin-top:8px;border:2px solid #000;border-radius:6px;padding:4px 7px;font-weight:900;font-size:14px;text-align:center}
   .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8;font-size:14px}
   .pall{margin-top:6px;font-size:13px}
   .pz{display:flex;width:190px;height:190px;margin:8px auto 4px;border:3px solid #000;border-radius:50%;overflow:hidden}
@@ -933,6 +955,7 @@ function ticketHtml(o){
     }).join('');
     parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
       <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${lines}
+      <div class="payl">${PAY_T[payOf(o)] || ''} · ${o.paid ? '✅ مدفوع' : 'لسا مش مدفوع'}</div>
       ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}</div>`);
   }
 
@@ -949,11 +972,16 @@ function ticketHtml(o){
       ${disc ? `<div class="sm"><span>خصم${o.coupon?' ('+esc(o.coupon)+')':''}</span><span>-${disc.toFixed(2)} ₪</span></div>` : ''}
       ${del ? `<div class="sm"><span>توصيل</span><span>${Number(o.fee||0).toFixed(2)} ₪</span></div>` : ''}
       <div class="tot"><span>الإجمالي</span><span>${Number(o.total||0).toFixed(2)} ₪</span></div>
+      <div class="sm"><span>الدفع</span><span>${PAY_T[payOf(o)] || ''}</span></div>
+      ${o.paid ? '<div class="ty">✅ مدفوع</div>' : `<div class="ty inv">لازم تجمع: ${Number(o.total||0).toFixed(2)} ₪</div>`}
       <div class="inf">👤 ${esc(c.name||'')}<br>📞 ${esc(c.phone||'')}
         ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
         ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
   }
-  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${PRINT_CSS}</style></head><body>${parts.join('')}</body></html>`;
+  const css = PRN.w === 58
+    ? PRINT_CSS.replace('width:290px', 'width:200px').replace(/font-size:13px/, 'font-size:12px') + ' .no{font-size:30px} .pz,.pz4{width:160px!important;height:160px!important} .k .n{font-size:15px}'
+    : PRINT_CSS;
+  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${css}</style></head><body>${parts.join('')}</body></html>`;
 }
 
 /* بتطبع عن طريق إطار مخفي، فما في نافذة بتنفتح وما بينحجب من المتصفح */
@@ -1065,6 +1093,9 @@ function todaySummary(){
     box(`<span class="ltr">${t.length ? (rev/t.length).toFixed(0) : 0} ₪</span>`, 'معدل الطلب') +
     box(top ? esc(top[0]) + ` <small>(${top[1]})</small>` : '—', 'الأكثر طلباً') +
     box(`${del} / ${t.length - del}`, 'توصيل / استلام') +
+    (() => { const by = {}; t.forEach(o => { const k = payOf(o); by[k] = (by[k]||0) + Number(o.total||0); });
+      const ks = Object.keys(by); return ks.length ? box(ks.map(k => `<span class="pm">${(PAY_T[k]||k).split(' ')[0]} <span class="ltr">${by[k].toFixed(0)}₪</span></span>`).join(' '), 'حسب طريقة الدفع') : ''; })() +
+    box(`<span class="ltr">${t.filter(o => !o.paid && o.status !== 'cancel').reduce((s,o) => s + Number(o.total||0), 0).toFixed(0)} ₪</span>`, 'لسا مش مدفوع') +
   `</div>`;
 }
 
@@ -2194,6 +2225,16 @@ function renderSet(){
         <div class="f"><label>النص 2</label><input id="p1t" value="${esc((SET.promos&&SET.promos[1]&&SET.promos[1].text)||'')}"></div>
       </div>
     </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">💳 طرق الدفع</label>
+      <div class="muted" style="margin-bottom:8px">علّم الطرق اللي بتقبلها. الزبون بيختار وحدة منهن بالسلة.</div>
+      ${(() => { const m = SET.payMethods || {cash:true, card:true}; return Object.keys(PAY_T).map(k =>
+        `<label class="chk"><input type="checkbox" id="pm_${k}" ${m[k]?'checked':''}><span>${PAY_T[k]}</span></label>`).join(''); })()}
+      <div class="f"><label>📱 رقم Bit (اللي الزبون بحوّل عليه)</label><input id="sBit" inputmode="tel" value="${esc(SET.bitPhone||'')}" placeholder="05xxxxxxxx"></div>
+      <div class="f"><label>📲 رابط PayBox (رابط الدفع تبعك)</label><input id="sPaybox" dir="ltr" value="${esc(SET.payboxLink||'')}" placeholder="https://payboxapp.page.link/..."></div>
+      <div class="f"><label>🌐 رابط صفحة الدفع أونلاين (من شركة البطاقات)</label><input id="sOnline" dir="ltr" value="${esc(SET.onlineUrl||'')}" placeholder="https://...?sum={sum}">
+        <div class="muted" style="margin-top:5px">بتحطه لما تفتح حساب عند Tranzila / Cardcom / PayPlus / Grow. اكتب <b dir="ltr">{sum}</b> مكان المبلغ و<b dir="ltr">{order}</b> مكان رقم الطلب. لحد ما تحطه، خيار "بطاقة أونلاين" ما بيطلع للزبون.</div></div>
+    </div>
     <button class="btn red full" style="margin-bottom:20px" onclick="saveSet()">💾 حفظ الإعدادات</button>`;
 }
 function togDay(d, closed){
@@ -2219,8 +2260,12 @@ async function saveSet(){
     name_he: val('sNameHe'), addr_he: val('sAddrHe'), tagline_he: val('sTagHe'), prepTime_he: val('sPrepHe'),
     heroTitle_he: val('sHtHe'), heroSub_he: val('sHsHe'),
     rating: val('sRate'), ratingCount: val('sRateN'),
-    hours, promos
+    hours, promos,
+    payMethods: Object.fromEntries(Object.keys(PAY_T).map(k => [k, !!($('pm_' + k) && $('pm_' + k).checked)])),
+    bitPhone: val('sBit').replace(/[^\d]/g, ''), payboxLink: val('sPaybox'), onlineUrl: val('sOnline')
   };
+  if(data.onlineUrl && !/^https:\/\//i.test(data.onlineUrl)){ alert('رابط الدفع لازم يبلّش بـ https://'); return; }
+  if(data.payboxLink && !/^https:\/\//i.test(data.payboxLink)){ alert('رابط PayBox لازم يبلّش بـ https://'); return; }
   try{ await db.collection('settings').doc('main').set(data, {merge:true}); toast('تم الحفظ ✓'); }
   catch(e){ alert(e.message); }
 }
