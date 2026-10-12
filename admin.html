@@ -223,6 +223,20 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .ogi .mv{width:30px;height:30px;border-radius:8px;background:#f1efed;font-size:12px;flex:none}
 .ogi.flash{background:#fff3e0}
 .stt .pm{display:inline-block;font-size:13px;margin-inline-end:8px;white-space:nowrap}
+.dslot{border:1.5px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px;background:#fcfbfa}
+.dsh{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.dsh .dn{font-size:13px}
+.dsh input.st,.dsh input.sth{flex:1;min-width:120px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;outline:none}
+.dsh input.sth{background:#f5f8ff}
+.dcount{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700}
+.dcount input{width:62px;border:1.5px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:14px}
+.dsh .x{width:32px;height:32px;border-radius:9px;background:#ffe9eb;color:var(--red)}
+.dsel{margin:6px 0}
+.dcat{border-top:1px solid #eee;padding:6px 0}
+.dcat summary{cursor:pointer;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
+.dcat .chk{margin:4px 18px 0 0}
+.subl{padding-inline-start:18px;color:var(--ink-2)}
+#dSlots:empty::after{content:'';display:block}
 </style>
 </head>
 <body>
@@ -402,6 +416,14 @@ const HE = {
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
   'معدل الطلب:':'ממוצע הזמנה:',
+  'العرض ظاهر للزبائن':'המבצע מוצג ללקוחות','بس جوا العروض (مخفي من المنيو)':'רק בתוך מבצעים (מוסתר מהתפריט)',
+  'مثلاً مشروب 330 مل اللي بيجي مع العرض بس، وما بينباع لحاله.':'למשל שתייה 330 מ״ל שמגיעה רק עם מבצע ולא נמכרת לבד.','بس للعروض':'רק למבצעים','خطوات العرض (الزبون بيختار)':'שלבי המבצע (הלקוח בוחר)',
+  'كل خطوة: الزبون بيختار':'בכל שלב הלקוח בוחר','عدد':'כמות','من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.':'מתוך הפריטים שתסמנו. למשל: "בחרו 3 פיצות" מתוך 5, ואחר כך "בחרו שתייה". בלי שלבים — המבצע נוסף לסל כמו שהוא.',
+  'خطوة':'שלב','مثلاً: اختار بيتسا':'למשל: בחרו פיצה','الإضافات جوا العرض':'תוספות בתוך המבצע',
+  'بتنحسب زيادة على سعر العرض (زي ما هي بالمنيو)':'בתשלום נוסף על מחיר המבצע (כמו בתפריט)','ببلاش — مشمولة بسعر العرض':'בחינם — כלולות במחיר המבצע',
+  'في خطوة ما علّمت فيها ولا صنف — رح تنحذف. تكمّل؟':'יש שלב בלי פריטים מסומנים — הוא יימחק. להמשיך?',
+  'كل العروض الظاهرة بتطلع بالصفحة الرئيسية. بالعرض بتحدد خطوات، والزبون بيختار الأصناف والإضافات.':'כל המבצעים הפעילים מוצגים בדף הראשי. בכל מבצע מגדירים שלבים, והלקוח בוחר פריטים ותוספות.',
+  'إضافات ببلاش':'תוספות בחינם','إضافات بتنحسب':'תוספות בתשלום','اختار':'בחרו',
   'كاش':'מזומן','بطاقة عند الاستلام':'אשראי במסירה','بطاقة أونلاين':'אשראי אונליין','مدفوع':'שולם','مش مدفوع':'לא שולם','لسا مش مدفوع':'עדיין לא שולם',
   'علّم مدفوع':'סמן כשולם','إلغاء "مدفوع"':'ביטול "שולם"','الدفع':'תשלום','لازم تجمع:':'לגבות:','حسب طريقة الدفع':'לפי אמצעי תשלום',
   'عرض ورق الطابعة':'רוחב נייר המדפסת','ملم':'מ״מ','طرق الدفع':'אמצעי תשלום','علّم الطرق اللي بتقبلها. الزبون بيختار وحدة منهن بالسلة.':'סמנו את האמצעים שאתם מקבלים. הלקוח בוחר אחד מהם בסל.',
@@ -417,6 +439,7 @@ const HE = {
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^(\d+) صنف معلّم$/, m => m[1] + ' פריטים מסומנים'],
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين)$/, m => HE[m[1]]],
   [/^· (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => '· ' + HE[m[1]]],
@@ -817,7 +840,7 @@ function renderOrders(){
     const d = o.createdAtStr ? new Date(o.createdAtStr) : null;
     const when = d ? d.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') + ' · ' + d.toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG',{hour:'2-digit',minute:'2-digit'}) : '';
     const lines = (o.items||[]).map(i =>
-      `<div><b>${Number(i.qty)||0}×</b> ${esc(iName(i))} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>` +
+      (i.sub ? `<div class="subl">↳ ${esc(iName(i))}` : `<div><b>${Number(i.qty)||0}×</b> ${i.deal?'🎯 ':''}${esc(iName(i))} — <span class="ltr">${Number(i.unit*i.qty).toFixed(2)} ₪</span>`) +
       (iLabels(i).length ? `<div class="o">${esc(iLabels(i).join(' · '))}</div>` : '') +
       (i.note ? `<div class="o">📝 ${esc(i.note)}</div>` : '') + `</div>`).join('');
     const c = o.customer || {};
@@ -922,6 +945,7 @@ const PRINT_CSS = `
   table{width:100%;border-collapse:collapse}td{padding:5px 2px;border-bottom:1px dashed #999;vertical-align:top}
   small{color:#333}.sm{display:flex;justify-content:space-between;font-size:13px;margin-top:4px}
   .tot{margin-top:8px;font-size:16px;font-weight:bold;display:flex;justify-content:space-between;border-top:2px solid #000;padding-top:6px}
+  .k.ks{border-top:1px dashed #000;padding-inline-start:14px}
   .payl{margin-top:8px;border:2px solid #000;border-radius:6px;padding:4px 7px;font-weight:900;font-size:14px;text-align:center}
   .inf{margin-top:10px;border-top:1px dashed #999;padding-top:8px;line-height:1.8;font-size:14px}
   .pall{margin-top:6px;font-size:13px}
@@ -949,7 +973,7 @@ function ticketHtml(o){
   if(PRN.kitchen){
     const lines = (o.items||[]).map(i => {
       const pz = pizzaPrint({labels: iLabels(i)});
-      return `<div class="k"><div class="n">${Number(i.qty)||0} × ${esc(iName(i))}</div>` +
+      return `<div class="k ${i.sub?'ks':''}"><div class="n">${i.sub ? '↳ ' : (Number(i.qty)||0) + ' × '}${i.deal?'🎯 ':''}${esc(iName(i))}</div>` +
         (pz ? `<div class="lb">${pz}</div>` : (iLabels(i).length ? `<div class="lb">${esc(iLabels(i).map(clean).join(' · '))}</div>` : '')) +
         (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
     }).join('');
@@ -962,7 +986,7 @@ function ticketHtml(o){
   if(PRN.receipt || !PRN.kitchen){
     const rows = (o.items||[]).map(i =>
       `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(iName(i))}</b>${iLabels(i).length?'<br><small>'+esc(iLabels(i).map(clean).join(' · '))+'</small>':''}</td>
-       <td style="text-align:left">${(Number(i.unit)*Number(i.qty)||0).toFixed(2)}</td></tr>`).join('');
+       <td style="text-align:left">${i.sub ? '' : (Number(i.unit)*Number(i.qty)||0).toFixed(2)}</td></tr>`).join('');
     const sub = Number(o.subtotal||0), disc = Number(o.discount||0);
     parts.push(`<div class="tk"><h3>${esc(SET.name||'')}</h3>
       <div class="c">${d.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG')} · ${esc(time)}</div>
@@ -1145,7 +1169,7 @@ function renderItems(){
           ${it.tag?`<span class="pill a">${esc(it.tag)}</span>`:''}
           ${it.sale&&it.sale<it.price?`<span class="pill r">خصم</span>`:''}
           ${it.available===false?'<span class="pill">غير متوفر</span>':''}
-          ${!it.img?'<span class="pill">بدون صورة</span>':''}
+          ${!it.img?'<span class="pill">بدون صورة</span>':''}${it.dealOnly?'<span class="pill b">🎯 بس للعروض</span>':''}
         </div>
       </div>
       <div class="pr">${it.sale&&it.sale<it.price
@@ -1250,6 +1274,8 @@ function editItem(id){
     </div>
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
     <label class="chk"><input type="checkbox" id="iAvail" ${it.available!==false?'checked':''}><span>✅ متوفر للطلب</span></label>
+    <label class="chk"><input type="checkbox" id="iDealOnly" ${it.dealOnly?'checked':''}><span>🎯 بس جوا العروض (مخفي من المنيو)</span></label>
+    <div class="muted" style="margin:-4px 0 6px">مثلاً مشروب 330 مل اللي بيجي مع العرض بس، وما بينباع لحاله.</div>
   `, async () => {
     const name = val('iName'), price = num('iPrice');
     if(!name || !price){ alert('الاسم والسعر مطلوبين'); return false; }
@@ -1259,7 +1285,7 @@ function editItem(id){
       catId: val('iCat'), img: window._pickImg || '',
       tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
-      best: $('iBest').checked, available: $('iAvail').checked
+      best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked
     };
     if(id) await db.collection('items').doc(id).update(data);
     else await db.collection('items').add(Object.assign(data, {order:(ITEMS.length+1)*10}));
@@ -2070,18 +2096,42 @@ function delGroup(id){
 function renderDeals(){
   $('vDeals').innerHTML = `
     <h2 class="sec">العروض الخاصة</h2>
-    <div class="muted" style="margin-bottom:12px">بيظهر كبانر كبير بالصفحة الرئيسية. الأول بس بيظهر.</div>
+    <div class="muted" style="margin-bottom:12px">كل العروض الظاهرة بتطلع بالصفحة الرئيسية. بالعرض بتحدد خطوات، والزبون بيختار الأصناف والإضافات.</div>
     <div class="bar"><button class="btn sm red" onclick="editDeal()">+ عرض جديد</button></div>
     ${DEALS.length ? DEALS.map(d=>`
       <div class="card"><div class="it">
         <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
-        <div class="mid"><div class="nm">${esc(LX(d,'title'))}</div><div class="muted">${esc(LX(d,'desc'))}</div></div>
+        <div class="mid"><div class="nm">${esc(LX(d,'title'))} ${d.active===false?'<span class="pill">مخفي</span>':''}</div><div class="muted">${esc(LX(d,'desc'))}</div>
+          ${(d.slots||[]).length ? `<div class="tags" style="margin-top:4px">${d.slots.map((s,i)=>`<span class="pill b">${i+1}. ${esc(LX(s,'title')||'اختار')} ×${Number(s.count)||1}</span>`).join(' ')} <span class="pill">${d.extrasFree?'إضافات ببلاش':'إضافات بتنحسب'}</span></div>` : ''}</div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
         <button class="menu-btn" onclick="editDeal('${d.id}')">✏️</button>
         <button class="menu-btn" onclick="delDeal('${d.id}')">🗑️</button>
       </div></div>`).join('')
       : `<div class="empty"><div class="e">🎯</div><div>ما في عروض</div></div>`}`;
 }
+/* خطوة بالعرض: عنوان + عدد + الأصناف المسموحة مقسمة حسب القسم */
+function dealSlotRow(s, i){
+  s = s || {title:'', title_he:'', count:1, items:[]};
+  const sel = new Set(s.items || []);
+  const cats = CATS.map(c => {
+    const its = ITEMS.filter(it => it.catId === c.id); if(!its.length) return '';
+    const n = its.filter(it => sel.has(it.id)).length;
+    return `<details class="dcat" ${n?'open':''}><summary><label onclick="event.stopPropagation()"><input type="checkbox" class="sca" ${n===its.length?'checked':''} onchange="this.closest('details').querySelectorAll('.si').forEach(x=>x.checked=this.checked);dealSlotCount(this)"> ${esc(LX(c,'name'))}</label> <span class="muted">(${its.length})</span></summary>
+      ${its.map(it => `<label class="chk"><input type="checkbox" class="si" value="${it.id}" ${sel.has(it.id)?'checked':''} onchange="dealSlotCount(this)"><span>${esc(LX(it,'name'))} <span class="muted ltr">₪${Number(it.price)||0}</span></span></label>`).join('')}
+    </details>`;
+  }).join('');
+  return `<div class="dslot">
+    <div class="dsh"><b class="dn">خطوة</b>
+      <input class="st" value="${esc(s.title||'')}" placeholder="مثلاً: اختار بيتسا">
+      <input class="sth" value="${esc(s.title_he||'')}" placeholder="🇮🇱 בעברית" dir="rtl" lang="he">
+      <label class="dcount">عدد <input class="sc" type="number" min="1" max="20" value="${Number(s.count)||1}"></label>
+      <button type="button" class="x" onclick="this.closest('.dslot').remove()">✕</button></div>
+    <div class="muted dsel">${sel.size} صنف معلّم</div>
+    ${cats || '<div class="muted">ما في أصناف بالمنيو</div>'}
+  </div>`;
+}
+function dealAddSlot(){ $('dSlots').insertAdjacentHTML('beforeend', dealSlotRow(null)); }
+function dealSlotCount(el){ const r = el.closest('.dslot'); r.querySelector('.dsel').textContent = r.querySelectorAll('.si:checked').length + ' صنف معلّم'; trNode(r.querySelector('.dsel')); }
 function editDeal(id){
   const d = id ? DEALS.find(x=>x.id===id) : {title:'',desc:'',price:'',emoji:'🍕',img:''};
   if(!d) return;
@@ -2096,10 +2146,31 @@ function editDeal(id){
       <div class="f"><label>السعر *</label><input id="dPrice" type="number" inputmode="decimal" value="${d.price||''}"></div>
       <div class="f"><label>إيموجي</label><input id="dEmoji" value="${esc(d.emoji||'🍕')}" style="font-size:22px;text-align:center"></div>
     </div>
+    <label class="chk"><input type="checkbox" id="dActive" ${d.active!==false?'checked':''}><span>✅ العرض ظاهر للزبائن</span></label>
+    <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
+      <label style="font-weight:800;font-size:15px">🧩 خطوات العرض (الزبون بيختار)</label>
+      <div class="muted" style="margin:3px 0 10px">كل خطوة: الزبون بيختار <b>عدد</b> من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.</div>
+      <div id="dSlots">${(d.slots||[]).map((s,i) => dealSlotRow(s, i)).join('')}</div>
+      <button type="button" class="btn sm gh" onclick="dealAddSlot()">+ خطوة</button>
+      <div style="margin-top:12px;border-top:1px dashed #e5e5e5;padding-top:10px">
+        <label style="font-weight:800;font-size:14px;display:block;margin-bottom:6px">💰 الإضافات جوا العرض</label>
+        <label class="chk"><input type="radio" name="dEx" value="paid" ${!d.extrasFree?'checked':''}><span>بتنحسب زيادة على سعر العرض (زي ما هي بالمنيو)</span></label>
+        <label class="chk"><input type="radio" name="dEx" value="free" ${d.extrasFree?'checked':''}><span>ببلاش — مشمولة بسعر العرض</span></label>
+      </div>
+    </div>
   `, async () => {
     const t = val('dTitle'), p = num('dPrice');
     if(!t || !p){ alert('العنوان والسعر مطلوبين'); return false; }
-    const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || ''};
+    const slots = [...document.querySelectorAll('#dSlots .dslot')].map(r => ({
+      title: r.querySelector('.st').value.trim(), title_he: r.querySelector('.sth').value.trim(),
+      count: Math.max(1, Math.min(20, Number(r.querySelector('.sc').value) || 1)),
+      items: [...r.querySelectorAll('.si:checked')].map(c => c.value)
+    })).filter(s => s.items.length);
+    const bad = [...document.querySelectorAll('#dSlots .dslot')].filter(r => !r.querySelectorAll('.si:checked').length).length;
+    if(bad && !confirm('في خطوة ما علّمت فيها ولا صنف — رح تنحذف. تكمّل؟')) return false;
+    const exEl = document.querySelector('input[name="dEx"]:checked');
+    const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || '',
+      slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked};
     if(id) await db.collection('deals').doc(id).update(data);
     else await db.collection('deals').add(Object.assign(data,{order:(DEALS.length+1)*10}));
     return true;

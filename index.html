@@ -375,6 +375,23 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .paystep{font-size:14.5px;margin-bottom:8px}
 .payph{display:inline-block;font-size:24px;font-weight:900;background:#fff;border:2px dashed var(--red);border-radius:14px;padding:10px 18px;margin-bottom:10px;cursor:pointer}
 a.cta{text-decoration:none;justify-content:center}
+/* بناء العرض */
+.dl-hero{height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#2a1a12,#1a1a1a);display:grid;place-items:center}
+.dl-hero img{width:100%;height:100%;object-fit:cover}
+.dl-hero .em{font-size:90px}
+.price small{font-size:13px;color:var(--ink-2);font-weight:700}
+.dl-slot .t .ok{background:#e6f6ec;color:#1e8e4e;font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px}
+.dl-ch{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;background:#fff;border:1.5px solid #1e8e4e;border-radius:12px;padding:9px 11px;margin-bottom:7px}
+.dl-ch .n{font-weight:800;font-size:14px;flex:1}
+.dl-ch small{flex-basis:100%;font-size:12px;color:var(--ink-2)}
+.dl-ch{position:relative;padding-inline-end:48px}
+.dl-ch button{position:absolute;inset-inline-end:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:#ffe9eb;color:var(--red);font-weight:900}
+.dl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.dl-it{background:#fff;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;text-align:start;display:flex;flex-direction:column;font-family:inherit;padding:0}
+.dl-it .ph{height:86px;background:#eee;overflow:hidden}.dl-it .ph img{width:100%;height:100%;object-fit:cover}
+.dl-it .nm{font-weight:800;font-size:13px;padding:8px 9px 2px}
+.dl-it .op{font-size:11px;color:var(--muted);padding:0 9px 8px}
+.dl-it:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -502,7 +519,13 @@ const HE = {
   'ساعات الدوام':'שעות פתיחה','وقت التحضير':'זמן הכנה','تمام':'אישור','تم نسخ الرابط':'הקישור הועתק',
   'اللغة':'שפה',
   'حسب المنطقة':'לפי אזור',
-  'طريقة الدفع':'אמצעי תשלום','كاش':'מזומן','بتدفع للسائق أو بالمحل':'משלמים לשליח או במסעדה','بطاقة عند الاستلام':'אשראי במסירה',
+  'طريقة الدفع':'אמצעי תשלום',
+  'اختار وجبتك':'בחרו את הארוחה',
+  'فطر':'פטריות','زيتون':'זיתים','زيتون اخضر':'זיתים ירוקים','زيتون أخضر':'זיתים ירוקים','زيتون اسود':'זיתים שחורים','زيتون أسود':'זיתים שחורים',
+  'ذره':'תירס','ذرة':'תירס','بصل':'בצל','فلفل أخضر':'פלפל ירוק','فلفل اخضر':'פלפל ירוק','فلفل حار':'פלפל חריף','طونه':'טונה','تونة':'טונה','طونة':'טונה',
+  'سلامي':'סלמי','سلامي بقري':'סלמי בקר','جبنة إضافية':'תוספת גבינה','جبنة اضافية':'תוספת גבינה','دجاج مشوي':'עוף צלוי','صدر دجاج':'חזה עוף',
+  'كباب':'קבב','انتريكوت':'אנטריקוט','برقيت':'פרגית','بندورة':'עגבנייה','أناناس':'אננס','هالبينو':'חלפיניו','ثوم':'שום','حار':'חריף','طحينة':'טחינה','كاتشب':'קטשופ','باربكيو':'ברביקיו',
+  'مشروب':'שתייה','مشروبات 330 مل':'שתייה 330 מ״ל','مشروبات 1.5 لتر':'שתייה 1.5 ליטר','مياه معدنية':'מים מינרליים','إضافات':'תוספות','اختيار للعرض':'בחירה למבצע','رجوع':'חזרה','شيل':'הסרה','اختار':'בחרו','كاش':'מזומן','بتدفع للسائق أو بالمحل':'משלמים לשליח או במסעדה','بطاقة عند الاستلام':'אשראי במסירה',
   'السائق أو المحل معه جهاز بطاقات':'לשליח או למסעדה יש מסוף אשראי','بتحوّل المبلغ بـ':'מעבירים את הסכום ב־','بتدفع بـ':'משלמים ב־',
   'بطاقة أونلاين':'אשראי אונליין','دفع آمن بالبطاقة هلأ':'תשלום מאובטח באשראי עכשיו','الدفع':'תשלום','طلبك وصل!':'ההזמנה התקבלה!',
   'المبلغ للدفع':'סכום לתשלום','حوّل المبلغ بـ':'העבירו את הסכום ב־','لرقم:':'למספר:','بالملاحظة اكتب اسمك. الطلب بيتجهّز أول ما يوصل التحويل.':'כתבו את שמכם בהערה. ההזמנה תוכן מיד כשההעברה תתקבל.',
@@ -537,6 +560,8 @@ const HE_RULES = [
   [/^المحل مسكّر هلأ — بنفتح (اليوم|بكرا|يوم \S+) الساعة$/, m => 'סגור עכשיו — נפתחים ' + HE_WHEN(m[1]) + ' בשעה'],
   [/^المحل مسكّر هلأ، بنفتح (اليوم|بكرا|يوم \S+) الساعة$/, m => 'סגור עכשיו, נפתחים ' + HE_WHEN(m[1]) + ' בשעה'],
   [/^(.+) — توصيل$/, m => trText(m[1], true) + ' — משלוח'],
+  [/^اختار (\d+) كمان$/, m => 'בחרו עוד ' + m[1]],
+  [/^(\d+)\. (.+)$/, m => m[1] + '. ' + trText(m[2], true)],
   [/^خصم (.+)$/, m => 'הנחה ' + m[1]]
 ];
 
@@ -774,7 +799,7 @@ function status(){
 }
 
 /* ============ أدوات ============ */
-const avail = () => ITEMS.filter(i => i.available !== false);
+const avail = () => ITEMS.filter(i => i.available !== false && !i.dealOnly);   // dealOnly = بيطلع بس جوا العروض
 const byId = id => ITEMS.find(i => i.id === id);
 const grp = g => GROUPS[g] || null;
 const base = it => (it.sale && it.sale < it.price) ? Number(it.sale) : Number(it.price);
@@ -828,7 +853,7 @@ function paint(){
   $('demoFlag').innerHTML = live ? ''
     : '<div class="demo">⚠️ <b>نسخة تجريبية.</b> المنيو والأسعار والصور وهمية — بتتبدل من لوحة التحكم.</div>';
 
-  $('cats').innerHTML = CATS.map(c =>
+  $('cats').innerHTML = CATS.filter(c => avail().some(i => i.catId === c.id)).map(c =>
     '<button class="cat" data-c="' + c.id + '" onclick="openCat(\'' + c.id + '\')">' +
     '<span class="bx">' + (c.img ? '<img src="' + esc(c.img) + '" alt="" loading="lazy">' : esc(c.icon||'🍽️')) + '</span><span class="lb">' + esc(LX(c,'name')) + '</span></button>').join('');
 
@@ -845,15 +870,8 @@ function renderHome(){
     return;
   }
   let html = '';
-  const d = DEALS[0];
-  if(d){
-    html += '<div style="height:6px"></div><div class="deal" onclick="addDeal()">' +
-      (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>'
-             : '<div class="em">' + esc(d.emoji||'🍕') + '</div>') +
-      '<div class="txt"><div class="t">' + esc(LX(d,'title')) + '</div>' +
-      '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
-      '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
-      '<div class="go">اطلب الآن</div></div></div>';
+  if(DEALS.some(d => d.active !== false)){
+    html += '<div style="height:6px"></div>' + dealCards();
   }
   const best = avail().filter(i => i.best);
   if(best.length){
@@ -1189,6 +1207,12 @@ function drawP(){
   drawFoot();
 }
 function drawFoot(){
+  if(DL && DL.slot != null){
+    const ex = DL.d.extrasFree ? 0 : Math.max(0, unit() - base(cur));
+    $('ft').innerHTML = '<button class="qc" style="width:auto;padding:0 16px;border-radius:14px" onclick="dealBack()">‹ رجوع</button>' +
+      '<button class="cta" onclick="dealConfirm()"><span>✓ اختيار للعرض</span><span class="ltr">' + (ex ? '+₪' + ex : '') + '</span></button>';
+    return;
+  }
   $('ft').innerHTML =
     '<div class="qty"><button class="qc" onclick="bump(-1)"' + (qty<=1?' disabled':'') + '>−</button>' +
     '<span class="n">' + qty + '</span><button class="qc" onclick="bump(1)">+</button></div>' +
@@ -1240,6 +1264,92 @@ function fav(b){ b.textContent = b.textContent.trim() === '🤍' ? '❤️' : '�
 
 /* ============ السلة ============ */
 function save(){ try{ localStorage.setItem('pz_cart', JSON.stringify(cart)); }catch(e){} }
+
+/* ============ عروض بتختار (Deal builder) ============ */
+let DL = null;   // {d, picks:[[pick...]...], slot:null|index}
+const dealSlots = d => (d.slots || []).filter(s => (s.items || []).length && Number(s.count) > 0);
+function openDeal(id){
+  const d = DEALS.find(x => x.id === id); if(!d) return;
+  if(!dealSlots(d).length){ addDealSimple(d); return; }
+  DL = {d, picks: dealSlots(d).map(() => []), slot: null};
+  drawDeal(); show();
+}
+const dealExtra = () => DL ? DL.picks.flat().reduce((s, p) => s + Number(p.extra || 0), 0) : 0;
+const dealLeft = () => DL ? dealSlots(DL.d).reduce((n, s, i) => n + Math.max(0, Number(s.count) - DL.picks[i].length), 0) : 0;
+function drawDeal(){
+  const d = DL.d, slots = dealSlots(d);
+  const head = '<div class="dl-hero">' +
+      (d.img ? '<img src="' + esc(d.img) + '" alt="">' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
+      '<button class="float a" onclick="closeSheet()">‹</button></div>' +
+    '<div class="pbody"><h3>' + esc(LX(d,'title')) + '</h3><p class="ds">' + esc(LX(d,'desc')) + '</p>' +
+    '<div class="price"><span class="ltr">₪' + Number(d.price) + '</span>' +
+      (dealExtra() ? ' <small class="ltr">+ ₪' + dealExtra() + ' إضافات</small>' : '') + '</div>';
+  const body = slots.map((s, i) => {
+    const got = DL.picks[i], need = Number(s.count), full = got.length >= need;
+    const chosen = got.map((p, k) =>
+      '<div class="dl-ch"><span class="n">✓ ' + esc(LANG === 'he' && p.nh ? p.nh : p.n) + '</span>' +
+      ((LANG === 'he' ? p.lh : p.labels).length ? '<small>' + esc((LANG === 'he' ? p.lh : p.labels).join(' · ')) + '</small>' : '') +
+      (p.extra ? '<small class="ltr">+₪' + p.extra + '</small>' : '') +
+      '<button onclick="dealRemove(' + i + ',' + k + ')" aria-label="شيل">✕</button></div>').join('');
+    const items = (s.items || []).map(byId).filter(it => it && it.available !== false);
+    const grid = full ? '' : '<div class="dl-grid">' + items.map(it =>
+      '<button class="dl-it" onclick="dealPick(' + i + ',\'' + it.id + '\')"><span class="ph"><img src="' + pic(it) + '" alt="" loading="lazy"></span>' +
+      '<span class="nm">' + esc(LX(it,'name')) + '</span>' + ((it.opts || []).length ? '<span class="op">⚙️ إضافات</span>' : '') + '</button>').join('') + '</div>';
+    return '<div class="og dl-slot ' + (full ? 'done' : '') + '"><div class="t"><span>' + (i + 1) + '. ' + esc(LX(s,'title') || 'اختار') + '</span>' +
+      '<span class="' + (full ? 'ok' : 'rq') + '">' + got.length + ' / ' + need + '</span></div>' + chosen + grid + '</div>';
+  }).join('');
+  $('sc').innerHTML = head + body + '</div>';
+  const left = dealLeft();
+  $('ft').innerHTML = left
+    ? '<button class="cta" disabled><span>اختار ' + left + ' كمان</span><span class="ltr">₪' + (Number(d.price) + dealExtra()) + '</span></button>'
+    : '<button class="cta" onclick="dealAdd()"><span>إضافة للسلة</span><span class="ltr">₪' + (Number(d.price) + dealExtra()) + '</span></button>';
+}
+function dealPick(i, id){
+  const it = byId(id); if(!it) return;
+  if(!(it.opts || []).length){
+    DL.picks[i].push({id, n: it.name, nh: it.name_he || '', labels: [], lh: [], extra: 0, note: ''});
+    const t = $('sc').scrollTop; drawDeal(); $('sc').scrollTop = t; return;
+  }
+  DL.slot = i; DL.scroll = $('sc').scrollTop;
+  openP(id);
+}
+function dealConfirm(){
+  if(!DL || DL.slot == null || !cur) return;
+  const ex = DL.d.extrasFree ? 0 : Math.max(0, Math.round((unit() - base(cur)) * 100) / 100);
+  DL.picks[DL.slot].push({id: cur.id, n: cur.name, nh: cur.name_he || '', labels: labels(false), lh: labels(true), extra: ex, note: note.trim()});
+  dealBack();
+}
+function dealBack(){
+  const t = DL.scroll || 0; DL.slot = null; cur = null;
+  drawDeal(); $('sc').scrollTop = t;
+}
+function dealRemove(i, k){ DL.picks[i].splice(k, 1); const t = $('sc').scrollTop; drawDeal(); $('sc').scrollTop = t; }
+function dealAdd(){
+  if(!DL || dealLeft()) return;
+  const d = DL.d, all = DL.picks.flat();
+  const tr = p => p.nh || trText(p.n, true);
+  cart.push({key: Date.now() + '_d' + Math.random().toString(36).slice(2, 6), id: d.id, n: d.title, nh: d.title_he || '',
+    img: d.img || '', catId: '', icon: d.emoji || '🍕', unit: Number(d.price) + dealExtra(), qty: 1, note: '',
+    labels: all.map(p => p.n + (p.labels.length ? ' (' + p.labels.join('، ') + ')' : '')),
+    lh: all.map(p => tr(p) + (p.lh.length ? ' (' + p.lh.join(', ') + ')' : '')),
+    sub: all.map(p => ({n: p.n, nh: p.nh, labels: p.labels, lh: p.lh, note: p.note}))});
+  DL = null;
+  save(); paintCart(); closeSheet(); toast('أُضيف العرض للسلة ✓');
+}
+function addDealSimple(d){
+  cart.push({key: Date.now() + '_d', id: d.id, n: d.title, nh: d.title_he || '', img: d.img || '', catId: '', icon: d.emoji || '🍕',
+    unit: Number(d.price), qty: 1, note: '', labels: [d.desc || ''], lh: [d.desc_he || d.desc || '']});
+  save(); paintCart(); toast('أُضيف العرض للسلة ✓');
+}
+function dealCards(){
+  return DEALS.filter(d => d.active !== false).map(d =>
+    '<div class="deal" onclick="openDeal(\'' + d.id + '\')">' +
+      (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
+      '<div class="txt"><div class="t">' + esc(LX(d,'title')) + '</div>' +
+      '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
+      '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
+      '<div class="go">' + (dealSlots(d).length ? 'اختار وجبتك' : 'اطلب الآن') + '</div></div></div>').join('<div style="height:12px"></div>');
+}
 
 /* ============ طرق الدفع ============ */
 const PAY_ALL = {
@@ -1462,7 +1572,7 @@ function openCart(){
   const lines = cart.map((l,i) =>
     '<div class="ci"><div class="ph"><img src="' + imgLine(l) + '" alt=""></div><div class="m">' +
     '<div class="nm">' + esc(LANG === 'he' && l.nh ? l.nh : l.n) + '</div>' +
-    (l.labels.length ? '<div class="op">' + esc((LANG === 'he' && l.lh ? l.lh : l.labels).join(' · ')) + '</div>' : '') +
+    (l.labels.length ? '<div class="op">' + (l.sub ? (LANG === 'he' && l.lh ? l.lh : l.labels).map(x => '• ' + esc(x)).join('<br>') : esc((LANG === 'he' && l.lh ? l.lh : l.labels).join(' · '))) + '</div>' : '') +
     (l.note ? '<div class="op">📝 ' + esc(l.note) + '</div>' : '') +
     '<div class="b"><div class="pr">' + nis(l.unit*l.qty) + '</div><div class="mq">' +
     '<button onclick="lq(' + i + ',-1)">' + (l.qty===1?'🗑':'−') + '</button>' +
@@ -1576,8 +1686,12 @@ function sendOrder(){
 
   const snapSub = sub(), snapDisc = discount(), snapFee = fee(), snapTot = total();
   const order = {
-    items: cart.map(l => Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
-      l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})),
+    items: cart.flatMap(l => l.sub && l.sub.length
+      ? [Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:[], note:l.note||'', deal:true}, l.nh ? {name_he:l.nh} : {})]
+          .concat(l.sub.map(p => Object.assign({name:p.n, qty:l.qty, unit:0, labels:p.labels||[], note:p.note||'', sub:true},
+            p.nh ? {name_he:p.nh} : {}, p.lh ? {labels_he:p.lh} : {})))
+      : [Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
+          l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})]),
     customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
@@ -1588,7 +1702,8 @@ function sendOrder(){
   let msg = '*طلب جديد - ' + (SET.name||'') + '*\n\n';
   cart.forEach(l => {
     msg += '• ' + l.qty + '× ' + l.n + ' — ₪' + (l.unit*l.qty).toFixed(2) + '\n';
-    if(l.labels.length) msg += '   ' + l.labels.join(' · ') + '\n';
+    if(l.sub && l.sub.length) l.sub.forEach(p => { msg += '   ↳ ' + p.n + (p.labels.length ? ' (' + p.labels.join(' · ') + ')' : '') + '\n'; if(p.note) msg += '      📝 ' + p.note + '\n'; });
+    else if(l.labels.length) msg += '   ' + l.labels.join(' · ') + '\n';
     if(l.note) msg += '   📝 ' + l.note + '\n';
   });
   msg += '\nالمجموع: ₪' + snapSub.toFixed(2);
@@ -1617,8 +1732,19 @@ function sendOrder(){
 }
 function reorder(i){
   const o = hist[i]; if(!o) return;
-  o.items.forEach(it => cart.push({key:Date.now()+'_'+Math.random().toString(36).slice(2,7),
-    id:'', n:it.name, img:'', catId:'', unit:it.unit, qty:it.qty, note:it.note||'', labels:it.labels||[]}));
+  let last = null;
+  o.items.forEach(it => {
+    if(it.sub){
+      if(last && last.sub){ last.sub.push({n:it.name, nh:it.name_he||'', labels:it.labels||[], lh:it.labels_he||[], note:it.note||''});
+        last.labels.push(it.name + ((it.labels||[]).length ? ' (' + it.labels.join('، ') + ')' : ''));
+        last.lh.push((it.name_he||it.name) + ((it.labels_he||[]).length ? ' (' + it.labels_he.join(', ') + ')' : '')); }
+      return;
+    }
+    last = {key:Date.now()+'_'+Math.random().toString(36).slice(2,7), id:'', n:it.name, nh:it.name_he||'', img:'', catId:'',
+      unit:it.unit, qty:it.qty, note:it.note||'', labels: it.deal ? [] : (it.labels||[]), lh: it.deal ? [] : (it.labels_he||[])};
+    if(it.deal) last.sub = [];
+    cart.push(last);
+  });
   save(); paintCart(); toast('أُضيف للسلة ✓'); go('home');
 }
 
@@ -1657,6 +1783,8 @@ function show(){
   $('cartbar').classList.remove('on');
 }
 function closeSheet(){
+  if(DL && DL.slot != null){ dealBack(); return; }
+  DL = null;
   $('bg').classList.remove('on'); $('sheet').classList.remove('on');
   document.body.style.overflow = ''; $('sc').scrollTop = 0;
   paintCart();
