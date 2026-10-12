@@ -1,3 +1,12 @@
+/* إشعارات Firebase (السائقين) — بترنّ حتى لو التلفون مسكّر */
+try{
+  self.window = self;
+  importScripts('firebase-config.js',
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+  firebase.initializeApp(self.FB_CONFIG);
+  firebase.messaging();
+}catch(e){}
 /* عامل خدمة بسيط: بيخلّي المتجر ينزل كتطبيق.
    ما بيخزّن صفحات — دايماً بيجيب أحدث نسخة من الإنترنت، فالتحديثات بتوصل فوراً. */
 self.addEventListener('install', () => self.skipWaiting());
@@ -11,6 +20,7 @@ self.addEventListener('fetch', e => {
 
 /* لما السائق يكبس على الإشعار — بنفتح صفحة السائق */
 self.addEventListener('notificationclick', e => {
+  if(e.notification.data && e.notification.data.FCM_MSG) return;   // Firebase بيفتحها لحاله
   e.notification.close();
   const url = (e.notification.data && e.notification.data.url) || './driver.html';
   e.waitUntil(self.clients.matchAll({type: 'window', includeUncontrolled: true}).then(list => {

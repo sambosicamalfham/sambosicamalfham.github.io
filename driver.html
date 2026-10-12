@@ -97,6 +97,7 @@ details div{font-size:14px;padding:3px 0}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
 /* ============ صفحة السائق ============
    بيشوف طلبات التوصيل الجاهزة، بياخذها، بيوصل وبيعلّم "وصلت".
@@ -137,7 +138,7 @@ function applyLang(){
 function toggleLang(){ LANG = LANG === 'he' ? 'ar' : 'he'; try{ localStorage.setItem('pz_drv_lang', LANG); }catch(e){} applyLang(); render(); }
 function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('on'), 2400); }
 
-let auth = null, db = null, SET = {}, ORDERS = [], view = 'ready', ME = '', UID = '', MYPH = '', first = true, lastReady = new Set();
+let auth = null, db = null, SET = {}, ORDERS = [], view = 'ready', ME = '', UID = '', MYPH = '', ROLE = '', first = true, lastReady = new Set();
 const DRV_DOMAIN = '@drivers.pizza-app.com';
 const normPh = p => { let d = String(p || '').replace(/\D/g, ''); if(d.startsWith('972')) d = '0' + d.slice(3); return d; };
 
@@ -162,7 +163,29 @@ function doLogin(){
     $('lgBtn').disabled = false; $('lgBtn').textContent = t('دخول');
   });
 }
-function doLogout(){ auth.signOut().then(() => location.reload()); }
+async function doLogout(){
+  // التلفون ما عاد يرنّ بعد الخروج
+  try{ const tk = localStorage.getItem('pz_fcm'); if(tk && UID && ROLE === 'driver') await db.collection('drivers').doc(UID).update({fcm: firebase.firestore.FieldValue.arrayRemove(tk)}); localStorage.removeItem('pz_fcm'); }catch(e){}
+  auth.signOut().then(() => location.reload());
+}
+/* 🔔 إشعارات حقيقية (Firebase) — بترنّ حتى لو الشاشة مسكّرة */
+let PUSH_OK = false, _pushBusy = false;
+async function registerPush(){
+  if(PUSH_OK || _pushBusy) return;
+  try{
+    if(ROLE !== 'driver' || !SET.vapid || !('Notification' in window) || Notification.permission !== 'granted') return;
+    if(!firebase.messaging || (firebase.messaging.isSupported && !firebase.messaging.isSupported())) return;
+    _pushBusy = true;
+    const reg = await navigator.serviceWorker.register('sw.js'); await navigator.serviceWorker.ready;
+    const tok = await firebase.messaging().getToken({vapidKey: SET.vapid, serviceWorkerRegistration: reg});
+    if(tok){
+      await db.collection('drivers').doc(UID).update({fcm: firebase.firestore.FieldValue.arrayUnion(tok), lang: LANG});
+      try{ localStorage.setItem('pz_fcm', tok); }catch(e){}
+      PUSH_OK = true; render();
+    }
+  }catch(e){ console.error('push', e); }
+  _pushBusy = false;
+}
 function denied(msg){
   $('main').innerHTML = '<div class="empty"><div class="e">🔒</div><div>' + esc(t(msg)) + '</div><br><button class="btn" onclick="doLogout()">' + t('خروج') + '</button></div>';
 }
@@ -171,17 +194,17 @@ async function start(u){
   $('login').style.display = 'none'; UID = u.uid;
   try{
     const d = await db.collection('drivers').doc(u.uid).get();
-    if(d.exists && d.data().active && !d.data().removed){ ME = d.data().name || ''; MYPH = d.data().phone || ''; }
+    if(d.exists && d.data().active && !d.data().removed){ ME = d.data().name || ''; MYPH = d.data().phone || ''; ROLE = 'driver'; }
     else if(d.exists){ denied('حسابك موقّف — احكي مع صاحب المحل'); return; }
     else{
       const st = await db.collection('staff').doc(u.uid).get().catch(() => null);
       if(!st || !st.exists){ denied('هاد الحساب مش موظف — اطلب من صاحب المحل يضيفك'); return; }
-      ME = t('المحل');
+      ME = t('المحل'); ROLE = 'staff';
     }
   }catch(e){ denied('حسابك موقّف — احكي مع صاحب المحل'); return; }
   applyLang();
   db.collection('drivers').doc(u.uid).onSnapshot(d => { if(d.exists && (!d.data().active || d.data().removed)) denied('حسابك موقّف — احكي مع صاحب المحل'); }, () => {});
-  db.collection('settings').doc('main').onSnapshot(d => { SET = d.exists ? d.data() : {}; $('hShop').textContent = (LANG === 'he' && SET.name_he) || SET.name || ''; });
+  db.collection('settings').doc('main').onSnapshot(d => { SET = d.exists ? d.data() : {}; $('hShop').textContent = (LANG === 'he' && SET.name_he) || SET.name || ''; registerPush(); });
   db.collection('orders').where('type', '==', 'delivery').where('status', 'in', ['new', 'prep', 'ready']).onSnapshot(s => {
     ORDERS = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a, b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr)));
     const seen = ORDERS.filter(o => !o.driverUid || o.driverUid === UID).map(o => o.id + ':' + (o.driverUid === UID ? 'm' : 'f'));
@@ -310,7 +333,7 @@ document.addEventListener('visibilitychange', () => { if(document.visibilityStat
 async function soundOn(){
   audioUnlock(); SOUND_OK = true; try{ sessionStorage.setItem('pz_drv_snd', '1'); }catch(e){}
   try{ if('Notification' in window && Notification.permission === 'default') await Notification.requestPermission(); }catch(e){}
-  wakeOn(); beep(); toast('🔔 ' + t('الرنّة شغّالة')); render();
+  wakeOn(); beep(); toast('🔔 ' + t('الرنّة شغّالة')); render(); registerPush();
 }
 function beep(){
   try{
@@ -336,7 +359,7 @@ function ding(msg){
 }
 function ack(){ UNSEEN = false; clearInterval(RING_T); try{ navigator.serviceWorker && navigator.serviceWorker.ready.then(r => r.getNotifications({tag: 'pz-order'}).then(ns => ns.forEach(n => n.close()))); }catch(e){} }
 function soundHtml(){
-  if(SOUND_OK) return '';
+  if(SOUND_OK && (PUSH_OK || !SET.vapid || ROLE !== 'driver' || !('Notification' in window) || Notification.permission === 'denied')) return '';
   return `<button class="snd" onclick="soundOn()"><span class="ic">🔔</span><span style="flex:1;text-align:start"><b>${t('اكبس هون لتشغيل الرنّة')}</b><br><small>${t('لازم كل مرة بتفتح الصفحة — عشان التلفون يرنّ لما يوصل طلب')}</small></span></button>`;
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

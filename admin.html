@@ -589,6 +589,9 @@ function LX(o, f){
 }
 /* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد، سائق ===== */
 Object.assign(HE, {
+  'الإشعارات شغّالة':'התראות פעילות', 'بدون إشعارات':'בלי התראות', 'إشعارات للتلفون (بترنّ حتى لو مسكّر)':'התראות לטלפון (מצלצל גם כשהוא נעול)',
+  'مفتاح Web Push (من Firebase)':'מפתח Web Push (מ־Firebase)', 'المفتاح مش مزبوط — انسخه كامل':'המפתח לא תקין — העתיקו אותו במלואו', 'حفظ':'שמירה', 'تم الحفظ ✓':'נשמר ✓',
+  'Firebase ← ⚙️ Project settings ← Cloud Messaging ← Web Push certificates ← Generate key pair ← انسخ المفتاح والصقه هون.':'Firebase ← ⚙️ Project settings ← Cloud Messaging ← Web Push certificates ← Generate key pair ← העתיקו את המפתח והדביקו כאן.',
   'لكل السائقين':'לכל השליחים',
   'السائقين':'שליחים', 'سائق جديد':'שליח חדש', 'رقم التلفون (هو اسم الدخول)':'טלפון (שם המשתמש)', 'الكود (كلمة السر)':'קוד (סיסמה)', 'إضافة':'הוספה',
   'السائق بيدخل على':'השליח נכנס ל־', 'برقم تلفونه والكود. بيشوف بس طلبات التوصيل الجاهزة — ما بيقدر يفتح اللوحة. بتقدر توقفه بأي وقت.':'עם הטלפון והקוד שלו. הוא רואה רק הזמנות משלוח מוכנות — אין לו גישה ללוח הבקרה. אפשר להשבית אותו בכל רגע.',
@@ -1570,7 +1573,7 @@ const DRV_RANGES = [['today', LANG === 'he' ? 'היום' : 'اليوم'], ['yest
 function renderDrv(){
   if(!DRV.orders && !DRV.loading){ drvLoad(); return; }
   const list = DRIVERS.map(d => `<div class="card dvr ${d.active ? '' : 'off'}">
-      <div class="dvh"><div><b>${esc(d.name)}</b> <span class="muted ltr">${esc(d.phone)}</span> ${d.active ? '<span class="pill g">فعّال</span>' : '<span class="pill">موقّف</span>'}</div>
+      <div class="dvh"><div><b>${esc(d.name)}</b> <span class="muted ltr">${esc(d.phone)}</span> ${d.active ? '<span class="pill g">فعّال</span>' : '<span class="pill">موقّف</span>'} ${(d.fcm || []).length ? '<span class="pill b">🔔 الإشعارات شغّالة</span>' : '<span class="pill a">🔕 بدون إشعارات</span>'}</div>
         <span class="pin" title="الكود">🔑 <span class="ltr">${esc(d.pin || '')}</span></span></div>
       <div class="acts">
         <a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(d.phone)}?text=${encodeURIComponent(drvShareMsg(d))}">💬 ابعتله الدخول</a>
@@ -1591,6 +1594,12 @@ function renderDrv(){
       <div class="muted" style="margin-top:8px">السائق بيدخل على <b class="ltr">driver.html</b> برقم تلفونه والكود. بيشوف بس طلبات التوصيل الجاهزة — ما بيقدر يفتح اللوحة. بتقدر توقفه بأي وقت.</div>
     </div>
     ${list || '<div class="empty"><div class="e">🛵</div><div>ما في سائقين بعد</div></div>'}
+    <div class="card">
+      <label style="font-weight:800;font-size:14px;display:block;margin-bottom:6px">🔔 إشعارات للتلفون (بترنّ حتى لو مسكّر)</label>
+      <div class="f"><label>مفتاح Web Push (من Firebase)</label><input id="sVapid" dir="ltr" value="${esc(SET.vapid || '')}" placeholder="B...">
+        <div class="muted" style="margin-top:5px">Firebase ← ⚙️ Project settings ← Cloud Messaging ← Web Push certificates ← Generate key pair ← انسخ المفتاح والصقه هون.</div></div>
+      <button class="btn sm red" onclick="saveVapid()">💾 حفظ</button>
+    </div>
     <h2 class="sec">📊 تقرير السائقين</h2>
     <div class="bar">
       <select onchange="drvLoad(this.value)">${DRV_RANGES.map(([k, t]) => `<option value="${k}" ${DRV.range === k ? 'selected' : ''}>${t}</option>`).join('')}</select>
@@ -1622,6 +1631,11 @@ const DRV_CSS = `
   .dvk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
   .dvk>div{background:#f7f5f3;border-radius:10px;padding:7px 9px}.dvk b{display:block;font-size:17px}.dvk span{font-size:11.5px;color:#666}
   .dvk .neg b{color:#c0392b}`;
+async function saveVapid(){
+  const v = val('sVapid').replace(/\s+/g, '');
+  if(v && !/^[A-Za-z0-9_-]{60,120}$/.test(v)){ alert('المفتاح مش مزبوط — انسخه كامل'); return; }
+  try{ await db.collection('settings').doc('main').set({vapid: v}, {merge: true}); SET.vapid = v; toast('تم الحفظ ✓'); }catch(e){ alert(e.message); }
+}
 /* اختيار سائق للطلب من اللوحة (أو تغييره) */
 function drvSelHtml(o){
   if(o.type === 'pickup') return '';
@@ -1634,7 +1648,7 @@ function drvSelHtml(o){
 async function assignDrv(id, uid){
   const d = DRIVERS.find(x => x.id === uid);
   try{
-    await db.collection('orders').doc(id).update(d ? {driver: d.name, driverUid: d.id, driverPhone: d.phone || '', driverAt: new Date().toISOString()}
+    await db.collection('orders').doc(id).update(d ? {driver: d.name, driverUid: d.id, driverPhone: d.phone || '', driverAt: new Date().toISOString(), assigned: Date.now()}
                                                    : {driver: '', driverUid: '', driverPhone: '', driverAt: ''});
     toast(d ? '🛵 ' + d.name + ' ✓' : 'تم ✓');
   }catch(e){ alert(e.message); }
