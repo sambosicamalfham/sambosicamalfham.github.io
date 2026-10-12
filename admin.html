@@ -416,7 +416,7 @@ const HE = {
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
   'معدل الطلب:':'ממוצע הזמנה:',
-  'العرض ظاهر للزبائن':'המבצע מוצג ללקוחות','بس جوا العروض (مخفي من المنيو)':'רק בתוך מבצעים (מוסתר מהתפריט)',
+  'العرض ظاهر للزبائن':'המבצע מוצג ללקוחות','مميّز — بيطلع كبير بالصفحة الرئيسية (أحسن 2-3 عروض)':'מומלץ — מוצג גדול בדף הראשי (2-3 המבצעים הטובים)','مميّز':'מומלץ','بس جوا العروض (مخفي من المنيو)':'רק בתוך מבצעים (מוסתר מהתפריט)',
   'مثلاً مشروب 330 مل اللي بيجي مع العرض بس، وما بينباع لحاله.':'למשל שתייה 330 מ״ל שמגיעה רק עם מבצע ולא נמכרת לבד.','بس للعروض':'רק למבצעים','خطوات العرض (الزبون بيختار)':'שלבי המבצע (הלקוח בוחר)',
   'كل خطوة: الزبون بيختار':'בכל שלב הלקוח בוחר','عدد':'כמות','من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.':'מתוך הפריטים שתסמנו. למשל: "בחרו 3 פיצות" מתוך 5, ואחר כך "בחרו שתייה". בלי שלבים — המבצע נוסף לסל כמו שהוא.',
   'خطوة':'שלב','مثلاً: اختار بيتسا':'למשל: בחרו פיצה','الإضافات جوا العرض':'תוספות בתוך המבצע',
@@ -875,6 +875,9 @@ function renderOrders(){
 }
 function setStatus(id, s){
   db.collection('orders').doc(id).update({status:s}).catch(e=>alert(e.message));
+  // تتبّع الطلب عند الزبون — بيشتغل بس إذا قواعد Firestore فيها track
+  const o = ORDERS.find(x => x.id === id);
+  db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
   if(s === 'ready') notifyReady(id);
 }
 /* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
@@ -2101,9 +2104,11 @@ function renderDeals(){
     ${DEALS.length ? DEALS.map(d=>`
       <div class="card"><div class="it">
         <div class="ph">${d.img?`<img src="${esc(d.img)}" alt="">`:`<div style="width:100%;height:100%;display:grid;place-items:center;font-size:30px;background:#f4f2f0">${esc(d.emoji||'🎯')}</div>`}</div>
-        <div class="mid"><div class="nm">${esc(LX(d,'title'))} ${d.active===false?'<span class="pill">مخفي</span>':''}</div><div class="muted">${esc(LX(d,'desc'))}</div>
+        <div class="mid"><div class="nm">${esc(LX(d,'title'))} ${d.featured?'<span class="pill a">⭐ مميّز</span>':''} ${d.active===false?'<span class="pill">مخفي</span>':''}</div><div class="muted">${esc(LX(d,'desc'))}</div>
           ${(d.slots||[]).length ? `<div class="tags" style="margin-top:4px">${d.slots.map((s,i)=>`<span class="pill b">${i+1}. ${esc(LX(s,'title')||'اختار')} ×${Number(s.count)||1}</span>`).join(' ')} <span class="pill">${d.extrasFree?'إضافات ببلاش':'إضافات بتنحسب'}</span></div>` : ''}</div>
         <div class="pr ltr">${Number(d.price)} ₪</div>
+        <button class="menu-btn" onclick="moveDeal('${d.id}',-1)" title="لفوق">▲</button>
+        <button class="menu-btn" onclick="moveDeal('${d.id}',1)" title="لتحت">▼</button>
         <button class="menu-btn" onclick="editDeal('${d.id}')">✏️</button>
         <button class="menu-btn" onclick="delDeal('${d.id}')">🗑️</button>
       </div></div>`).join('')
@@ -2132,6 +2137,15 @@ function dealSlotRow(s, i){
 }
 function dealAddSlot(){ $('dSlots').insertAdjacentHTML('beforeend', dealSlotRow(null)); }
 function dealSlotCount(el){ const r = el.closest('.dslot'); r.querySelector('.dsel').textContent = r.querySelectorAll('.si:checked').length + ' صنف معلّم'; trNode(r.querySelector('.dsel')); }
+async function moveDeal(id, d){
+  const i = DEALS.findIndex(x => x.id === id), j = i + d;
+  if(i < 0 || j < 0 || j >= DEALS.length) return;
+  const arr = DEALS.slice(); [arr[i], arr[j]] = [arr[j], arr[i]];
+  DEALS = arr; render();
+  const b = db.batch();
+  arr.forEach((x, k) => { x.order = (k + 1) * 10; b.update(db.collection('deals').doc(x.id), {order: x.order}); });
+  try{ await b.commit(); }catch(e){ alert(e.message); }
+}
 function editDeal(id){
   const d = id ? DEALS.find(x=>x.id===id) : {title:'',desc:'',price:'',emoji:'🍕',img:''};
   if(!d) return;
@@ -2147,6 +2161,7 @@ function editDeal(id){
       <div class="f"><label>إيموجي</label><input id="dEmoji" value="${esc(d.emoji||'🍕')}" style="font-size:22px;text-align:center"></div>
     </div>
     <label class="chk"><input type="checkbox" id="dActive" ${d.active!==false?'checked':''}><span>✅ العرض ظاهر للزبائن</span></label>
+    <label class="chk"><input type="checkbox" id="dFeat" ${d.featured?'checked':''}><span>⭐ مميّز — بيطلع كبير بالصفحة الرئيسية (أحسن 2-3 عروض)</span></label>
     <div class="card" style="box-shadow:none;border:1.5px solid var(--line)">
       <label style="font-weight:800;font-size:15px">🧩 خطوات العرض (الزبون بيختار)</label>
       <div class="muted" style="margin:3px 0 10px">كل خطوة: الزبون بيختار <b>عدد</b> من الأصناف اللي بتعلّم عليها. مثلاً: "اختار 3 بيتسات" من 5 بيتسات، وبعدين "اختار مشروب". إذا ما في خطوات، العرض بينضاف للسلة زي ما هو.</div>
@@ -2170,7 +2185,7 @@ function editDeal(id){
     if(bad && !confirm('في خطوة ما علّمت فيها ولا صنف — رح تنحذف. تكمّل؟')) return false;
     const exEl = document.querySelector('input[name="dEx"]:checked');
     const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || '',
-      slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked};
+      slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked, featured: $('dFeat').checked};
     if(id) await db.collection('deals').doc(id).update(data);
     else await db.collection('deals').add(Object.assign(data,{order:(DEALS.length+1)*10}));
     return true;

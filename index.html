@@ -277,7 +277,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* الشريط السفلي */
 .tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;max-width:var(--w);margin:0 auto;background:#fff;
-  border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);
   padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -3px 18px rgba(0,0,0,.05)}
 .tab{padding:10px 0 9px;text-align:center;color:#b2b2b2;font-size:11px;font-weight:700;position:relative}
 .tab .i{font-size:20px;display:block;margin-bottom:2px;line-height:1.1}
@@ -392,6 +392,46 @@ a.cta{text-decoration:none;justify-content:center}
 .dl-it .nm{font-weight:800;font-size:13px;padding:8px 9px 2px}
 .dl-it .op{font-size:11px;color:var(--muted);padding:0 9px 8px}
 .dl-it:active{transform:scale(.97)}
+/* العروض */
+.alldeals{display:flex;align-items:center;gap:10px;width:calc(100% - 32px);margin:12px 16px 0;background:#fff;border:2px solid var(--red);color:var(--red);
+  border-radius:16px;padding:13px 16px;font-family:inherit;font-weight:900;font-size:15px}
+.alldeals b{background:var(--red);color:#fff;border-radius:999px;padding:1px 10px;font-size:13px}
+.alldeals .ar{margin-inline-start:auto;font-size:18px}
+.cat.dealchip .bx{background:linear-gradient(135deg,#e3242b,#ff7a3d);color:#fff;border-color:transparent}
+.cat.dealchip .lb{color:var(--red);font-weight:900}
+.deal .fbadge{display:inline-block;background:#f5b301;color:#1a1a1a;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-bottom:6px}
+.dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dtile{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);text-align:start;display:flex;flex-direction:column;font-family:inherit;padding:0;border:none}
+.dtile .ph{height:120px;position:relative;background:linear-gradient(135deg,#2a1a12,#1a1a1a);display:grid;place-items:center;overflow:hidden}
+.dtile .ph img{width:100%;height:100%;object-fit:cover}
+.dtile .ph .em{font-size:52px}
+.dtile .fb{position:absolute;top:8px;inset-inline-start:8px;background:#f5b301;border-radius:999px;font-size:12px;padding:2px 7px}
+.dtile .bd{padding:10px 11px 11px;display:flex;flex-direction:column;flex:1}
+.dtile .nm{font-weight:900;font-size:14px;line-height:1.35}
+.dtile .ds{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.45;max-height:34px;overflow:hidden}
+.dtile .ft{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:9px}
+.dtile .ft b{color:var(--red);font-size:17px}
+.dtile .go{background:var(--red);color:#fff;border-radius:999px;font-size:12px;font-weight:800;padding:5px 12px}
+/* تتبّع الطلب */
+#trkPill{position:fixed;z-index:39;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:9px;
+  background:#1a1a1a;color:#fff;border-radius:999px;padding:10px 16px;font-family:inherit;font-weight:800;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.3);white-space:nowrap;max-width:calc(100% - 32px)}
+#trkPill .go{color:#f5b301}
+#trkPill .pulse{width:10px;height:10px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 0 rgba(61,220,132,.7);animation:pl 1.6s infinite}
+@keyframes pl{70%{box-shadow:0 0 0 10px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+.trk-no{text-align:center;color:var(--ink-2);margin-top:6px}.trk-no b{color:var(--ink);font-size:18px}
+.trk-big{font-size:64px;text-align:center;margin:10px 0 2px;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.trk-t{text-align:center;font-size:21px;font-weight:900}
+.trk-eta{text-align:center;margin-top:6px;color:var(--ink-2)}.trk-eta b{color:var(--red);font-size:18px}
+.trk-x{font-size:56px;text-align:center;margin-top:16px}
+.trk-steps{margin:20px 4px 0;position:relative}
+.trk-steps .ts{display:flex;align-items:center;gap:12px;padding:9px 0;position:relative;color:#b8b8b8;font-weight:700}
+.trk-steps .ts:not(:last-child)::after{content:'';position:absolute;inset-inline-start:17px;top:44px;width:2px;height:calc(100% - 26px);background:#e5e5e5}
+.trk-steps .ts.done::after{background:#1e8e4e}
+.trk-steps .dot{width:36px;height:36px;border-radius:50%;background:#f0f0f0;display:grid;place-items:center;font-size:17px;flex:none;z-index:1}
+.trk-steps .ts.done{color:var(--ink-2)}.trk-steps .ts.done .dot{background:#1e8e4e;color:#fff;font-weight:900}
+.trk-steps .ts.now{color:var(--ink);font-size:16px}.trk-steps .ts.now .dot{background:var(--red);box-shadow:0 0 0 5px var(--red-soft)}
+.cta.gh2{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
 </style>
 </head>
 <body>
@@ -439,6 +479,12 @@ a.cta{text-decoration:none;justify-content:center}
     <div class="fn"><span id="fnName"></span><br>للطلب: <span class="ltr" id="fnPhone"></span></div>
   </div>
 
+  <!-- ===== العروض ===== -->
+  <div id="vDeals" class="vh" style="display:none">
+    <h2>🎯 العروض</h2>
+    <div id="dealsList" style="padding:0 16px 20px"></div>
+  </div>
+
   <!-- ===== الأقسام ===== -->
   <div id="vCats" class="vh" style="display:none">
     <h2>الأقسام</h2>
@@ -458,6 +504,7 @@ a.cta{text-decoration:none;justify-content:center}
 
 <div class="tabs">
   <button class="tab on" id="tHome" onclick="go('home')"><span class="i">🏠</span>الرئيسية</button>
+  <button class="tab"    id="tDeals" onclick="go('deals')"><span class="i">🎯</span>العروض<span class="dot" id="tDealsN" style="display:none;background:var(--gold,#f5b301);color:#1a1a1a">0</span></button>
   <button class="tab"    id="tCats" onclick="go('cats')"><span class="i">🗂️</span>الأقسام</button>
   <button class="tab"    id="tCart" onclick="go('cart')"><span class="i">🛒</span>السلة<span class="dot" id="tDot" style="display:none">0</span></button>
   <button class="tab"    id="tMe"   onclick="go('me')"><span class="i">👤</span>حسابي</button>
@@ -521,6 +568,10 @@ const HE = {
   'حسب المنطقة':'לפי אזור',
   'طريقة الدفع':'אמצעי תשלום',
   'اختار وجبتك':'בחרו את הארוחה',
+  'استلمنا طلبك':'קיבלנו את ההזמנה','عم نحضّره':'מכינים אותה','طالع مع السائق':'יצאה עם השליח','وصل — بالهنا والشفا':'הגיעה — בתיאבון!',
+  'جاهز للاستلام':'מוכנה לאיסוף','استلمته — بالهنا والشفا':'נאספה — בתיאבון!','انلغى الطلب':'ההזמנה בוטלה','تابع':'מעקב','طلبك':'ההזמנה שלך',
+  'إذا في سؤال اتصل فينا':'לשאלות התקשרו אלינו','طلب رقم':'הזמנה מס׳','بيوصلك تقريباً الساعة':'תגיע בערך בשעה','بيكون جاهز تقريباً الساعة':'תהיה מוכנה בערך בשעה',
+  'الصفحة بتتحدّث لحالها — مش لازم تعمل إشي':'הדף מתעדכן לבד — לא צריך לעשות כלום','تابع طلبك':'מעקב הזמנה','العروض':'מבצעים','كل العروض':'כל המבצעים','مميّز':'מומלץ','ما في عروض هلأ':'אין מבצעים כרגע',
   'فطر':'פטריות','زيتون':'זיתים','زيتون اخضر':'זיתים ירוקים','زيتون أخضر':'זיתים ירוקים','زيتون اسود':'זיתים שחורים','زيتون أسود':'זיתים שחורים',
   'ذره':'תירס','ذرة':'תירס','بصل':'בצל','فلفل أخضر':'פלפל ירוק','فلفل اخضر':'פלפל ירוק','فلفل حار':'פלפל חריף','طونه':'טונה','تونة':'טונה','طونة':'טונה',
   'سلامي':'סלמי','سلامي بقري':'סלמי בקר','جبنة إضافية':'תוספת גבינה','جبنة اضافية':'תוספת גבינה','دجاج مشوي':'עוף צלוי','صدر دجاج':'חזה עוף',
@@ -833,7 +884,10 @@ function wideCard(it){
 }
 
 /* ============ الرسم ============ */
+let _trkInit = false;
 function paint(){
+  if(!_trkInit && typeof trkPill === 'function'){ _trkInit = true; setTimeout(() => { trkListen(); trkPill(); }, 0); }
+  try{ const n = activeDeals().length, el = $('tDealsN'); if(el){ el.style.display = n ? '' : 'none'; el.textContent = n; } if(view === 'deals') renderDeals(); }catch(e){}
   $('brandName').textContent = LX(SET,'name');
   $('brandTag').textContent  = LX(SET,'tagline') || 'مذاق لا يُقاوم';
   $('fnName').textContent    = LX(SET,'name') + ' · ' + LX(SET,'addr');
@@ -853,7 +907,8 @@ function paint(){
   $('demoFlag').innerHTML = live ? ''
     : '<div class="demo">⚠️ <b>نسخة تجريبية.</b> المنيو والأسعار والصور وهمية — بتتبدل من لوحة التحكم.</div>';
 
-  $('cats').innerHTML = CATS.filter(c => avail().some(i => i.catId === c.id)).map(c =>
+  $('cats').innerHTML = (activeDeals().length ? '<button class="cat dealchip" onclick="go(\'deals\')"><span class="bx">🎯</span><span class="lb">العروض</span></button>' : '') +
+    CATS.filter(c => avail().some(i => i.catId === c.id)).map(c =>
     '<button class="cat" data-c="' + c.id + '" onclick="openCat(\'' + c.id + '\')">' +
     '<span class="bx">' + (c.img ? '<img src="' + esc(c.img) + '" alt="" loading="lazy">' : esc(c.icon||'🍽️')) + '</span><span class="lb">' + esc(LX(c,'name')) + '</span></button>').join('');
 
@@ -870,8 +925,13 @@ function renderHome(){
     return;
   }
   let html = '';
-  if(DEALS.some(d => d.active !== false)){
-    html += '<div style="height:6px"></div>' + dealCards();
+  const actD = activeDeals();
+  if(actD.length){
+    const feat = actD.filter(d => d.featured);
+    const show = (feat.length ? feat : actD).slice(0, 3);
+    html += '<div style="height:6px"></div>' + show.map(dealBig).join('<div style="height:12px"></div>');
+    if(actD.length > show.length)
+      html += '<button class="alldeals" onclick="go(\'deals\')"><span>🎯 كل العروض</span><b>' + actD.length + '</b><span class="ar">←</span></button>';
   }
   const best = avail().filter(i => i.best);
   if(best.length){
@@ -935,6 +995,9 @@ function go(v){
   view = v;
   $('vHome').style.display = v==='home' ? '' : 'none';
   $('vCats').style.display = v==='cats' ? '' : 'none';
+  $('vDeals').style.display = v==='deals' ? '' : 'none';
+  $('tDeals').classList.toggle('on', v==='deals');
+  if(v === 'deals') renderDeals();
   $('vMe').style.display   = v==='me'   ? '' : 'none';
   $('tHome').classList.toggle('on', v==='home');
   $('tCats').classList.toggle('on', v==='cats');
@@ -1341,14 +1404,98 @@ function addDealSimple(d){
     unit: Number(d.price), qty: 1, note: '', labels: [d.desc || ''], lh: [d.desc_he || d.desc || '']});
   save(); paintCart(); toast('أُضيف العرض للسلة ✓');
 }
-function dealCards(){
-  return DEALS.filter(d => d.active !== false).map(d =>
-    '<div class="deal" onclick="openDeal(\'' + d.id + '\')">' +
-      (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
-      '<div class="txt"><div class="t">' + esc(LX(d,'title')) + '</div>' +
-      '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
-      '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
-      '<div class="go">' + (dealSlots(d).length ? 'اختار وجبتك' : 'اطلب الآن') + '</div></div></div>').join('<div style="height:12px"></div>');
+const activeDeals = () => DEALS.filter(d => d.active !== false);
+function dealBig(d){
+  return '<div class="deal" onclick="openDeal(\'' + d.id + '\')">' +
+    (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
+    '<div class="txt">' + (d.featured ? '<div class="fbadge">⭐ مميّز</div>' : '') + '<div class="t">' + esc(LX(d,'title')) + '</div>' +
+    '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
+    '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
+    '<div class="go">' + (dealSlots(d).length ? 'اختار وجبتك' : 'اطلب الآن') + '</div></div></div>';
+}
+function dealTile(d){
+  return '<button class="dtile" onclick="openDeal(\'' + d.id + '\')">' +
+    '<span class="ph">' + (d.img ? '<img src="' + esc(d.img) + '" alt="" loading="lazy">' : '<span class="em">' + esc(d.emoji || '🍕') + '</span>') +
+      (d.featured ? '<span class="fb">⭐</span>' : '') + '</span>' +
+    '<span class="bd"><span class="nm">' + esc(LX(d,'title')) + '</span>' +
+    '<span class="ds">' + esc(LX(d,'desc')) + '</span>' +
+    '<span class="ft"><b class="ltr">₪' + Number(d.price) + '</b><span class="go">' + (dealSlots(d).length ? 'اختار' : '+') + '</span></span></span></button>';
+}
+function renderDeals(){
+  const ds = activeDeals();
+  $('dealsList').innerHTML = ds.length
+    ? '<div class="dgrid">' + ds.map(dealTile).join('') + '</div>'
+    : '<div class="empty"><div class="e">🎯</div><div>ما في عروض هلأ</div></div>';
+}
+function dealCards(){ return activeDeals().map(dealBig).join('<div style="height:12px"></div>'); }
+
+/* ============ تتبّع الطلب ============ */
+let TRK = null, trkUnsub = null, trkDoc = null;
+try{ TRK = JSON.parse(localStorage.getItem('pz_track') || 'null'); }catch(e){}
+if(TRK && Date.now() - new Date(TRK.at).getTime() > 4 * 3600e3) TRK = null;
+const etaMin = () => { const n = String(SET.prepTime || '').match(/\d+/g); return n ? Number(n[n.length - 1]) : 35; };
+const TSTEPS = {
+  delivery: [['new','📥','استلمنا طلبك'], ['prep','👨‍🍳','عم نحضّره'], ['ready','🛵','طالع مع السائق'], ['done','✅','وصل — بالهنا والشفا']],
+  pickup:   [['new','📥','استلمنا طلبك'], ['prep','👨‍🍳','عم نحضّره'], ['ready','🏪','جاهز للاستلام'], ['done','✅','استلمته — بالهنا والشفا']]
+};
+function trkStart(id, order){
+  TRK = {id, at: order.createdAt, type: order.type, total: order.total, status: 'new', no: ''};
+  try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+  trkListen();
+}
+function trkListen(){
+  if(!TRK || !live || !db) return;
+  if(trkUnsub) trkUnsub();
+  trkUnsub = db.collection('track').doc(TRK.id).onSnapshot(d => {
+    if(!d.exists) return;
+    const x = d.data(), was = TRK.status;
+    TRK.status = x.status || TRK.status; TRK.no = x.no || TRK.no;
+    try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+    if(was && was !== TRK.status){
+      try{ navigator.vibrate && navigator.vibrate([120, 60, 120]); }catch(e){}
+      const st = (TSTEPS[TRK.type] || TSTEPS.delivery).find(s => s[0] === TRK.status);
+      toast(TRK.status === 'cancel' ? '❌ انلغى الطلب' : (st ? st[1] + ' ' + st[2] : ''));
+    }
+    trkPill(); if($('trkBox')) trkDraw();
+  }, () => {});
+}
+function trkActive(){ return !!TRK && (!['done','cancel'].includes(TRK.status) || Date.now() - new Date(TRK.at).getTime() < 30 * 60e3); }
+function trkPill(){
+  let el = $('trkPill');
+  if(!el){ el = document.createElement('button'); el.id = 'trkPill'; el.onclick = openTrack; document.body.appendChild(el); }
+  if(!trkActive()){ el.style.display = 'none'; return; }
+  const steps = TSTEPS[TRK.type] || TSTEPS.delivery;
+  const st = TRK.status === 'cancel' ? ['cancel','❌','انلغى الطلب'] : (steps.find(s => s[0] === TRK.status) || steps[0]);
+  el.style.display = '';
+  el.innerHTML = '<span class="pulse"></span><span>' + st[1] + ' ' + esc(st[2]) + '</span><span class="go">تابع ←</span>';
+  trNode(el);
+}
+function openTrack(){
+  if(!TRK) return;
+  $('sc').innerHTML = '<div class="ctop"><h3>🛵 طلبك</h3><button onclick="closeSheet()">✕</button></div><div class="cwrap" id="trkBox"></div>';
+  trkDraw();
+  $('ft').innerHTML = '<button class="cta gh2" onclick="callRest()">📞 اتصل فينا</button>';
+  cur = null; show();
+}
+function trkDraw(){
+  const box = $('trkBox'); if(!box || !TRK) return;
+  const steps = TSTEPS[TRK.type] || TSTEPS.delivery;
+  const idx = Math.max(0, steps.findIndex(s => s[0] === TRK.status));
+  const at = new Date(TRK.at), eta = new Date(at.getTime() + (etaMin() + (TRK.type === 'delivery' ? 10 : 0)) * 60e3);
+  const hm = d => d.toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG', {hour:'2-digit', minute:'2-digit'});
+  if(TRK.status === 'cancel'){
+    box.innerHTML = '<div class="trk-x">❌</div><div class="trk-t">انلغى الطلب</div><div class="muted" style="text-align:center">إذا في سؤال اتصل فينا</div>';
+  }else{
+    box.innerHTML =
+      (TRK.no ? '<div class="trk-no">طلب رقم <b>#' + esc(TRK.no) + '</b></div>' : '') +
+      '<div class="trk-big">' + steps[idx][1] + '</div>' +
+      '<div class="trk-t">' + esc(steps[idx][2]) + '</div>' +
+      (idx < steps.length - 1 ? '<div class="trk-eta">' + (TRK.type === 'delivery' ? 'بيوصلك تقريباً الساعة' : 'بيكون جاهز تقريباً الساعة') + ' <b class="ltr">' + hm(eta) + '</b></div>' : '') +
+      '<div class="trk-steps">' + steps.map((s, i) =>
+        '<div class="ts ' + (i < idx ? 'done' : i === idx ? 'now' : '') + '"><span class="dot">' + (i < idx ? '✓' : s[1]) + '</span><span class="lb">' + esc(s[2]) + '</span></div>').join('') + '</div>' +
+      '<div class="muted" style="text-align:center;margin-top:10px">الصفحة بتتحدّث لحالها — مش لازم تعمل إشي</div>';
+  }
+  trNode(box);
 }
 
 /* ============ طرق الدفع ============ */
@@ -1388,8 +1535,8 @@ function payAfter(order){
     (k === 'paybox' ? '<div class="paystep">ادفع بـ <b>PayBox</b> من الرابط:</div>' : '') +
     (k === 'online' ? '<div class="paystep">ادفع بالبطاقة بصفحة الدفع الآمنة:</div>' : '') +
     '</div>';
-  $('ft').innerHTML = link ? '<a class="cta" href="' + esc(link) + '" target="_blank" rel="noopener">' + (k === 'online' ? '💳 ادفع هلأ' : '📲 افتح PayBox') + '</a>'
-    : '<button class="cta" onclick="closeSheet()">تمام</button>';
+  $('ft').innerHTML = (link ? '<a class="cta" href="' + esc(link) + '" target="_blank" rel="noopener">' + (k === 'online' ? '💳 ادفع هلأ' : '📲 افتح PayBox') + '</a>'
+    : '<button class="cta" onclick="closeSheet()">تمام</button>') + (TRK ? '<button class="cta gh2" style="margin-top:8px" onclick="openTrack()">🛵 تابع طلبك</button>' : '');
   cur = null; show();
 }
 function copyTxt(t){ try{ navigator.clipboard.writeText(t); toast('تم النسخ ✓'); }catch(e){} }
@@ -1721,12 +1868,23 @@ function sendOrder(){
     cart = []; coupon = null; orderNote = '';
     save(); paintCart(); closeSheet(); renderMe();
     toast(saved ? 'تم إرسال طلبك ✓' : 'تم فتح واتساب — ابعت الرسالة');
-    setTimeout(() => payAfter(order), 450);
+    setTimeout(() => {
+      if(['bit','paybox','online'].includes((order.customer||{}).pay)) payAfter(order);
+      else if(saved && TRK) openTrack();
+    }, 450);
+    trkPill();
   };
   if(live && db){
     db.collection('orders').add(Object.assign({}, order,
       {createdAt: firebase.firestore.FieldValue.serverTimestamp(), createdAtStr: order.createdAt}))
-      .then(() => finish(true))
+      .then(ref => {
+        // وثيقة صغيرة للتتبّع (بدون معلومات شخصية) — الزبون بيقراها، المحل بيحدّثها
+        if(ref && ref.id){
+          db.collection('track').doc(ref.id).set({status:'new', type: order.type, at: order.createdAt, eta: etaMin()}).catch(() => {});
+          trkStart(ref.id, order);
+        }
+        finish(true);
+      })
       .catch(e => { console.error('order', e); finish(false); });
   }else finish(false);
 }
