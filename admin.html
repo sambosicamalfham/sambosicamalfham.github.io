@@ -311,6 +311,9 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 #vDrv .muted{color:#888;font-weight:400}.ltr{direction:ltr;unicode-bidi:isolate}
 #vDrv .rfoot{margin-top:18px;font-size:11px;color:#888;border-top:1px dashed #ccc;padding-top:8px}
 #vDrv .rep h3{font-size:15px;margin:14px 0 7px}
+
+.drvsel{border:1.5px solid var(--line);border-radius:10px;padding:4px 8px;font-family:inherit;font-weight:800;font-size:12.5px;background:#fff}
+.drvsel.on{border-color:#1e8e4e;background:#e6f6ec;color:#1e8e4e}
 </style>
 </head>
 <body>
@@ -586,6 +589,7 @@ function LX(o, f){
 }
 /* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد، سائق ===== */
 Object.assign(HE, {
+  'لكل السائقين':'לכל השליחים',
   'السائقين':'שליחים', 'سائق جديد':'שליח חדש', 'رقم التلفون (هو اسم الدخول)':'טלפון (שם המשתמש)', 'الكود (كلمة السر)':'קוד (סיסמה)', 'إضافة':'הוספה',
   'السائق بيدخل على':'השליח נכנס ל־', 'برقم تلفونه والكود. بيشوف بس طلبات التوصيل الجاهزة — ما بيقدر يفتح اللوحة. بتقدر توقفه بأي وقت.':'עם הטלפון והקוד שלו. הוא רואה רק הזמנות משלוח מוכנות — אין לו גישה ללוח הבקרה. אפשר להשבית אותו בכל רגע.',
   'ابعتله الدخول':'שליחת פרטי כניסה', 'إيقاف':'השבתה', 'تفعيل':'הפעלה', 'كود جديد':'קוד חדש', 'موقّف':'מושבת', 'فعّال':'פעיל', 'الكود':'קוד',
@@ -834,6 +838,7 @@ function onLogin(u){
     autoPrint();
     try{ stockSync(); }catch(e){}
     try{ loySync(); }catch(e){}
+    try{ numSync(); }catch(e){}
   }, err => console.error(err));
 }
 
@@ -1029,7 +1034,7 @@ function renderOrders(){
         ${c.reward ? `<span class="pill r">🎁 هدية ولاء -₪${Number(c.reward)}</span>` : ''}
         ${c.wheel ? `<span class="pill r">🎡 جائزة: ${esc(c.wheel)}</span>` : ''}
         ${c.bdayGift ? `<span class="pill r">🎂 <span>هدية عيد ميلاد</span>: <span>${esc(c.bdayGift)}</span></span>` : ''}
-        ${o.driver ? `<span class="pill g">🛵 <span>مع</span>: <span data-nt>${esc(o.driver)}</span></span>` : ''}
+        ${drvSelHtml(o)}
       </div>
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
@@ -1617,6 +1622,30 @@ const DRV_CSS = `
   .dvk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
   .dvk>div{background:#f7f5f3;border-radius:10px;padding:7px 9px}.dvk b{display:block;font-size:17px}.dvk span{font-size:11.5px;color:#666}
   .dvk .neg b{color:#c0392b}`;
+/* اختيار سائق للطلب من اللوحة (أو تغييره) */
+function drvSelHtml(o){
+  if(o.type === 'pickup') return '';
+  const pill = o.driver ? `<span class="pill g">🛵 <span>مع</span>: <span data-nt>${esc(o.driver)}</span></span>` : '';
+  if(['done','cancel'].includes(o.status) || !DRIVERS.length) return pill;
+  const opts = DRIVERS.filter(d => d.active || d.id === o.driverUid);
+  return `<select class="drvsel ${o.driverUid ? 'on' : ''}" onclick="event.stopPropagation()" onchange="assignDrv('${o.id}', this.value)">
+    <option value="">🛵 لكل السائقين</option>${opts.map(d => `<option value="${d.id}" ${o.driverUid === d.id ? 'selected' : ''}>🛵 ${esc(d.name)}</option>`).join('')}</select>`;
+}
+async function assignDrv(id, uid){
+  const d = DRIVERS.find(x => x.id === uid);
+  try{
+    await db.collection('orders').doc(id).update(d ? {driver: d.name, driverUid: d.id, driverPhone: d.phone || '', driverAt: new Date().toISOString()}
+                                                   : {driver: '', driverUid: '', driverPhone: '', driverAt: ''});
+    toast(d ? '🛵 ' + d.name + ' ✓' : 'تم ✓');
+  }catch(e){ alert(e.message); }
+}
+/* رقم الطلب اليومي بنكتبه على الطلب نفسه — عشان السائق يشوفه */
+const NO_BUSY = {};
+function numSync(){
+  const since = Date.now() - 24 * 3600e3;
+  ORDERS.forEach(o => { if(!o.no && !NO_BUSY[o.id] && o.status !== 'cancel' && o.createdAtStr && new Date(o.createdAtStr).getTime() > since && NUMS[o.id]){
+    NO_BUSY[o.id] = 1; db.collection('orders').doc(o.id).update({no: String(NUMS[o.id])}).catch(() => {}); } });
+}
 /* نقطة ولاء للطلبات اللي السائق علّمها "وصلت" */
 const LOY_BUSY = {};
 function loySync(){

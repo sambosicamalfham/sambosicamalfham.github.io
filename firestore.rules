@@ -54,17 +54,17 @@ service cloud.firestore {
                          get(/databases/$(database)/documents/settings/main).data.get('blocked', []));
       allow read, update, delete: if isStaff();
 
-      // السائق: بيشوف بس طلبات التوصيل اللي بالتحضير أو جاهزة
+      // السائق: بيشوف طلبات التوصيل من أول ما توصل لحد ما يسلّمها
       allow read: if isDriver()
                   && resource.data.type == 'delivery'
-                  && resource.data.status in ['prep', 'ready'];
+                  && resource.data.status in ['new', 'prep', 'ready'];
       // السائق: بياخذ الطلب / بيرجّعه / بيعلّم وصل — وما بيقدر يغيّر إشي ثاني
       allow update: if isDriver()
                     && resource.data.type == 'delivery'
-                    && resource.data.status == 'ready'
+                    && resource.data.status in ['new', 'prep', 'ready']
                     && request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['driver','driverUid','driverPhone','driverAt','status','paid','collected','deliveredAt'])
-                    && request.resource.data.status in ['ready', 'done']
+                    && (request.resource.data.status == resource.data.status || request.resource.data.status == 'done')
                     && resource.data.get('driverUid', '') in ['', request.auth.uid]
                     && request.resource.data.get('driverUid', '') in ['', request.auth.uid];
     }

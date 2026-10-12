@@ -59,6 +59,8 @@ details{margin-top:8px}summary{font-weight:800;font-size:13.5px;color:var(--mute
 details div{font-size:14px;padding:3px 0}
 .empty{text-align:center;color:var(--muted);padding:50px 10px}.empty .e{font-size:50px}
 .sec{font-size:15px;margin:16px 4px 8px;color:var(--muted)}
+.inst{display:flex;align-items:center;gap:10px;background:#111;color:#fff;border-radius:16px;padding:11px 12px;margin-bottom:12px}
+.inst .ic{font-size:26px}.inst small{opacity:.7}.inst .x{background:none;color:#fff;opacity:.6;font-size:16px;padding:4px}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:#111;color:#fff;border-radius:14px;padding:12px 18px;font-weight:800;transition:.3s;z-index:30;max-width:90%}
 #toast.on{transform:translateX(-50%) translateY(0)}
 #who{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;padding:20px;z-index:25}
@@ -81,7 +83,7 @@ details div{font-size:14px;padding:3px 0}
     <button class="hb" onclick="doLogout()" id="hOut">خروج</button>
   </div>
   <div class="tabs">
-    <button class="tab on" data-v="ready" onclick="go('ready')"><span data-t="جاهزة">جاهزة</span><span class="n" id="nReady" style="display:none"></span></button>
+    <button class="tab on" data-v="ready" onclick="go('ready')"><span data-t="طلبات">طلبات</span><span class="n" id="nReady" style="display:none"></span></button>
     <button class="tab" data-v="mine" onclick="go('mine')"><span data-t="معي">معي</span><span class="n" id="nMine" style="display:none"></span></button>
   </div>
 </header>
@@ -112,6 +114,11 @@ const HE = {
   'هاد الحساب مش موظف — اطلب من صاحب المحل يضيفك':'החשבון הזה לא מוגדר כעובד — בקשו מבעל העסק להוסיף אותך',
   'البريد أو كلمة المرور غلط':'אימייל או סיסמה שגויים','اكتب البريد وكلمة المرور':'כתבו אימייל וסיסמה','ما في اتصال بالإنترنت':'אין חיבור לאינטרנט',
   'مرحبا، أنا السائق من':'שלום, אני השליח של','أنا بالطريق لعندك 🛵':'אני בדרך אליך 🛵','ملاحظة':'הערה','منطقة':'אזור',
+  'طلبات':'הזמנות','ما في طلبات هلأ':'אין הזמנות כרגע','بنرنّ لما يوصل طلب':'נשמע צלצול כשמגיעה הזמנה','جاهز':'מוכן','عم يتحضّر':'בהכנה','طلب جديد':'הזמנה חדשה',
+  'المحل أعطاك طلب!':'המסעדה העבירה לך הזמנה!','طلب جديد للتوصيل!':'הזמנה חדשה למשלוח!',
+  'نزّل صفحة السائق كتطبيق':'התקינו את דף השליח כאפליקציה','بتفتح بكبسة من شاشة التلفون':'נפתח בלחיצה ממסך הטלפון','تنزيل':'התקנה','تم التنزيل':'הותקן',
+  'بالآيفون: اكبس زر المشاركة ⬆️ تحت بـ Safari، وبعدين "إضافة إلى الشاشة الرئيسية" ➕':'באייפון: לחצו על כפתור השיתוף ⬆️ למטה ב־Safari, ואז "הוספה למסך הבית" ➕',
+  'بالأندرويد: اكبس ⋮ فوق بـ Chrome، وبعدين "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"':'באנדרואיד: לחצו ⋮ למעלה ב־Chrome, ואז "התקנת האפליקציה" או "הוספה למסך הבית"',
   'اليوم':'היום','بكرا':'מחר','الإجمالي':'סה״כ','الزبون دفع':'הלקוח שילם',
   'اكتب رقم التلفون والكود':'כתבו טלפון וקוד','رقم التلفون أو الكود غلط':'טלפון או קוד שגויים','حسابك موقّف — احكي مع صاحب المحل':'החשבון שלך מושבת — דברו עם בעל העסק','المحل':'המסעדה'
 };
@@ -171,11 +178,12 @@ async function start(u){
   applyLang();
   db.collection('drivers').doc(u.uid).onSnapshot(d => { if(d.exists && (!d.data().active || d.data().removed)) denied('حسابك موقّف — احكي مع صاحب المحل'); }, () => {});
   db.collection('settings').doc('main').onSnapshot(d => { SET = d.exists ? d.data() : {}; $('hShop').textContent = (LANG === 'he' && SET.name_he) || SET.name || ''; });
-  db.collection('orders').where('type', '==', 'delivery').where('status', 'in', ['prep', 'ready']).onSnapshot(s => {
+  db.collection('orders').where('type', '==', 'delivery').where('status', 'in', ['new', 'prep', 'ready']).onSnapshot(s => {
     ORDERS = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a, b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr)));
-    const ready = ORDERS.filter(o => isDel(o) && o.status === 'ready' && !o.driver).map(o => o.id);
-    if(!first && ready.some(id => !lastReady.has(id))){ ding(); toast('🔔 ' + t('طلب جاهز للتوصيل!')); }
-    lastReady = new Set(ready); first = false;
+    const seen = ORDERS.filter(o => !o.driverUid || o.driverUid === UID).map(o => o.id + ':' + (o.driverUid === UID ? 'm' : 'f'));
+    const fresh = seen.filter(k => !lastReady.has(k));
+    if(!first && fresh.length){ ding(); toast(fresh.some(k => k.endsWith(':m')) ? '🛵 ' + t('المحل أعطاك طلب!') : '🔔 ' + t('طلب جديد للتوصيل!')); }
+    lastReady = new Set(seen); first = false;
     render();
   }, err => {
     console.error(err);
@@ -208,9 +216,10 @@ function card(o, mode){
   const items = (o.items || []).filter(i => !i.sub);
   const waMsg = t('مرحبا، أنا السائق من') + ' ' + ((LANG === 'he' && SET.name_he) || SET.name || '') + ' — ' + t('أنا بالطريق لعندك 🛵');
   return `<div class="card ${mode}">
-    <div class="top"><div class="no">#${esc(o.no || '—')}</div>
+    <div class="top"><div class="no">${o.no ? '#' + esc(o.no) : '🛵'}</div>
       <div class="who"><b>${esc(c.name || '—')}</b><div class="muted ltr">${esc(c.phone || '')}</div></div>
       ${o.driver && mode !== 'ready' ? `<span class="pill b">🛵 ${esc(o.driver)}</span>` : ''}</div>
+    <div style="margin-top:8px">${o.status === 'ready' ? `<span class="pill g">✅ ${t('جاهز')}</span>` : o.status === 'prep' ? `<span class="pill a">👨‍🍳 ${t('عم يتحضّر')}</span>` : `<span class="pill r">🆕 ${t('طلب جديد')}</span>`}</div>
     ${c.sched ? `<div style="margin-top:8px"><span class="pill b">⏰ ${t('طلب مسبق')}: ${esc(schedTxt(c.sched))}</span></div>` : ''}
     <div class="addr">📍 ${esc(c.addr || '—')}</div>
     ${c.zone ? `<span class="pill">🗺️ ${esc(c.zone)}</span>` : ''}
@@ -235,10 +244,9 @@ function card(o, mode){
 function render(){
   if(!db || first) return;
   const del = ORDERS.filter(o => isDel(o) && recent(o));
-  const prep = del.filter(o => ['new', 'prep'].includes(o.status));
   const isMine = o => o.driverUid ? o.driverUid === UID : (o.driver && o.driver === ME);
-  const ready = del.filter(o => o.status === 'ready' && !o.driverUid && !o.driver);
-  const mine = del.filter(o => o.status === 'ready' && isMine(o));
+  const ready = del.filter(o => !o.driverUid && !o.driver);
+  const mine = del.filter(o => isMine(o));
   const n1 = $('nReady'), n2 = $('nMine');
   n1.style.display = ready.length ? '' : 'none'; n1.textContent = ready.length;
   n2.style.display = mine.length ? '' : 'none'; n2.textContent = mine.length;
@@ -246,12 +254,11 @@ function render(){
   let h = '';
   if(view === 'ready'){
     h = ready.length ? ready.sort((a, b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr))).map(o => card(o, 'ready')).join('')
-      : `<div class="empty"><div class="e">😴</div><div>${t('ما في طلبات جاهزة هلأ')}</div><div class="muted">${t('بنرنّ لما يجهز طلب')}</div></div>`;
-    if(prep.length) h += `<div class="sec">👨‍🍳 ${t('عم يتحضّروا')} (${prep.length})</div>` + prep.map(o => card(o, 'prep')).join('');
+      : `<div class="empty"><div class="e">😴</div><div>${t('ما في طلبات هلأ')}</div><div class="muted">${t('بنرنّ لما يوصل طلب')}</div></div>`;
   }else{
     h = mine.length ? mine.map(o => card(o, 'mine')).join('') : `<div class="empty"><div class="e">🛵</div><div>${t('ما معك طلبات')}</div></div>`;
   }
-  $('main').innerHTML = sum + h;
+  $('main').innerHTML = instHtml() + sum + h;
 }
 async function take(id){
   const ref = db.collection('orders').doc(id);
@@ -289,6 +296,25 @@ function ding(){
   try{ navigator.vibrate && navigator.vibrate([200, 100, 200]); }catch(e){}
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+/* 📲 تنزيل الصفحة كتطبيق على التلفون */
+let instEvt = null;
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instEvt = e; render(); });
+window.addEventListener('appinstalled', () => { instEvt = null; toast('✓ ' + t('تم التنزيل')); render(); });
+function instHtml(){
+  if(isStandalone()) return '';
+  let off = false; try{ off = localStorage.getItem('pz_drv_inst_off') === '1'; }catch(e){}
+  if(off) return '';
+  return `<div class="inst"><span class="ic">📲</span><span style="flex:1"><b>${t('نزّل صفحة السائق كتطبيق')}</b><br><small>${t('بتفتح بكبسة من شاشة التلفون')}</small></span>
+    <button class="btn red sm" onclick="doInstall()">${t('تنزيل')}</button><button class="x" onclick="instOff()">✕</button></div>`;
+}
+function instOff(){ try{ localStorage.setItem('pz_drv_inst_off', '1'); }catch(e){} render(); }
+async function doInstall(){
+  if(instEvt){ instEvt.prompt(); try{ await instEvt.userChoice; }catch(e){} instEvt = null; render(); return; }
+  alert(isIOS() ? t('بالآيفون: اكبس زر المشاركة ⬆️ تحت بـ Safari، وبعدين "إضافة إلى الشاشة الرئيسية" ➕')
+               : t('بالأندرويد: اكبس ⋮ فوق بـ Chrome، وبعدين "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"'));
+}
 </script>
 </body>
 </html>
