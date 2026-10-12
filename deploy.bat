@@ -18,10 +18,11 @@ cd functions
 call npm install --no-fund --no-audit
 cd ..
 echo.
-echo [2/3] Login to Google (a browser window will open)...
+echo [2/3] Login to Google...
 call npx -y firebase-tools login
 echo.
-echo [3/3] Uploading to Firebase...
+echo [3/3] Uploading to Firebase... (2-5 minutes)
+set FUNCTIONS_DISCOVERY_TIMEOUT=180
 call npx -y firebase-tools deploy --only functions --project pizza-um-elfahem --force
 echo.
 echo ==========================================
