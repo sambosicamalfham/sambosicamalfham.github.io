@@ -59,6 +59,9 @@ details{margin-top:8px}summary{font-weight:800;font-size:13.5px;color:var(--mute
 details div{font-size:14px;padding:3px 0}
 .empty{text-align:center;color:var(--muted);padding:50px 10px}.empty .e{font-size:50px}
 .sec{font-size:15px;margin:16px 4px 8px;color:var(--muted)}
+.snd{display:flex;align-items:center;gap:12px;width:100%;background:#e3242b;color:#fff;border-radius:16px;padding:14px;margin-bottom:12px;font-family:inherit;font-size:15px;animation:sndp 1.4s infinite}
+.snd .ic{font-size:30px}.snd small{opacity:.85;font-size:12px}
+@keyframes sndp{50%{box-shadow:0 0 0 8px rgba(227,36,43,.25)}}
 .inst{display:flex;align-items:center;gap:10px;background:#111;color:#fff;border-radius:16px;padding:11px 12px;margin-bottom:12px}
 .inst .ic{font-size:26px}.inst small{opacity:.7}.inst .x{background:none;color:#fff;opacity:.6;font-size:16px;padding:4px}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:#111;color:#fff;border-radius:14px;padding:12px 18px;font-weight:800;transition:.3s;z-index:30;max-width:90%}
@@ -119,6 +122,7 @@ const HE = {
   'نزّل صفحة السائق كتطبيق':'התקינו את דף השליח כאפליקציה','بتفتح بكبسة من شاشة التلفون':'נפתח בלחיצה ממסך הטלפון','تنزيل':'התקנה','تم التنزيل':'הותקן',
   'بالآيفون: اكبس زر المشاركة ⬆️ تحت بـ Safari، وبعدين "إضافة إلى الشاشة الرئيسية" ➕':'באייפון: לחצו על כפתור השיתוף ⬆️ למטה ב־Safari, ואז "הוספה למסך הבית" ➕',
   'بالأندرويد: اكبس ⋮ فوق بـ Chrome، وبعدين "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"':'באנדרואיד: לחצו ⋮ למעלה ב־Chrome, ואז "התקנת האפליקציה" או "הוספה למסך הבית"',
+  'الرنّة شغّالة':'הצלצול פועל','اكبس هون لتشغيل الرنّة':'לחצו כאן להפעלת הצלצול','لازم كل مرة بتفتح الصفحة — عشان التلفون يرنّ لما يوصل طلب':'בכל פעם שפותחים את הדף — כדי שהטלפון יצלצל כשמגיעה הזמנה',
   'اليوم':'היום','بكرا':'מחר','الإجمالي':'סה״כ','الزبون دفع':'הלקוח שילם',
   'اكتب رقم التلفون والكود':'כתבו טלפון וקוד','رقم التلفون أو الكود غلط':'טלפון או קוד שגויים','حسابك موقّف — احكي مع صاحب المحل':'החשבון שלך מושבת — דברו עם בעל העסק','المحل':'המסעדה'
 };
@@ -182,7 +186,7 @@ async function start(u){
     ORDERS = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a, b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr)));
     const seen = ORDERS.filter(o => !o.driverUid || o.driverUid === UID).map(o => o.id + ':' + (o.driverUid === UID ? 'm' : 'f'));
     const fresh = seen.filter(k => !lastReady.has(k));
-    if(!first && fresh.length){ ding(); toast(fresh.some(k => k.endsWith(':m')) ? '🛵 ' + t('المحل أعطاك طلب!') : '🔔 ' + t('طلب جديد للتوصيل!')); }
+    if(!first && fresh.length){ const m = fresh.some(k => k.endsWith(':m')) ? t('المحل أعطاك طلب!') : t('طلب جديد للتوصيل!'); ding(m); toast('🔔 ' + m); }
     lastReady = new Set(seen); first = false;
     render();
   }, err => {
@@ -258,7 +262,7 @@ function render(){
   }else{
     h = mine.length ? mine.map(o => card(o, 'mine')).join('') : `<div class="empty"><div class="e">🛵</div><div>${t('ما معك طلبات')}</div></div>`;
   }
-  $('main').innerHTML = instHtml() + sum + h;
+  $('main').innerHTML = soundHtml() + instHtml() + sum + h;
 }
 async function take(id){
   const ref = db.collection('orders').doc(id);
@@ -286,14 +290,54 @@ async function deliver(id, collected){
     toast(t('تم ✓'));
   }catch(e){ toast('⚠️ ' + e.message); }
 }
-function ding(){
+/* ============ 🔔 الرنّة ============
+   المتصفح ما بيسمح بصوت إلا بعد ما السائق يكبس على الصفحة مرة —
+   عشان هيك في زر "🔔 شغّل الرنّة" أول الشغل. وبنخلّي الشاشة مضوية عشان الصفحة تضل شغّالة. */
+let ACTX = null, SOUND_OK = false, RING_T = null, UNSEEN = false, WAKE = null;
+try{ SOUND_OK = sessionStorage.getItem('pz_drv_snd') === '1'; }catch(e){}
+function audioUnlock(){
   try{
-    const C = window.AudioContext || window.webkitAudioContext, ctx = new C();
-    [0, .22, .44].forEach(x => { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 988; o.connect(g); g.connect(ctx.destination);
-      g.gain.setValueAtTime(0, ctx.currentTime + x); g.gain.linearRampToValueAtTime(.35, ctx.currentTime + x + .02);
-      g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + x + .18); o.start(ctx.currentTime + x); o.stop(ctx.currentTime + x + .2); });
+    if(!ACTX){ const C = window.AudioContext || window.webkitAudioContext; ACTX = new C(); }
+    if(ACTX.state === 'suspended') ACTX.resume();
+    const b = ACTX.createBuffer(1, 1, 22050), s = ACTX.createBufferSource(); s.buffer = b; s.connect(ACTX.destination); s.start(0);
   }catch(e){}
-  try{ navigator.vibrate && navigator.vibrate([200, 100, 200]); }catch(e){}
+}
+['touchstart', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, () => { audioUnlock(); if(UNSEEN) ack(); }, {passive: true}));
+async function wakeOn(){
+  try{ if('wakeLock' in navigator && !WAKE){ WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } }catch(e){}
+}
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && SOUND_OK) wakeOn(); });
+async function soundOn(){
+  audioUnlock(); SOUND_OK = true; try{ sessionStorage.setItem('pz_drv_snd', '1'); }catch(e){}
+  try{ if('Notification' in window && Notification.permission === 'default') await Notification.requestPermission(); }catch(e){}
+  wakeOn(); beep(); toast('🔔 ' + t('الرنّة شغّالة')); render();
+}
+function beep(){
+  try{
+    if(!ACTX) audioUnlock();
+    const ctx = ACTX, now = ctx.currentTime;
+    for(let r = 0; r < 3; r++) [0, .18, .36].forEach((x, k) => {
+      const at = now + r * .9 + x, o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'square'; o.frequency.value = k === 1 ? 1320 : 990; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.5, at + .02); g.gain.exponentialRampToValueAtTime(.001, at + .16);
+      o.start(at); o.stop(at + .17);
+    });
+  }catch(e){}
+  try{ navigator.vibrate && navigator.vibrate([400, 150, 400, 150, 400]); }catch(e){}
+}
+/* بترنّ كل 15 ثانية لحد ما السائق يكبس على الشاشة */
+function ding(msg){
+  UNSEEN = true; beep();
+  clearInterval(RING_T); RING_T = setInterval(() => { if(UNSEEN) beep(); else clearInterval(RING_T); }, 15000);
+  try{
+    if('Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker)
+      navigator.serviceWorker.ready.then(r => r.showNotification('🛵 ' + (msg || t('طلب جديد للتوصيل!')), {body: (SET.name || ''), tag: 'pz-order', renotify: true, requireInteraction: true, vibrate: [400, 150, 400, 150, 400], icon: 'icon-192.png', badge: 'icon-192.png', data: {url: location.href}}));
+  }catch(e){}
+}
+function ack(){ UNSEEN = false; clearInterval(RING_T); try{ navigator.serviceWorker && navigator.serviceWorker.ready.then(r => r.getNotifications({tag: 'pz-order'}).then(ns => ns.forEach(n => n.close()))); }catch(e){} }
+function soundHtml(){
+  if(SOUND_OK) return '';
+  return `<button class="snd" onclick="soundOn()"><span class="ic">🔔</span><span style="flex:1;text-align:start"><b>${t('اكبس هون لتشغيل الرنّة')}</b><br><small>${t('لازم كل مرة بتفتح الصفحة — عشان التلفون يرنّ لما يوصل طلب')}</small></span></button>`;
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 /* 📲 تنزيل الصفحة كتطبيق على التلفون */
