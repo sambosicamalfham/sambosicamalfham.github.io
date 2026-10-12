@@ -616,7 +616,7 @@ const HE = {
   'اللغة':'שפה',
   'حسب المنطقة':'לפי אזור',
   'طريقة الدفع':'אמצעי תשלום',
-  'اختار وجبتك':'בחרו את הארוחה',
+  'اختار وجبتك':'בחרו את הארוחה','ما بنقدر نستقبل طلبات من هاد الرقم — لو سمحت اتصل بالمطعم':'לא ניתן לקבל הזמנות מהמספר הזה — נא להתקשר למסעדה',
   'بدك معها؟':'רוצים גם?','هدية الولاء':'מתנת מועדון','جائزة العجلة':'פרס הגלגל','مبروك! عندك هدية:':'מזל טוב! מגיעה לך מתנה:',
   'استعمل هديتك بهالطلب':'לממש את המתנה בהזמנה הזו','اطلب مرة وحدة وبنبلّش نعدّلك 😉':'הזמינו פעם אחת ונתחיל לספור לכם 😉',
   'هدية لأول طلب!':'מתנה להזמנה הראשונה!','لفّ العجلة واربح هدية على أول طلب إلك 🎁':'סובבו את הגלגל וזכו במתנה להזמנה הראשונה 🎁','لفّ العجلة':'סובבו את הגלגל',
@@ -2114,6 +2114,7 @@ function sendOrder(){
   const addr  = ($('ad') ? $('ad').value : '').trim();
   if(!name || !phone){ alert('لو سمحت اكتب الاسم ورقم الهاتف'); return; }
   if(otype === 'delivery' && !addr){ alert('لو سمحت اكتب العنوان للتوصيل'); return; }
+  if((SET.blocked || []).includes(phone)){ alert('ما بنقدر نستقبل طلبات من هاد الرقم — لو سمحت اتصل بالمطعم'); return; }
   if(locBlock() === 'pick'){ openMapPick(); return; }
   if(locBlock() === 'out'){ alert('موقعك خارج منطقة التوصيل'); return; }
   try{
@@ -2133,7 +2134,8 @@ function sendOrder(){
           l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})]),
     customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
       rewardDisc() ? {reward: rewardDisc()} : {},
-      wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0)} : {},
+      wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0), wheelDisc: wheelDisc()} : {},
+      couponDisc() ? {couponDisc: couponDisc()} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
     coupon: coupon ? coupon.code : '', fee: snapFee, total: snapTot,

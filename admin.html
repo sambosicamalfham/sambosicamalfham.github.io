@@ -247,6 +247,34 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .ravg{display:flex;align-items:center;gap:10px;margin-bottom:8px}.ravg b{font-size:30px}
 .rs{color:#f5b301;letter-spacing:1px}.rs i{color:#ddd;font-style:normal}
 .rv{border-top:1px solid #f0f0f0;padding:8px 0;font-size:13.5px}.rv .top{display:flex;justify-content:space-between;gap:8px;margin-bottom:3px}
+/* تقارير */
+.rexp{gap:6px}
+#vRep select{flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;font-size:14px;background:#fff;font-family:inherit}
+#vRep .rep{border-radius:16px;box-shadow:var(--shadow);margin-bottom:20px}
+.blk{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #f0f0f0;padding:7px 0}
+.blk.add input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;direction:ltr}
+.cpz{background:#fff8e6;border:1px solid #f5d27a;border-radius:10px;padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.8}
+
+
+#vRep .rep{max-width:820px;margin:0 auto;padding:22px 26px;background:#fff}
+#vRep .rh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #e3242b;padding-bottom:12px;margin-bottom:14px}
+#vRep .rt{font-size:22px;font-weight:900}.rt2{font-size:18px;font-weight:900}.rs2{color:#555;font-size:13px;margin-top:3px}
+#vRep .kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+#vRep .kp>div{border:1.5px solid #eee;border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:20px}.kp span{font-size:12px;color:#666}
+#vRep .kp .neg b{color:#c0392b}
+#vRep h3{font-size:15px;margin:18px 0 7px;border-inline-start:4px solid #e3242b;padding-inline-start:8px}
+#vRep .rtb{width:100%;border-collapse:collapse;font-size:13px}
+#vRep .rtb td{padding:6px 8px;border-bottom:1px solid #eee}.rtb .n{text-align:left;direction:ltr;white-space:nowrap}
+#vRep .rtb tr.hd td{background:#f5f3f1;font-weight:800}.rtb tr.b td{font-weight:900;border-top:2px solid #111}
+#vRep .rtb .neg{color:#c0392b}.rtb.day td{font-size:12px;padding:5px 6px}
+#vRep .chart{display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1.5px solid #ddd;margin:6px 0 4px;direction:ltr}
+#vRep .cb{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+#vRep .cb i{display:block;width:100%;background:#e3242b;border-radius:3px 3px 0 0;min-height:1px}
+#vRep .cb span{font-size:8px;color:#888;margin-top:2px}
+#vRep .hours .hb{display:flex;align-items:center;gap:8px;font-size:12px;margin:2px 0}.hours .hb span{width:44px}
+#vRep .hours i{display:block;height:10px;background:#f5b301;border-radius:5px}.hours b{font-size:11px}
+#vRep .muted{color:#888;font-weight:400}.ltr{direction:ltr;unicode-bidi:isolate}
+#vRep .rfoot{margin-top:18px;font-size:11px;color:#888;border-top:1px dashed #ccc;padding-top:8px}
 </style>
 </head>
 <body>
@@ -278,6 +306,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
     <button class="tb"    data-v="cpn"     onclick="tab('cpn')">🎟️ الكوبونات</button>
     <button class="tb"    data-v="zones"   onclick="tab('zones')">🗺️ التوصيل</button>
     <button class="tb"    data-v="cust"    onclick="tab('cust')">👥 الزبائن</button>
+    <button class="tb"    data-v="rep"     onclick="tab('rep')">📊 التقارير</button>
     <button class="tb"    data-v="set"     onclick="tab('set')">🏪 الإعدادات</button>
   </div>
 </header>
@@ -293,6 +322,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
   <div id="vSet"    style="display:none"></div>
   <div id="vZones"  style="display:none"></div>
   <div id="vCust"   style="display:none"></div>
+  <div id="vRep"    style="display:none"></div>
 </div>
 
 <div class="mbg" id="mbg" onclick="closeModal()"></div>
@@ -426,6 +456,23 @@ const HE = {
   'الزبائن':'לקוחות','جاري تحميل الطلبات...':'טוען הזמנות...','ابحث بالاسم أو الرقم أو العنوان':'חיפוש לפי שם, מספר או כתובת',
   'تحديث':'רענון','ما في زبائن':'אין לקוחות','زبون دائم':'לקוח קבוע','زبون جديد':'לקוח חדש','اتصال':'חיוג','آخر طلب:':'הזמנה אחרונה:',
   'معدل الطلب:':'ממוצע הזמנה:',
+  'التقارير':'דוחות','تقرير شهري':'דוח חודשי','مجموع المدخول (شامل מע״מ)':'סה״כ הכנסות (כולל מע״מ)','طلبات':'הזמנות','زبائن':'לקוחות',
+  'تكلفة الجوائز':'עלות הפרסים','ملخص للمحاسب':'סיכום לרואה החשבון','المبيعات (قبل الخصومات والتوصيل)':'מכירות (לפני הנחות ומשלוח)',
+  'رسوم التوصيل':'דמי משלוח','خصومات الكوبونات':'הנחות קופונים','هدايا الولاء':'מתנות מועדון','خصومات العجلة':'הנחות גלגל המזל',
+  'المدخول قبل מע״מ':'הכנסות לפני מע״מ','هدايا أصناف ببلاش (تكلفة تقديرية)':'מתנות פריטים בחינם (עלות משוערת)','طلبات ملغية (مش محسوبة)':'הזמנות שבוטלו (לא נספרות)',
+  'حسب طريقة الدفع':'לפי אמצעי תשלום','الطريقة':'אמצעי','المبلغ':'סכום','توصيل / استلام':'משלוח / איסוף','تفصيل يومي':'פירוט יומי',
+  'اليوم':'יום','المدخول':'הכנסות','خصومات':'הנחות','جوائز':'פרסים','قبل מע״מ':'לפני מע״מ','المجموع':'סה״כ','ما في طلبات بهالشهر':'אין הזמנות בחודש הזה',
+  'الأصناف الأكثر مبيعاً':'הפריטים הנמכרים ביותר','الصنف':'פריט','كمية':'כמות','حسب المنطقة':'לפי אזור','المنطقة':'אזור','ساعات الضغط':'שעות עומס',
+  'سجل الجوائز':'יומן פרסים','التاريخ':'תאריך','الزبون':'לקוח','الجائزة':'פרס','التكلفة':'עלות','ما في جوائز بهالشهر':'אין פרסים בחודש הזה',
+  'مجموع تكلفة الجوائز':'סה״כ עלות פרסים','تقرير داخلي من نظام الطلبات — مش חשבונית מס. الأرقام حسب الطلبات بالموقع.':'דוח פנימי ממערכת ההזמנות — אינו חשבונית מס. הנתונים לפי ההזמנות באתר.',
+  'PDF / طباعة':'PDF / הדפסה','تنزيل PDF':'הורדת PDF','مشاركة (واتساب / إيميل)':'שיתוף (וואטסאפ / מייל)','ملخص بالواتساب':'סיכום בוואטסאפ','إيميل':'מייל',
+  'جاري التحميل...':'טוען...','جاري تجهيز PDF...':'מכין PDF...','جاري تجهيز الملفات...':'מכין קבצים...','ملخص':'סיכום','الطلبات':'הזמנות','الجوائز':'פרסים','الأصناف':'פריטים',
+  'رقم الهاتف':'טלפון','مدفوع':'שולם','الإجمالي':'סה״כ','الحالة':'סטטוס','خصم':'הנחה','الملفات مرفقة':'הקבצים מצורפים',
+  'ما قدرت أحمّل المكتبة — تأكد من الإنترنت':'לא הצלחתי לטעון את הספרייה — בדקו את האינטרנט',
+  'التقارير والمحاسبة':'דוחות והנהלת חשבונות','رقم עוסק / ח.פ':'מספר עוסק / ח.פ','إيميل المحاسب (للتقارير)':'מייל רואה החשבון (לדוחות)',
+  'أرقام محظورة':'מספרים חסומים','الرقم المحظور ما بيقدر يبعت طلب من الموقع. بتقدر تحظر كمان من تاب 👥 الزبائن.':'מספר חסום לא יכול לשלוח הזמנה מהאתר. אפשר לחסום גם מלשונית 👥 לקוחות.',
+  'فك الحظر':'ביטול חסימה','ما في أرقام محظورة':'אין מספרים חסומים','حظر':'חסימה','رقم مش صحيح':'מספר לא תקין','محظور':'חסום','حذف الزبون':'מחיקת לקוח',
+  'تم فك الحظر ✓':'החסימה בוטלה ✓','تم الحظر ✓':'נחסם ✓','الجوائز اللي ربحها:':'הפרסים שזכה בהם:','هدية الولاء':'מתנת מועדון',
   'اقترحه بالسلة ("بدك معها؟")':'להציע בסל ("רוצים גם?")','وقت العرض (اختياري)':'זמני המבצע (אופציונלי)',
   'إذا ما حددت إشي، العرض بيطلع دايماً. مثلاً "عرض الظهر" من 12:00 لـ 15:00 — والزبون بيشوف عدّاد "ضايل ساعة".':'בלי הגדרה — המבצע מוצג תמיד. למשל "מבצע צהריים" 12:00–15:00 — והלקוח רואה ספירה לאחור.',
   'من الساعة':'משעה','لحد الساعة':'עד שעה','حط ساعة البداية والنهاية مع بعض':'הגדירו שעת התחלה וסיום יחד','كل يوم':'כל יום',
@@ -461,6 +508,10 @@ const HE = {
 };
 const HE_RULES = [
   [/^طلبات اليوم$/, () => 'הזמנות היום'],
+  [/^تحظر الرقم (\S+)؟ ما رح يقدر يطلب من الموقع\.$/, m => 'לחסום את ' + m[1] + '? הוא לא יוכל להזמין מהאתר.'],
+  [/^تحذف الزبون (\S+) وكل طلباته \((\d+)\)؟ ما بترجع!$/, m => 'למחוק את הלקוח ' + m[1] + ' ואת כל ההזמנות שלו (' + m[2] + ')? אין דרך חזרה!'],
+  [/^المجموع: (.*)$/, m => 'סה״כ: ' + m[1]],
+  [/^آخر طلب: (.*)$/, m => 'הזמנה אחרונה: ' + m[1]],
   [/^هدية ولاء -₪(.+)$/, m => 'מתנת מועדון -₪' + m[1]],
   [/^جائزة: (.+)$/, m => 'פרס: ' + trText(m[1])],
   [/^(\d+) صنف معلّم$/, m => m[1] + ' פריטים מסומנים'],
@@ -722,7 +773,7 @@ function tab(v){
   view = v; armed = null;
   document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   if(v === 'zones') zBuilt = false; else { zCancel && zCancel(); }
-  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust'].forEach(k=>{
+  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust','Rep'].forEach(k=>{
     $('v'+k).style.display = (v === k.toLowerCase()) ? '' : 'none';
   });
   render(); window.scrollTo({top:0});
@@ -737,6 +788,7 @@ function render(){
   if(view==='set')    renderSet();
   if(view==='zones')  renderZones();
   if(view==='cust')   renderCust();
+  if(view==='rep')    renderRep();
 }
 
 /* ========= تجهيز أول مرة ========= */
@@ -1692,9 +1744,9 @@ async function renderCust(){
       const wa = waPhone(x.phone), open = custOpen === x.phone;
       return `<div class="card cst ${open?'on':''}">
         <div class="ch" onclick="custOpen=custOpen==='${x.phone}'?'':'${x.phone}';renderCust()">
-          <div class="av">${esc((x.name||'?').trim().charAt(0))}</div>
+          <div class="av" data-nt>${esc((x.name||'?').trim().charAt(0))}</div>
           <div style="flex:1;min-width:0">
-            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''}</div>
+            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''} ${isBlocked(x.phone)?'<span class="pill r">🚫 محظور</span>':''}</div>
             <div class="muted ltr" style="text-align:start">${esc(x.phone)}</div>
           </div>
           <div class="cs"><b>${x.orders.length}</b><span>طلب</span></div>
@@ -1708,6 +1760,14 @@ async function renderCust(){
             ${x.zone?`<span class="pill">🗺️ ${esc(x.zone)}</span>`:''}
             ${x.loc?`<a href="${mapsLink(x.loc)}" target="_blank">🗺️ الخريطة</a> <a href="${wazeLink(x.loc)}" target="_blank">🚗 Waze</a>`:''}
           </div>
+          ${(() => { const pz = []; x.orders.forEach(o => { const pp = prizeParts(o), c = o.customer || {};
+              if(pp.reward) pz.push(['🎁 هدية الولاء', o.createdAtStr, pp.reward]);
+              if(pp.wheel || pp.gift) pz.push(['🎡 ' + (c.wheel || ''), o.createdAtStr, pp.wheel + pp.gift]); });
+            return pz.length ? `<div class="cpz"><b>🏆 الجوائز اللي ربحها:</b>${pz.map(p => `<div>${esc(p[0])} · ${esc(d(p[1]))} · <span class="ltr">${rmoney(p[2])}</span></div>`).join('')}<div class="muted">المجموع: <span class="ltr">${rmoney(pz.reduce((s, p) => s + p[2], 0))}</span></div></div>` : ''; })()}
+          <div class="acts" style="margin:8px 0">
+            <button class="btn sm ${isBlocked(x.phone)?'gh':'gh'}" onclick="toggleBlock('${x.phone}')">${isBlocked(x.phone)?'✅ فك الحظر':'🚫 حظر'}</button>
+            <button class="btn sm gh" onclick="deleteCustomer('${x.phone}')">🗑️ حذف الزبون</button>
+          </div>
           <div class="muted" style="margin:6px 0">آخر طلب: ${esc(d(x.last))} · معدل الطلب: <span class="ltr">${(x.spent / Math.max(1, x.orders.filter(o=>o.status!=='cancel').length)).toFixed(0)} ₪</span></div>
           ${x.orders.map(o => `<div class="ch2">
             <div class="top"><span><b>${esc(d(o.createdAtStr))}</b> <span class="pill ${(ST[o.status]||ST.done).c}">${(ST[o.status]||ST.done).t}</span> ${o.type==='pickup'?'🏪':'🛵'}</span><b class="ltr">${Number(o.total||0).toFixed(2)} ₪</b></div>
@@ -1716,6 +1776,316 @@ async function renderCust(){
         </div>` : ''}
       </div>`;
     }).join('')}`;
+}
+
+/* ========= حظر وحذف الزبائن ========= */
+const isBlocked = ph => (SET.blocked || []).includes(phKey(ph));
+async function toggleBlock(ph){
+  const k = phKey(ph); if(!k) return;
+  const on = isBlocked(k);
+  if(!on && !confirm('تحظر الرقم ' + k + '؟ ما رح يقدر يطلب من الموقع.')) return;
+  const FV = firebase.firestore.FieldValue;
+  try{
+    await db.collection('settings').doc('main').set({blocked: on ? FV.arrayRemove(k) : FV.arrayUnion(k)}, {merge:true});
+    SET.blocked = on ? (SET.blocked || []).filter(x => x !== k) : (SET.blocked || []).concat(k);
+    toast(on ? 'تم فك الحظر ✓' : 'تم الحظر ✓'); render();
+  }catch(e){ alert(e.message); }
+}
+async function deleteCustomer(ph){
+  const k = phKey(ph); if(!k) return;
+  const list = (CUST_ORDERS || ORDERS).filter(o => phKey((o.customer || {}).phone) === k);
+  if(!confirm('تحذف الزبون ' + k + ' وكل طلباته (' + list.length + ')؟ ما بترجع!')) return;
+  try{
+    for(let i = 0; i < list.length; i += 150){
+      const b = db.batch();
+      list.slice(i, i + 150).forEach(o => { b.delete(db.collection('orders').doc(o.id)); });
+      await b.commit();
+    }
+    await db.collection('loyalty').doc(k).delete().catch(() => {});
+    if(CUST_ORDERS) CUST_ORDERS = CUST_ORDERS.filter(o => phKey((o.customer || {}).phone) !== k);
+    custOpen = ''; toast('تم الحذف ✓'); render();
+  }catch(e){ alert(e.message); }
+}
+function blockedHtml(){
+  const bl = SET.blocked || [];
+  return `<div class="card">
+    <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🚫 أرقام محظورة</label>
+    <div class="muted" style="margin-bottom:8px">الرقم المحظور ما بيقدر يبعت طلب من الموقع. بتقدر تحظر كمان من تاب 👥 الزبائن.</div>
+    ${bl.length ? bl.map(p => `<div class="blk"><span class="ltr">${esc(p)}</span><button class="btn sm gh" onclick="toggleBlock('${esc(p)}')">فك الحظر</button></div>`).join('') : '<div class="muted">ما في أرقام محظورة</div>'}
+    <div class="blk add"><input id="blkNew" inputmode="tel" placeholder="05xxxxxxxx"><button class="btn sm red" onclick="const v=$('blkNew').value; if(phKey(v).length>=9) toggleBlock(v); else alert('رقم مش صحيح')">🚫 حظر</button></div>
+  </div>`;
+}
+
+/* ========= 📊 التقارير ========= */
+let REP = {month: '', orders: null, loading: false};
+const ymOf = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+function monthRange(ym){
+  const [y, m] = ym.split('-').map(Number);
+  return [new Date(y, m - 1, 1), new Date(y, m, 1)];
+}
+async function loadReport(ym){
+  REP.month = ym; REP.orders = null; REP.loading = true; render();
+  const [a, b] = monthRange(ym);
+  try{
+    const s = await db.collection('orders').where('createdAtStr', '>=', a.toISOString()).where('createdAtStr', '<', b.toISOString()).get();
+    REP.orders = s.docs.map(d => ({id: d.id, ...d.data()}));
+  }catch(e){
+    console.error(e);
+    REP.orders = (CUST_ORDERS || ORDERS).filter(o => o.createdAtStr && o.createdAtStr >= a.toISOString() && o.createdAtStr < b.toISOString());
+  }
+  REP.loading = false; if(view === 'rep') render();
+}
+const vatRate = () => (SET.vat == null || SET.vat === '' ? 18 : Number(SET.vat));
+/* تكلفة كل جائزة بالطلب */
+function prizeParts(o){
+  const c = o.customer || {}, sub = Number(o.subtotal || 0), disc = Number(o.discount || 0);
+  const reward = Number(c.reward || 0);
+  let wheel = 0;
+  if(c.wheel){
+    if(c.wheelDisc != null) wheel = Number(c.wheelDisc);
+    else if(c.wheelType === 'percent') wheel = Math.round(sub * Number(c.wheelVal || 0)) / 100;
+    else if(c.wheelType === 'fixed') wheel = Math.min(Number(c.wheelVal || 0), sub);
+  }
+  const gift = c.wheel && c.wheelType === 'gift' ? Number(c.wheelVal || 0) : 0;
+  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel) * 100) / 100);
+  return {reward, wheel, gift, coupon};
+}
+function calcReport(list){
+  const ok = list.filter(o => o.status !== 'cancel');
+  const vr = vatRate() / 100;
+  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0,
+    byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set()};
+  ok.forEach(o => {
+    const t = Number(o.total || 0), c = o.customer || {}, pp = prizeParts(o);
+    R.gross += t; R.sub += Number(o.subtotal || 0); R.fees += Number(o.fee || 0); R.disc += Number(o.discount || 0);
+    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift;
+    const pk = c.pay || 'cash'; R.byPay[pk] = R.byPay[pk] || [0, 0]; R.byPay[pk][0]++; R.byPay[pk][1] += t;
+    const ty = o.type === 'pickup' ? 'pickup' : 'delivery'; R.byType[ty][0]++; R.byType[ty][1] += t;
+    if(c.zone){ R.byZone[c.zone] = R.byZone[c.zone] || [0, 0]; R.byZone[c.zone][0]++; R.byZone[c.zone][1] += t; }
+    const d = new Date(o.createdAtStr); R.byHour[d.getHours()]++;
+    const dk = d.getDate();
+    const D = R.days[dk] = R.days[dk] || {n: 0, gross: 0, fees: 0, disc: 0, prizes: 0};
+    D.n++; D.gross += t; D.fees += Number(o.fee || 0); D.disc += Number(o.discount || 0); D.prizes += pp.reward + pp.wheel + pp.gift;
+    (o.items || []).forEach(i => { if(i.sub) return; const k = iName(i); R.items[k] = R.items[k] || [0, 0]; R.items[k][0] += Number(i.qty) || 0; R.items[k][1] += (Number(i.unit) || 0) * (Number(i.qty) || 0); });
+    if(!o.paid) R.unpaid += t;
+    if(phKey(c.phone)) R.customers.add(phKey(c.phone));
+    if(pp.reward) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎁 ' + (LANG === 'he' ? 'מתנת מועדון' : 'هدية الولاء'), cost: pp.reward, no: o.id});
+    if(pp.wheel || pp.gift) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎡 ' + c.wheel, cost: pp.wheel + pp.gift, no: o.id});
+  });
+  R.prizeCost = R.reward + R.wheel + R.gift;
+  R.net = R.gross / (1 + vr); R.vat = R.gross - R.net;
+  R.avg = R.count ? R.gross / R.count : 0;
+  return R;
+}
+const rmoney = n => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₪';
+const money0 = n => Math.round(Number(n || 0)).toLocaleString('en-US') + ' ₪';
+function monthName(ym){
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG', {month: 'long', year: 'numeric'});
+}
+function reportDocHtml(R, ym){
+  const [y, m] = ym.split('-').map(Number), nd = new Date(y, m, 0).getDate();
+  const days = Array.from({length: nd}, (_, k) => k + 1);
+  const mx = Math.max(1, ...days.map(d => (R.days[d] || {}).gross || 0));
+  const PT = k => (PAY_T[k] || k);
+  const tops = Object.entries(R.items).sort((a, b) => b[1][0] - a[1][0]).slice(0, 10);
+  const hMax = Math.max(1, ...R.byHour);
+  return `<div class="rep" id="repDoc">
+    <div class="rh">
+      <div><div class="rt">${esc(LX(SET,'name') || '')}</div><div class="rs2">${esc(LX(SET,'addr') || '')}${SET.osek ? ' · עוסק/ח.פ: <span class="ltr">' + esc(SET.osek) + '</span>' : ''}</div></div>
+      <div style="text-align:end"><div class="rt2">📊 تقرير شهري</div><div class="rs2">${esc(monthName(ym))}</div></div>
+    </div>
+    <div class="kp">
+      <div><b>${money0(R.gross)}</b><span>مجموع المدخول (شامل מע״מ)</span></div>
+      <div><b>${R.count}</b><span>طلبات</span></div>
+      <div><b>${money0(R.avg)}</b><span>معدل الطلب</span></div>
+      <div><b>${R.customers.size}</b><span>زبائن</span></div>
+      <div class="neg"><b>${money0(R.prizeCost)}</b><span>تكلفة الجوائز</span></div>
+      <div class="neg"><b>${money0(R.unpaid)}</b><span>لسا مش مدفوع</span></div>
+    </div>
+    <h3>🧾 ملخص للمحاسب</h3>
+    <table class="rtb">
+      <tr><td>المبيعات (قبل الخصومات والتوصيل)</td><td class="n">${rmoney(R.sub)}</td></tr>
+      <tr><td>رسوم التوصيل</td><td class="n">${rmoney(R.fees)}</td></tr>
+      <tr><td>خصومات الكوبونات</td><td class="n neg">${R.coupon ? '-' : ''}${rmoney(R.coupon)}</td></tr>
+      <tr><td>🎁 هدايا الولاء</td><td class="n neg">${R.reward ? '-' : ''}${rmoney(R.reward)}</td></tr>
+      <tr><td>🎡 خصومات العجلة</td><td class="n neg">${R.wheel ? '-' : ''}${rmoney(R.wheel)}</td></tr>
+      <tr class="b"><td>مجموع المدخول (شامل מע״מ)</td><td class="n">${rmoney(R.gross)}</td></tr>
+      <tr><td>מע״מ ${vatRate()}%</td><td class="n">${rmoney(R.vat)}</td></tr>
+      <tr class="b"><td>المدخول قبل מע״מ</td><td class="n">${rmoney(R.net)}</td></tr>
+      ${R.gift ? `<tr><td>🎁 هدايا أصناف ببلاش (تكلفة تقديرية)</td><td class="n neg">${rmoney(R.gift)}</td></tr>` : ''}
+      <tr><td>طلبات ملغية (مش محسوبة)</td><td class="n">${R.cancel}</td></tr>
+    </table>
+    <h3>💳 حسب طريقة الدفع</h3>
+    <table class="rtb"><tr class="hd"><td>الطريقة</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
+      ${Object.entries(R.byPay).map(([k, v]) => `<tr><td>${esc(PT(k))}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
+    <h3>🛵 توصيل / استلام</h3>
+    <table class="rtb"><tr class="hd"><td></td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
+      <tr><td>🛵 توصيل</td><td class="n">${R.byType.delivery[0]}</td><td class="n">${rmoney(R.byType.delivery[1])}</td></tr>
+      <tr><td>🏪 استلام</td><td class="n">${R.byType.pickup[0]}</td><td class="n">${rmoney(R.byType.pickup[1])}</td></tr></table>
+    <h3>📅 تفصيل يومي</h3>
+    <div class="chart">${days.map(d => { const v = (R.days[d] || {}).gross || 0; return `<div class="cb" title="${d}: ${money0(v)}"><i style="height:${Math.round(v / mx * 100)}%"></i><span>${d}</span></div>`; }).join('')}</div>
+    <table class="rtb day"><tr class="hd"><td>اليوم</td><td class="n">طلبات</td><td class="n">المدخول</td><td class="n">توصيل</td><td class="n">خصومات</td><td class="n">جوائز</td><td class="n">قبل מע״מ</td></tr>
+      ${days.filter(d => R.days[d]).map(d => { const D = R.days[d], dt = new Date(y, m - 1, d);
+        return `<tr><td>${dt.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG', {weekday: 'short', day: 'numeric', month: 'numeric'})}</td><td class="n">${D.n}</td><td class="n">${rmoney(D.gross)}</td><td class="n">${rmoney(D.fees)}</td><td class="n">${rmoney(D.disc)}</td><td class="n">${rmoney(D.prizes)}</td><td class="n">${rmoney(D.gross / (1 + vatRate() / 100))}</td></tr>`; }).join('') || '<tr><td colspan="7">ما في طلبات بهالشهر</td></tr>'}
+      <tr class="b"><td>المجموع</td><td class="n">${R.count}</td><td class="n">${rmoney(R.gross)}</td><td class="n">${rmoney(R.fees)}</td><td class="n">${rmoney(R.disc)}</td><td class="n">${rmoney(R.prizeCost)}</td><td class="n">${rmoney(R.net)}</td></tr></table>
+    <h3>🏆 الأصناف الأكثر مبيعاً</h3>
+    <table class="rtb"><tr class="hd"><td>الصنف</td><td class="n">كمية</td><td class="n">المبلغ</td></tr>
+      ${tops.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
+    ${Object.keys(R.byZone).length ? `<h3>🗺️ حسب المنطقة</h3><table class="rtb"><tr class="hd"><td>المنطقة</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
+      ${Object.entries(R.byZone).sort((a, b) => b[1][1] - a[1][1]).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('')}</table>` : ''}
+    <h3>🕐 ساعات الضغط</h3>
+    <div class="hours">${R.byHour.map((v, h) => v ? `<div class="hb"><span class="ltr">${String(h).padStart(2, '0')}:00</span><i style="width:${Math.round(v / hMax * 100)}%"></i><b>${v}</b></div>` : '').join('') || '<div class="muted">—</div>'}</div>
+    <h3>🎁 سجل الجوائز <span class="muted">(${R.prizes.length} · ${rmoney(R.prizeCost)})</span></h3>
+    <table class="rtb"><tr class="hd"><td>التاريخ</td><td>الزبون</td><td>الجائزة</td><td class="n">التكلفة</td></tr>
+      ${R.prizes.sort((a, b) => String(a.at).localeCompare(String(b.at))).map(p => `<tr><td>${esc(new Date(p.at).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG'))}</td><td>${esc(p.name)} <span class="ltr muted">${esc(p.phone)}</span></td><td>${esc(p.what)}</td><td class="n">${rmoney(p.cost)}</td></tr>`).join('') || '<tr><td colspan="4">ما في جوائز بهالشهر</td></tr>'}
+      ${R.prizes.length ? `<tr class="b"><td colspan="3">مجموع تكلفة الجوائز</td><td class="n">${rmoney(R.prizeCost)}</td></tr>` : ''}</table>
+    <div class="rfoot">تقرير داخلي من نظام الطلبات — مش חשבונית מס. الأرقام حسب الطلبات بالموقع. · ${esc(new Date().toLocaleString(LANG === 'he' ? 'he-IL' : 'ar-EG'))}</div>
+  </div>`;
+}
+function renderRep(){
+  if(!REP.month){ loadReport(ymOf(new Date())); return; }
+  const now = new Date(), opts = [];
+  for(let k = 0; k < 18; k++){ const d = new Date(now.getFullYear(), now.getMonth() - k, 1); opts.push(ymOf(d)); }
+  const bar = `<h2 class="sec">📊 التقارير</h2>
+    <div class="bar">
+      <select onchange="loadReport(this.value)">${opts.map(o => `<option value="${o}" ${o === REP.month ? 'selected' : ''}>${esc(monthName(o))}</option>`).join('')}</select>
+      <button class="btn sm gh" onclick="loadReport(REP.month)">🔄</button>
+    </div>
+    <div class="bar rexp">
+      <button class="btn sm red" onclick="repPrint()">🖨️ PDF / طباعة</button>
+      <button class="btn sm gh" onclick="repPdf()">📄 تنزيل PDF</button>
+      <button class="btn sm gh" onclick="repXlsx()">📊 Excel</button>
+      <button class="btn sm gh" onclick="repShare()">📤 مشاركة (واتساب / إيميل)</button>
+      <button class="btn sm gh" onclick="repWa()">💬 ملخص بالواتساب</button>
+      <button class="btn sm gh" onclick="repMail()">✉️ إيميل</button>
+    </div>`;
+  if(REP.loading || !REP.orders){ $('vRep').innerHTML = bar + '<div class="empty"><div class="e">⏳</div><div>جاري التحميل...</div></div>'; return; }
+  REP.R = calcReport(REP.orders);
+  $('vRep').innerHTML = bar + reportDocHtml(REP.R, REP.month);
+}
+const REP_CSS = `
+  body{font-family:'Heebo','Cairo',system-ui,sans-serif;color:#111;margin:0}
+  .rep{max-width:820px;margin:0 auto;padding:22px 26px;background:#fff}
+  .rh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #e3242b;padding-bottom:12px;margin-bottom:14px}
+  .rt{font-size:22px;font-weight:900}.rt2{font-size:18px;font-weight:900}.rs2{color:#555;font-size:13px;margin-top:3px}
+  .kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+  .kp>div{border:1.5px solid #eee;border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:20px}.kp span{font-size:12px;color:#666}
+  .kp .neg b{color:#c0392b}
+  h3{font-size:15px;margin:18px 0 7px;border-inline-start:4px solid #e3242b;padding-inline-start:8px}
+  .rtb{width:100%;border-collapse:collapse;font-size:13px}
+  .rtb td{padding:6px 8px;border-bottom:1px solid #eee}.rtb .n{text-align:left;direction:ltr;white-space:nowrap}
+  .rtb tr.hd td{background:#f5f3f1;font-weight:800}.rtb tr.b td{font-weight:900;border-top:2px solid #111}
+  .rtb .neg{color:#c0392b}.rtb.day td{font-size:12px;padding:5px 6px}
+  .chart{display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1.5px solid #ddd;margin:6px 0 4px;direction:ltr}
+  .cb{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+  .cb i{display:block;width:100%;background:#e3242b;border-radius:3px 3px 0 0;min-height:1px}
+  .cb span{font-size:8px;color:#888;margin-top:2px}
+  .hours .hb{display:flex;align-items:center;gap:8px;font-size:12px;margin:2px 0}.hours .hb span{width:44px}
+  .hours i{display:block;height:10px;background:#f5b301;border-radius:5px}.hours b{font-size:11px}
+  .muted{color:#888;font-weight:400}.ltr{direction:ltr;unicode-bidi:isolate}
+  .rfoot{margin-top:18px;font-size:11px;color:#888;border-top:1px dashed #ccc;padding-top:8px}
+  @page{size:A4;margin:10mm}
+  @media print{.rep{padding:0;max-width:none}h3{break-after:avoid}.rtb tr{break-inside:avoid}}`;
+function repFullHtml(){
+  const doc = $('repDoc'); if(!doc) return '';
+  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>${esc((LX(SET,'name') || '') + ' — ' + monthName(REP.month))}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>${REP_CSS}</style></head><body>${doc.outerHTML}</body></html>`;
+}
+function repFileName(ext){ return 'report-' + REP.month + '.' + ext; }
+/* PDF عالي الجودة: من شباك الطباعة اختار "שמירה כ-PDF / Save as PDF" */
+function repPrint(){
+  let f = $('prnFrame'); if(f) f.remove();
+  f = document.createElement('iframe'); f.id = 'prnFrame';
+  f.style.cssText = 'position:fixed;width:0;height:0;border:0;left:-9999px;top:0';
+  document.body.appendChild(f);
+  const d = f.contentWindow.document; d.open(); d.write(repFullHtml()); d.close();
+  setTimeout(() => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} }, 900);
+}
+function loadScript(src){
+  return new Promise((res, rej) => { if(document.querySelector('script[src="' + src + '"]')) return res();
+    const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('ما قدرت أحمّل المكتبة — تأكد من الإنترنت')); document.head.appendChild(s); });
+}
+async function repPdfBlob(){
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:820px;background:#fff';
+  wrap.innerHTML = '<style>' + REP_CSS.replace(/body\{[^}]*\}/, '') + '</style>' + $('repDoc').outerHTML;
+  wrap.setAttribute('dir', 'rtl'); document.body.appendChild(wrap);
+  try{
+    return await window.html2pdf().set({margin: [8, 8, 10, 8], filename: repFileName('pdf'), image: {type: 'jpeg', quality: 0.96},
+      html2canvas: {scale: 2.2, useCORS: true, backgroundColor: '#ffffff'}, jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+      pagebreak: {mode: ['css', 'legacy'], avoid: ['tr', 'h3', '.kp']}}).from(wrap.firstElementChild.nextElementSibling).outputPdf('blob');
+  }finally{ wrap.remove(); }
+}
+function dl(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+async function repPdf(){ try{ toast('⏳ جاري تجهيز PDF...'); dl(await repPdfBlob(), repFileName('pdf')); }catch(e){ alert(e.message + '\n\nجرّب زر "🖨️ PDF / طباعة" واختار Save as PDF.'); } }
+async function repXlsxBlob(){
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+  const X = window.XLSX, R = REP.R, [y, m] = REP.month.split('-').map(Number), nd = new Date(y, m, 0).getDate();
+  const r2 = n => Math.round(Number(n || 0) * 100) / 100;
+  const tr = s => (typeof trText === 'function' ? trText(s) : s);
+  const wb = X.utils.book_new(); wb.Workbook = {Views: [{RTL: true}]};
+  const sum = [[tr('تقرير شهري') + ' — ' + (LX(SET,'name') || ''), monthName(REP.month)], SET.osek ? ['עוסק / ח.פ', SET.osek] : [], [],
+    [tr('المبيعات (قبل الخصومات والتوصيل)'), r2(R.sub)], [tr('رسوم التوصيل'), r2(R.fees)], [tr('خصومات الكوبونات'), -r2(R.coupon)],
+    [tr('هدايا الولاء'), -r2(R.reward)], [tr('خصومات العجلة'), -r2(R.wheel)], [tr('مجموع المدخول (شامل מע״מ)'), r2(R.gross)],
+    ['מע״מ ' + vatRate() + '%', r2(R.vat)], [tr('المدخول قبل מע״מ'), r2(R.net)], [tr('طلبات'), R.count], [tr('معدل الطلب'), r2(R.avg)],
+    [tr('تكلفة الجوائز'), r2(R.prizeCost)], [tr('لسا مش مدفوع'), r2(R.unpaid)], [], [tr('حسب طريقة الدفع')],
+    ...Object.entries(R.byPay).map(([k, v]) => [tr(PAY_T[k] || k), v[0], r2(v[1])])];
+  const s1 = X.utils.aoa_to_sheet(sum); s1['!cols'] = [{wch: 36}, {wch: 18}, {wch: 14}]; X.utils.book_append_sheet(wb, s1, tr('ملخص').slice(0, 30));
+  const dRows = [[tr('اليوم'), tr('طلبات'), tr('المدخول'), tr('توصيل'), tr('خصومات'), tr('جوائز'), tr('قبل מע״מ'), 'מע״מ']];
+  for(let d = 1; d <= nd; d++){ const D = R.days[d]; if(!D) continue; const net = D.gross / (1 + vatRate() / 100);
+    dRows.push([y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0'), D.n, r2(D.gross), r2(D.fees), r2(D.disc), r2(D.prizes), r2(net), r2(D.gross - net)]); }
+  dRows.push([tr('المجموع'), R.count, r2(R.gross), r2(R.fees), r2(R.disc), r2(R.prizeCost), r2(R.net), r2(R.vat)]);
+  const s2 = X.utils.aoa_to_sheet(dRows); s2['!cols'] = [{wch: 13}, {wch: 8}, {wch: 12}, {wch: 10}, {wch: 10}, {wch: 10}, {wch: 12}, {wch: 10}];
+  X.utils.book_append_sheet(wb, s2, tr('تفصيل يومي').slice(0, 30));
+  const oRows = [['#', tr('التاريخ'), tr('الزبون'), tr('رقم الهاتف'), tr('توصيل / استلام'), tr('الدفع'), tr('مدفوع'), tr('المجموع'), tr('توصيل'), tr('خصم'), tr('الإجمالي'), tr('الحالة')]];
+  REP.orders.slice().sort((a, b) => String(a.createdAtStr).localeCompare(String(b.createdAtStr))).forEach((o, k) => {
+    const c = o.customer || {};
+    oRows.push([k + 1, new Date(o.createdAtStr).toLocaleString('he-IL'), c.name || '', c.phone || '', o.type === 'pickup' ? tr('استلام') : tr('توصيل'),
+      tr(PAY_T[c.pay || 'cash'] || ''), o.paid ? '✓' : '', r2(o.subtotal), r2(o.fee), r2(o.discount), r2(o.total), tr((ST[o.status] || ST.done).t)]); });
+  const s3 = X.utils.aoa_to_sheet(oRows); s3['!cols'] = [{wch: 5}, {wch: 18}, {wch: 16}, {wch: 13}, {wch: 10}, {wch: 16}, {wch: 6}, {wch: 10}, {wch: 8}, {wch: 8}, {wch: 10}, {wch: 10}];
+  X.utils.book_append_sheet(wb, s3, tr('الطلبات').slice(0, 30));
+  const pRows = [[tr('التاريخ'), tr('الزبون'), tr('رقم الهاتف'), tr('الجائزة'), tr('التكلفة')]].concat(
+    R.prizes.map(p => [new Date(p.at).toLocaleDateString('he-IL'), p.name, p.phone, p.what, r2(p.cost)]), [[tr('المجموع'), '', '', '', r2(R.prizeCost)]]);
+  const s4 = X.utils.aoa_to_sheet(pRows); s4['!cols'] = [{wch: 12}, {wch: 16}, {wch: 13}, {wch: 26}, {wch: 10}];
+  X.utils.book_append_sheet(wb, s4, tr('الجوائز').slice(0, 30));
+  const iRows = [[tr('الصنف'), tr('كمية'), tr('المبلغ')]].concat(Object.entries(R.items).sort((a, b) => b[1][0] - a[1][0]).map(([k, v]) => [k, v[0], r2(v[1])]));
+  const s5 = X.utils.aoa_to_sheet(iRows); s5['!cols'] = [{wch: 28}, {wch: 8}, {wch: 12}]; X.utils.book_append_sheet(wb, s5, tr('الأصناف').slice(0, 30));
+  const out = X.write(wb, {bookType: 'xlsx', type: 'array'});
+  return new Blob([out], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+async function repXlsx(){ try{ dl(await repXlsxBlob(), repFileName('xlsx')); }catch(e){ alert(e.message); } }
+function repSummary(){
+  const R = REP.R, L = [];
+  L.push('📊 ' + (LX(SET,'name') || '') + ' — ' + monthName(REP.month));
+  L.push(tr2('مجموع المدخول (شامل מע״מ)') + ': ' + rmoney(R.gross));
+  L.push('מע״מ ' + vatRate() + '%: ' + rmoney(R.vat));
+  L.push(tr2('المدخول قبل מע״מ') + ': ' + rmoney(R.net));
+  L.push(tr2('طلبات') + ': ' + R.count + ' · ' + tr2('معدل الطلب') + ': ' + rmoney(R.avg));
+  Object.entries(R.byPay).forEach(([k, v]) => L.push('• ' + tr2(PAY_T[k] || k) + ': ' + rmoney(v[1])));
+  L.push(tr2('تكلفة الجوائز') + ': ' + rmoney(R.prizeCost));
+  return L.join('\n');
+}
+function tr2(s){ return typeof trText === 'function' ? trText(s) : s; }
+async function repShare(){
+  try{
+    toast('⏳ جاري تجهيز الملفات...');
+    const files = [new File([await repPdfBlob()], repFileName('pdf'), {type: 'application/pdf'}),
+                   new File([await repXlsxBlob()], repFileName('xlsx'), {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})];
+    if(navigator.canShare && navigator.canShare({files})){
+      await navigator.share({files, title: repFileName('pdf'), text: repSummary()});
+    }else{
+      files.forEach(f => dl(f, f.name));
+      alert('نزّلتلك الملفين (PDF + Excel).\nهلأ افتح واتساب أو الإيميل وأرفقهم من مجلد التنزيلات (הורדות) — أو استعمل زر "💬 ملخص بالواتساب".');
+    }
+  }catch(e){ if(e && e.name !== 'AbortError') alert(e.message); }
+}
+function repWa(){ window.open('https://wa.me/?text=' + encodeURIComponent(repSummary()), '_blank'); }
+function repMail(){
+  const to = SET.reportEmail || '';
+  location.href = 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent((LX(SET,'name') || '') + ' — ' + monthName(REP.month)) + '&body=' + encodeURIComponent(repSummary() + '\n\n(' + tr2('الملفات مرفقة') + ')');
 }
 
 /* ========= الصور ========= */
@@ -2387,6 +2757,15 @@ function renderSet(){
         <div class="muted" style="margin-top:5px">بتحطه لما تفتح حساب عند Tranzila / Cardcom / PayPlus / Grow. اكتب <b dir="ltr">{sum}</b> مكان المبلغ و<b dir="ltr">{order}</b> مكان رقم الطلب. لحد ما تحطه، خيار "بطاقة أونلاين" ما بيطلع للزبون.</div></div>
     </div>
     <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">📊 التقارير والمحاسبة</label>
+      <div class="f3">
+        <div class="f"><label>رقم עוסק / ח.פ</label><input id="sOsek" inputmode="numeric" value="${esc(SET.osek||'')}"></div>
+        <div class="f"><label>מע״מ %</label><input id="sVat" type="number" step="0.1" value="${SET.vat==null||SET.vat===''?18:SET.vat}"></div>
+        <div class="f"><label>إيميل المحاسب (للتقارير)</label><input id="sRepMail" type="email" dir="ltr" value="${esc(SET.reportEmail||'')}"></div>
+      </div>
+    </div>
+    ${blockedHtml()}
+    <div class="card">
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎁 نقاط الولاء</label>
       <label class="chk"><input type="checkbox" id="lyOn" ${(SET.loyalty||{}).on?'checked':''}><span>تفعيل نقاط الولاء</span></label>
       <div class="f3">
@@ -2444,6 +2823,7 @@ async function saveSet(){
     hours, promos,
     payMethods: Object.fromEntries(Object.keys(PAY_T).map(k => [k, !!($('pm_' + k) && $('pm_' + k).checked)])),
     bitPhone: val('sBit').replace(/[^\d]/g, ''), payboxLink: val('sPaybox'), onlineUrl: val('sOnline'),
+    osek: val('sOsek'), vat: num('sVat'), reportEmail: val('sRepMail'),
     loyalty: {on: $('lyOn').checked, every: Math.max(2, num('lyEvery') || 10), value: num('lyVal') || 0, text: val('lyTxt'), text_he: val('lyTxtHe')},
     wheel: {on: $('whOn').checked, prizes: [...document.querySelectorAll('#whRows .whr')].map(r => ({
       label: r.querySelector('.wl').value.trim(), label_he: r.querySelector('.wlh').value.trim(), type: r.querySelector('.wt').value,

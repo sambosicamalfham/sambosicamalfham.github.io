@@ -1,0 +1,86 @@
+rules_version = '2';
+
+// =====================================================================
+//  قواعد الأمان — مكسيكاني وبيتسا
+//  انسخ كل هاض الملف والصقه في:
+//  Firebase Console ← Firestore Database ← Rules ← Publish
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // موظف = اله وثيقة باسم الـUID تبعه في مجموعة staff
+    function isStaff() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    // ---------- المنيو والإعدادات ----------
+    match /settings/{id}      { allow read: if true; allow write: if isStaff(); }
+    match /categories/{id}    { allow read: if true; allow write: if isStaff(); }
+    match /items/{id}         { allow read: if true; allow write: if isStaff(); }
+    match /optionGroups/{id}  { allow read: if true; allow write: if isStaff(); }
+    match /deals/{id}         { allow read: if true; allow write: if isStaff(); }
+
+    // الكوبونات: الزبون بقدر يتحقق من رمز بيعرفه، بس ما بقدر يشوف القائمة كلها
+    match /coupons/{code}     { allow get: if true; allow list: if isStaff(); allow write: if isStaff(); }
+
+    // ---------- الطلبات ----------
+    match /orders/{id} {
+      allow create: if request.resource.data.keys().hasAll(['items','customer','total','status'])
+                    && request.resource.data.keys().hasOnly(['items','customer','type','subtotal',
+                         'discount','coupon','fee','total','note','status','createdAt','createdAtStr'])
+                    && request.resource.data.status == 'new'
+                    && request.resource.data.total is number
+                    && request.resource.data.total >= 0
+                    && request.resource.data.total <= 100000
+                    && request.resource.data.items is list
+                    && request.resource.data.items.size() > 0
+                    && request.resource.data.items.size() <= 80
+                    && request.resource.data.customer is map
+                    && request.resource.data.customer.name is string
+                    && request.resource.data.customer.name.size() <= 80
+                    && request.resource.data.customer.phone is string
+                    && request.resource.data.customer.phone.size() <= 20
+                    // رقم محظور ما بيقدر يطلب
+                    && !(request.resource.data.customer.phone in
+                         get(/databases/$(database)/documents/settings/main).data.get('blocked', []));
+      allow read, update, delete: if isStaff();
+    }
+
+    // ---------- تتبّع الطلب (بدون معلومات شخصية) ----------
+    match /track/{id} {
+      allow get: if true;
+      allow create: if request.resource.data.status == 'new'
+                    && request.resource.data.keys().hasOnly(['status','type','at','eta']);
+      allow update: if isStaff();
+      allow list, delete: if false;
+    }
+
+    // ---------- نقاط الولاء (رقم التلفون = اسم الوثيقة، فيها العدد بس) ----------
+    match /loyalty/{phone} {
+      allow get: if true;
+      allow list: if isStaff();
+      allow write: if isStaff();
+    }
+
+    // ---------- التقييمات ----------
+    match /reviews/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['stars','text','name','order','at'])
+                    && request.resource.data.stars is int
+                    && request.resource.data.stars >= 1 && request.resource.data.stars <= 5
+                    && request.resource.data.text is string && request.resource.data.text.size() <= 500
+                    && request.resource.data.name is string && request.resource.data.name.size() <= 40;
+      allow read, update, delete: if isStaff();
+    }
+
+    // ---------- قائمة الموظفين ----------
+    match /staff/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // أي شي ثاني ممنوع
+    match /{document=**} { allow read, write: if false; }
+  }
+}
