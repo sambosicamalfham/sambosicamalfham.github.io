@@ -617,6 +617,13 @@ if(document.readyState !== 'loading') setTimeout(applyLang, 0);
    الحالة — كل التعريفات هون. لا تنقل أي let لتحت.
    ===================================================================== */
 let SET = Object.assign({}, (window.FALLBACK || {}));
+/* Firestore ما بيقبل قائمة جوا قائمة: النقاط بتنحفظ {lat,lng} وبنرجعها [lat,lng] هون */
+function normZones(S){
+  if(S && Array.isArray(S.zones)) S.zones = S.zones.map(z => Object.assign({}, z,
+    {pts: (z.pts || []).map(p => Array.isArray(p) ? [Number(p[0]), Number(p[1])] : [Number(p.lat), Number(p.lng)])}));
+  return S;
+}
+
 let CATS = [], ITEMS = [], DEALS = [], GROUPS = {};
 let db = null, live = false;
 let rdy = {c:false, i:false, g:false, s:false};
@@ -721,7 +728,7 @@ function boot(){
     e => { console.error(col, e); rdy[key] = true; hideSoon(); });
 
   db.collection('settings').doc('main').onSnapshot(d => {
-    if(d.exists) SET = Object.assign({}, window.FALLBACK, d.data());
+    if(d.exists) SET = normZones(Object.assign({}, window.FALLBACK, d.data()));
     rdy.s = true; paint(); hideSoon();
   }, e => { console.error(e); rdy.s = true; hideSoon(); });
 
@@ -833,7 +840,7 @@ function renderHome(){
   const best = avail().filter(i => i.best);
   if(best.length){
     html += '<div class="sh"><h2>🔥 الأكثر مبيعاً</h2>' +
-      '<button class="all" onclick="openCat(\'' + best[0].catId + '\')">عرض الكل</button></div>' +
+      '</div>' +
       '<div class="row">' + best.map(card).join('') + '</div>';
   }
   const promos = avail().filter(i => i.sale && i.sale < i.price);
@@ -844,7 +851,7 @@ function renderHome(){
     const list = avail().filter(i => i.catId === c.id);
     if(!list.length) return;
     html += '<div class="sh"><h2>' + esc(c.icon||'') + ' ' + esc(LX(c,'name')) + '</h2>' +
-      '<button class="all" onclick="openCat(\'' + c.id + '\')">عرض الكل</button></div>' +
+      '</div>' +
       '<div class="row">' + list.map(card).join('') + '</div>';
   });
   host.innerHTML = html;

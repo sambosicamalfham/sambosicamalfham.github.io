@@ -524,6 +524,13 @@ const iLabels = i => (LANG === 'he' && i.labels_he && i.labels_he.length ? i.lab
 /* ========= الحالة (كلها هون — لا تنقل let لتحت) ========= */
 let db = null, auth = null;
 let SET = Object.assign({}, (window.FALLBACK || {}));
+/* Firestore ما بيقبل قائمة جوا قائمة: النقاط بتنحفظ {lat,lng} وبنرجعها [lat,lng] هون */
+function normZones(S){
+  if(S && Array.isArray(S.zones)) S.zones = S.zones.map(z => Object.assign({}, z,
+    {pts: (z.pts || []).map(p => Array.isArray(p) ? [Number(p[0]), Number(p[1])] : [Number(p.lat), Number(p.lng)])}));
+  return S;
+}
+
 let CATS = [], ITEMS = [], GROUPS = [], DEALS = [], ORDERS = [], CPNS = [];
 let view = 'orders';
 let qItems = '', qCat = '';
@@ -597,7 +604,7 @@ function onLogin(u){
   $('hSub').textContent = u.email;
 
   db.collection('settings').doc('main').onSnapshot(d => {
-    if(d.exists) SET = Object.assign({}, window.FALLBACK, d.data());
+    if(d.exists) SET = normZones(Object.assign({}, window.FALLBACK, d.data()));
     checkSetup(); if(view==='set') render();
   });
   db.collection('categories').onSnapshot(s => {
@@ -1521,7 +1528,7 @@ async function saveZones(){
     const n = v => (v === '' || v == null || isNaN(Number(v))) ? '' : Number(v);
     return {id: z.id, name: String(z.name||'').trim(), name_he: String(z.name_he||'').trim(), color: z.color || '',
       price: Number(z.price||0), min: n(z.min), over: n(z.over), overPrice: n(z.overPrice),
-      pts: z.pts.map(p => [Number(p[0]), Number(p[1])])};
+      pts: z.pts.map(p => ({lat: Number(p[0]), lng: Number(p[1])}))};
   });
   try{
     await db.collection('settings').doc('main').set({zones: clean, shopLoc: SHOP || null, zonesOn: !!ZON}, {merge:true});
