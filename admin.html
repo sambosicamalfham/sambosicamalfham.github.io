@@ -282,6 +282,35 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .bdl{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}.bdl:last-of-type{border-bottom:0}
 .bdl .b{background:#fff3e0;color:#a35b00;border-radius:9px;padding:3px 9px;font-weight:800;font-size:12.5px;white-space:nowrap}
 .drvlink{display:flex;align-items:center;gap:10px;background:#111;color:#fff;border-radius:14px;padding:12px 14px;text-decoration:none;font-weight:800;margin-bottom:12px}
+
+.dvr .dvh,.dvc .dvh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.dvr.off{opacity:.6}.dvr .acts{margin-top:10px}
+.pin{background:#f5f3f1;border-radius:9px;padding:3px 10px;font-weight:800}
+.dvc{cursor:pointer}.dvc .dvs{border:0;padding:0;margin:0}
+.dvk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.dvk>div{background:#f7f5f3;border-radius:10px;padding:7px 9px}.dvk b{display:block;font-size:17px}.dvk span{font-size:11.5px;color:#666}.dvk .neg b{color:#c0392b}
+@media(max-width:560px){.dvk{grid-template-columns:repeat(2,1fr)}}
+
+#vDrv select{flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;font-size:14px;background:#fff;font-family:inherit}
+#vDrv .rh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #e3242b;padding-bottom:12px;margin-bottom:14px}
+#vDrv .rt{font-size:22px;font-weight:900}.rt2{font-size:18px;font-weight:900}.rs2{color:#555;font-size:13px;margin-top:3px}
+#vDrv .kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+#vDrv .kp>div{border:1.5px solid #eee;border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:20px}.kp span{font-size:12px;color:#666}
+#vDrv .kp .neg b{color:#c0392b}
+#vDrv h3{font-size:15px;margin:18px 0 7px;border-inline-start:4px solid #e3242b;padding-inline-start:8px}
+#vDrv .rtb{width:100%;border-collapse:collapse;font-size:13px}
+#vDrv .rtb td{padding:6px 8px;border-bottom:1px solid #eee}.rtb .n{text-align:left;direction:ltr;white-space:nowrap}
+#vDrv .rtb tr.hd td{background:#f5f3f1;font-weight:800}.rtb tr.b td{font-weight:900;border-top:2px solid #111}
+#vDrv .rtb .neg{color:#c0392b}.rtb.day td{font-size:12px;padding:5px 6px}
+#vDrv .chart{display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1.5px solid #ddd;margin:6px 0 4px;direction:ltr}
+#vDrv .cb{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+#vDrv .cb i{display:block;width:100%;background:#e3242b;border-radius:3px 3px 0 0;min-height:1px}
+#vDrv .cb span{font-size:8px;color:#888;margin-top:2px}
+#vDrv .hours .hb{display:flex;align-items:center;gap:8px;font-size:12px;margin:2px 0}.hours .hb span{width:44px}
+#vDrv .hours i{display:block;height:10px;background:#f5b301;border-radius:5px}.hours b{font-size:11px}
+#vDrv .muted{color:#888;font-weight:400}.ltr{direction:ltr;unicode-bidi:isolate}
+#vDrv .rfoot{margin-top:18px;font-size:11px;color:#888;border-top:1px dashed #ccc;padding-top:8px}
+#vDrv .rep h3{font-size:15px;margin:14px 0 7px}
 </style>
 </head>
 <body>
@@ -314,6 +343,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
     <button class="tb"    data-v="zones"   onclick="tab('zones')">🗺️ التوصيل</button>
     <button class="tb"    data-v="cust"    onclick="tab('cust')">👥 الزبائن</button>
     <button class="tb"    data-v="rep"     onclick="tab('rep')">📊 التقارير</button>
+    <button class="tb"    data-v="drv"     onclick="tab('drv')">🛵 السائقين</button>
     <button class="tb"    data-v="set"     onclick="tab('set')">🏪 الإعدادات</button>
   </div>
 </header>
@@ -330,6 +360,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
   <div id="vZones"  style="display:none"></div>
   <div id="vCust"   style="display:none"></div>
   <div id="vRep"    style="display:none"></div>
+  <div id="vDrv"    style="display:none"></div>
 </div>
 
 <div class="mbg" id="mbg" onclick="closeModal()"></div>
@@ -555,6 +586,18 @@ function LX(o, f){
 }
 /* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد، سائق ===== */
 Object.assign(HE, {
+  'السائقين':'שליחים', 'سائق جديد':'שליח חדש', 'رقم التلفون (هو اسم الدخول)':'טלפון (שם המשתמש)', 'الكود (كلمة السر)':'קוד (סיסמה)', 'إضافة':'הוספה',
+  'السائق بيدخل على':'השליח נכנס ל־', 'برقم تلفونه والكود. بيشوف بس طلبات التوصيل الجاهزة — ما بيقدر يفتح اللوحة. بتقدر توقفه بأي وقت.':'עם הטלפון והקוד שלו. הוא רואה רק הזמנות משלוח מוכנות — אין לו גישה ללוח הבקרה. אפשר להשבית אותו בכל רגע.',
+  'ابعتله الدخول':'שליחת פרטי כניסה', 'إيقاف':'השבתה', 'تفعيل':'הפעלה', 'كود جديد':'קוד חדש', 'موقّف':'מושבת', 'فعّال':'פעיל', 'الكود':'קוד',
+  'ما في سائقين بعد':'אין שליחים עדיין', 'تقرير السائقين':'דוח שליחים', 'طلبات وصّلها':'הזמנות שמסר', 'كاش قبضه':'מזומן שגבה', 'بطاقة قبضها':'אשראי שגבה',
+  'مدفوع مسبقاً':'שולם מראש', 'ما قبض':'לא נגבה', 'دقايق بالطريق (معدل)':'דקות בדרך (ממוצע)', 'دقايق من الطلب للتوصيل':'דקות מההזמנה עד המסירה', 'معه هلأ':'אצלו עכשיו',
+  'حسب الساعة (وقت ما أخذ الطلب)':'לפי שעה (מתי לקח את ההזמנה)', 'حسب الساعة':'לפי שעה', 'كل الطلبات':'כל ההזמנות', 'الطلبات':'הזמנות',
+  'طلب':'הוזמן', 'أخذه':'נלקח', 'وصّله':'נמסר', 'دقايق':'דקות', 'قبض':'נגבה', 'معه':'אצלו', 'ملغي':'בוטל', 'العنوان':'כתובת',
+  'مبارح':'אתמול', 'آخر 7 أيام':'7 ימים אחרונים', 'هالشهر':'החודש', 'الشهر الماضي':'החודש שעבר', 'ما في توصيلات بهالفترة':'אין משלוחים בתקופה הזו',
+  'اكتب اسم السائق':'כתבו שם שליח', 'رقم التلفون مش صحيح — 05xxxxxxxx':'מספר טלפון לא תקין — 05xxxxxxxx', 'الكود لازم يكون 6 أرقام على الأقل':'הקוד חייב להיות לפחות 6 ספרות',
+  'هالرقم موجود بالقائمة':'המספר כבר ברשימה', 'تم ✓ السائق جاهز':'בוצע ✓ השליח מוכן', 'تم إيقاف السائق':'השליח הושבת', 'تم تفعيل السائق ✓':'השליח הופעל ✓',
+  'الكود الجديد (6 أرقام)':'קוד חדש (6 ספרות)', 'تم تغيير الكود ✓':'הקוד שונה ✓', 'هالرقم مسجّل من قبل بكود ثاني':'המספר כבר רשום עם קוד אחר',
+  'لازم تفعّل Email/Password بـ Firebase Authentication':'צריך להפעיל Email/Password ב־Firebase Authentication', 'تقرير':'דוח',
   'مشاركة التقرير':'שיתוף הדוח', 'الملفات جاهزة':'הקבצים מוכנים', 'شارك هلأ (واتساب / إيميل)':'שתפו עכשיו (וואטסאפ / מייל)', 'نزّل الملفين':'הורדת שני הקבצים',
   'نزّل وافتح واتساب':'הורדה ופתיחת וואטסאפ', 'نزّل وافتح الإيميل':'הורדה ופתיחת מייל', 'تم التنزيل':'הורד',
   'بالكمبيوتر: نزّل الملفين، وبعدين بالواتساب أو الإيميل اكبس 📎 وأرفقهم من مجلد ההורדות.':'במחשב: הורידו את שני הקבצים, ואז בוואטסאפ או במייל לחצו 📎 וצרפו אותם מתיקיית ההורדות.',
@@ -581,6 +624,8 @@ HE_RULES.push(
   [/^بعد (\d+) س (\d+) د$/, m => 'בעוד ' + m[1] + ' שע׳ ' + m[2] + ' דק׳'],
   [/^بعد (\d+) د$/, m => 'בעוד ' + m[1] + ' דק׳'],
   [/^بعد (\d+) أيام$/, m => 'בעוד ' + m[1] + ' ימים'],
+  [/^تحذف السائق (.+)؟ ما رح يقدر يدخل\. طلباته القديمة بتضل بالتقارير\.$/, m => 'למחוק את השליח ' + m[1] + '? הוא לא יוכל להיכנס. ההזמנות הישנות שלו יישארו בדוחות.'],
+  [/^المجموع \((\d+)\)$/, m => 'סה״כ (' + m[1] + ')'],
   [/^ضل (\d+)$/, m => 'נשארו ' + m[1]],
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · \S+ (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
   [/^(.+) \((\d+)\)$/, m => { const t = trCore(m[1]); return t == null ? null : t + ' (' + m[2] + ')'; }]
@@ -776,6 +821,7 @@ function onLogin(u){
     CPNS = s.docs.map(d=>({id:d.id,...d.data()}));
     if(view==='cpn') render();
   }, err => console.error('coupons', err));
+  drvListen();
   db.collection('orders').orderBy('createdAtStr','desc').limit(250).onSnapshot(s => {
     ORDERS = s.docs.map(d=>({id:d.id,...d.data()}));
     computeNums();
@@ -787,6 +833,7 @@ function onLogin(u){
     if(view==='orders') render();
     autoPrint();
     try{ stockSync(); }catch(e){}
+    try{ loySync(); }catch(e){}
   }, err => console.error(err));
 }
 
@@ -813,7 +860,7 @@ function tab(v){
   view = v; armed = null;
   document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   if(v === 'zones') zBuilt = false; else { zCancel && zCancel(); }
-  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust','Rep'].forEach(k=>{
+  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust','Rep','Drv'].forEach(k=>{
     $('v'+k).style.display = (v === k.toLowerCase()) ? '' : 'none';
   });
   render(); window.scrollTo({top:0});
@@ -829,6 +876,7 @@ function render(){
   if(view==='zones')  renderZones();
   if(view==='cust')   renderCust();
   if(view==='rep')    renderRep();
+  if(view==='drv')    renderDrv();
 }
 
 /* ========= تجهيز أول مرة ========= */
@@ -1005,7 +1053,8 @@ async function loyCount(o){
   }catch(e){ console.error('loyalty', e); }
 }
 function setStatus(id, s){
-  db.collection('orders').doc(id).update({status:s}).catch(e=>alert(e.message));
+  const o0 = ORDERS.find(x => x.id === id);
+  db.collection('orders').doc(id).update(Object.assign({status:s}, o0 ? {no: String(ordNo(o0))} : {})).catch(e=>alert(e.message));
   // تتبّع الطلب عند الزبون — بيشتغل بس إذا قواعد Firestore فيها track
   const o = ORDERS.find(x => x.id === id);
   db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
@@ -1368,6 +1417,211 @@ function bdayListHtml(all){
       <span style="flex:1"><b>${esc(x.name)}</b> <span class="muted ltr">${esc(x.bday.split('-').reverse().join('/'))}</span></span>
       ${waPhone(x.phone) ? `<a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(x.phone)}?text=${encodeURIComponent(bdayMsg(x))}">💬 هنّيه</a>` : ''}</div>`).join('')}
     <div class="muted" style="margin-top:6px">الهدية بتنضاف لحالها للزبون بالموقع بأيام عيد ميلاده. الرسالة بس تذكير لطيف.</div></div>`;
+}
+
+/* ============ 🛵 السائقين: حسابات + تقرير مفصّل ============ */
+let DRIVERS = [], DRV = {range: 'today', orders: null, loading: false, open: ''};
+const DRV_DOMAIN = '@drivers.pizza-app.com';
+const drvEmail = ph => 'd' + phKey(ph) + DRV_DOMAIN;
+const randPin = () => String(Math.floor(100000 + Math.random() * 900000));
+let _secApp = null;
+/* تطبيق Firebase ثاني عشان نفتح حساب للسائق بدون ما نطلع من حساب اللوحة */
+function secAuth(){ if(!_secApp) _secApp = firebase.initializeApp(window.FB_CONFIG, 'drvSecondary'); return _secApp.auth(); }
+const authMsg = e => ({'auth/weak-password': 'الكود لازم يكون 6 أرقام على الأقل', 'auth/network-request-failed': 'ما في اتصال بالإنترنت',
+  'auth/operation-not-allowed': 'لازم تفعّل Email/Password بـ Firebase Authentication'}[e && e.code] || (e && e.message) || '');
+function drvListen(){
+  db.collection('drivers').onSnapshot(s => {
+    DRIVERS = s.docs.map(d => ({id: d.id, ...d.data()})).filter(d => !d.removed).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    if(view === 'drv') render();
+  }, err => console.error('drivers', err));
+}
+async function addDriver(){
+  const name = val('dvName'), ph = phKey(val('dvPhone')), pin = val('dvPin');
+  if(!name){ alert('اكتب اسم السائق'); return; }
+  if(!/^05\d{8}$/.test(ph)){ alert('رقم التلفون مش صحيح — 05xxxxxxxx'); return; }
+  if(!/^\d{6,12}$/.test(pin)){ alert('الكود لازم يكون 6 أرقام على الأقل'); return; }
+  if(DRIVERS.some(d => d.phone === ph)){ alert('هالرقم موجود بالقائمة'); return; }
+  const b = $('dvAdd'); if(b){ b.disabled = true; b.textContent = '⏳'; }
+  try{
+    const A = secAuth(); let uid = '';
+    const old = (await db.collection('drivers').where('phone', '==', ph).get().catch(() => ({docs: []}))).docs[0];
+    try{ uid = (await A.createUserWithEmailAndPassword(drvEmail(ph), pin)).user.uid; }
+    catch(e){
+      if(e.code !== 'auth/email-already-in-use') throw e;
+      const oldPin = old && old.data().pin;
+      uid = (await A.signInWithEmailAndPassword(drvEmail(ph), oldPin || pin)).user.uid;
+      if(oldPin && oldPin !== pin) await A.currentUser.updatePassword(pin);
+    }
+    await A.signOut().catch(() => {});
+    await db.collection('drivers').doc(uid).set({name, phone: ph, pin, active: true, removed: false, createdAt: new Date().toISOString()});
+    toast('تم ✓ السائق جاهز');
+    DRV.open = uid; render();
+  }catch(e){ console.error(e); alert(authMsg(e) || 'هالرقم مسجّل من قبل بكود ثاني'); }
+  if(b){ b.disabled = false; b.textContent = '+ إضافة'; }
+}
+async function drvToggle(id){
+  const d = DRIVERS.find(x => x.id === id); if(!d) return;
+  try{ await db.collection('drivers').doc(id).update({active: !d.active}); toast(d.active ? 'تم إيقاف السائق' : 'تم تفعيل السائق ✓'); }catch(e){ alert(e.message); }
+}
+async function drvDel(id){
+  const d = DRIVERS.find(x => x.id === id); if(!d) return;
+  if(!confirm('تحذف السائق ' + d.name + '؟ ما رح يقدر يدخل. طلباته القديمة بتضل بالتقارير.')) return;
+  try{ await db.collection('drivers').doc(id).update({active: false, removed: true}); toast('تم الحذف ✓'); }catch(e){ alert(e.message); }
+}
+async function drvPin(id){
+  const d = DRIVERS.find(x => x.id === id); if(!d) return;
+  const np = prompt(trText('الكود الجديد (6 أرقام)'), randPin()); if(np === null) return;
+  if(!/^\d{6,12}$/.test(np.trim())){ alert('الكود لازم يكون 6 أرقام على الأقل'); return; }
+  try{
+    const A = secAuth();
+    await A.signInWithEmailAndPassword(drvEmail(d.phone), d.pin);
+    await A.currentUser.updatePassword(np.trim()); await A.signOut().catch(() => {});
+    await db.collection('drivers').doc(id).update({pin: np.trim()});
+    toast('تم تغيير الكود ✓');
+  }catch(e){ alert(authMsg(e)); }
+}
+function drvShareMsg(d){
+  const url = location.origin + location.pathname.replace(/[^/]*$/, '') + 'driver.html';
+  return 'مرحبا ' + d.name + ' 👋\nهاد دخولك لصفحة السائق 🛵\n' + url + '\n\n📱 رقم التلفون: ' + d.phone + '\n🔑 الكود: ' + d.pin +
+    '\n\nמשלוחים — כניסה לדף השליח:\n' + url + '\nטלפון: ' + d.phone + '\nקוד: ' + d.pin;
+}
+
+/* ===== التقرير ===== */
+function drvRangeDates(r){
+  const n = new Date(), d0 = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  if(r === 'today') return [d0, new Date(d0.getTime() + 864e5)];
+  if(r === 'yesterday') return [new Date(d0.getTime() - 864e5), d0];
+  if(r === 'week') return [new Date(d0.getTime() - 6 * 864e5), new Date(d0.getTime() + 864e5)];
+  if(r === 'month') return [new Date(n.getFullYear(), n.getMonth(), 1), new Date(n.getFullYear(), n.getMonth() + 1, 1)];
+  if(r === 'lastmonth') return [new Date(n.getFullYear(), n.getMonth() - 1, 1), new Date(n.getFullYear(), n.getMonth(), 1)];
+  return [d0, new Date(d0.getTime() + 864e5)];
+}
+async function drvLoad(r){
+  DRV.range = r || DRV.range; DRV.orders = null; DRV.loading = true; render();
+  const [a, b] = drvRangeDates(DRV.range);
+  try{
+    const s = await db.collection('orders').where('createdAtStr', '>=', a.toISOString()).where('createdAtStr', '<', b.toISOString()).get();
+    DRV.orders = s.docs.map(d => ({id: d.id, ...d.data()}));
+  }catch(e){
+    console.error(e);
+    DRV.orders = (CUST_ORDERS || ORDERS).filter(o => o.createdAtStr && o.createdAtStr >= a.toISOString() && o.createdAtStr < b.toISOString());
+  }
+  DRV.loading = false; if(view === 'drv') render();
+}
+const drvMins = (a, b) => (a && b) ? Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)) : null;
+const tHM = s => s ? hm2(new Date(s)) : '—';
+const dDM = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG', {day: 'numeric', month: 'numeric'}) : '';
+function drvStats(list){
+  const by = {};
+  list.filter(o => o.driverUid || o.driver).forEach(o => {
+    const k = o.driverUid || ('n:' + o.driver);
+    const d = DRIVERS.find(x => x.id === o.driverUid);
+    const x = by[k] || (by[k] = {key: k, name: (d && d.name) || o.driver || '—', phone: (d && d.phone) || o.driverPhone || '', orders: [], done: 0, open: 0, total: 0, cash: 0, card: 0, prepaid: 0, unpaid: 0, fees: 0, ride: [], full: [], hours: Array(24).fill(0)});
+    x.orders.push(o);
+    const t = Number(o.total || 0), pay = (o.customer || {}).pay || 'cash';
+    if(o.status === 'done'){
+      x.done++; x.total += t; x.fees += Number(o.fee || 0);
+      if(o.collected) (pay === 'card' ? x.card += t : x.cash += t);
+      else if(o.paid) x.prepaid += t; else x.unpaid += t;
+      const r = drvMins(o.driverAt, o.deliveredAt); if(r != null) x.ride.push(r);
+      const f = drvMins(o.createdAtStr, o.deliveredAt); if(f != null) x.full.push(f);
+    }else if(o.status === 'ready') x.open++;
+    if(o.driverAt) x.hours[new Date(o.driverAt).getHours()]++;
+  });
+  return Object.values(by).sort((a, b) => b.done - a.done);
+}
+const avg = a => a.length ? Math.round(a.reduce((s, v) => s + v, 0) / a.length) : 0;
+function drvTable(x){
+  const rows = x.orders.slice().sort((a, b) => String(a.driverAt || a.createdAtStr).localeCompare(String(b.driverAt || b.createdAtStr)));
+  return `<table class="rtb day"><tr class="hd"><td>#</td><td>التاريخ</td><td>الزبون</td><td>العنوان</td><td class="n">المبلغ</td><td>الدفع</td><td class="n">طلب</td><td class="n">أخذه</td><td class="n">وصّله</td><td class="n">دقايق</td></tr>
+    ${rows.map(o => { const c = o.customer || {}, pay = c.pay || 'cash';
+      const st = o.status === 'done' ? (o.collected ? '💰 قبض' : o.paid ? '✅ مدفوع' : '⚠️ ما قبض') : o.status === 'cancel' ? '❌ ملغي' : '🛵 معه';
+      return `<tr><td>${esc(o.no || '')}</td><td>${esc(dDM(o.createdAtStr))}</td><td>${esc(c.name || '')}<br><span class="muted ltr">${esc(c.phone || '')}</span></td>
+        <td>${esc(c.addr || '')}${c.zone ? '<br><span class="muted">' + esc(c.zone) + '</span>' : ''}</td><td class="n">${rmoney(o.total)}</td>
+        <td>${esc((PAY_T[pay] || '').split(' ').slice(1).join(' ') || pay)}<br><span class="muted">${st}</span></td>
+        <td class="n">${tHM(o.createdAtStr)}</td><td class="n">${tHM(o.driverAt)}</td><td class="n">${tHM(o.deliveredAt)}</td><td class="n">${drvMins(o.driverAt, o.deliveredAt) ?? '—'}</td></tr>`; }).join('')}
+    <tr class="b"><td colspan="4">المجموع (${x.done})</td><td class="n">${rmoney(x.total)}</td><td colspan="5"></td></tr></table>`;
+}
+function drvHours(x){
+  const mx = Math.max(1, ...x.hours);
+  return `<div class="hours">${x.hours.map((v, h) => v ? `<div class="hb"><span class="ltr">${String(h).padStart(2, '0')}:00</span><i style="width:${Math.round(v / mx * 100)}%"></i><b>${v}</b></div>` : '').join('') || '<div class="muted">—</div>'}</div>`;
+}
+function drvCard(x, full){
+  return `<div class="dvs">
+      <div class="dvh"><div><b>🛵 ${esc(x.name)}</b> <span class="muted ltr">${esc(x.phone)}</span></div>${full ? '' : `<span class="muted">${DRV.open === x.key ? '▲' : '▼'}</span>`}</div>
+      <div class="dvk">
+        <div><b>${x.done}</b><span>طلبات وصّلها</span></div>
+        <div><b class="ltr">${money0(x.total)}</b><span>المبلغ</span></div>
+        <div><b class="ltr">${money0(x.cash)}</b><span>كاش قبضه</span></div>
+        <div><b class="ltr">${money0(x.card)}</b><span>بطاقة قبضها</span></div>
+        <div><b class="ltr">${money0(x.prepaid)}</b><span>مدفوع مسبقاً</span></div>
+        <div class="${x.unpaid ? 'neg' : ''}"><b class="ltr">${money0(x.unpaid)}</b><span>ما قبض</span></div>
+        <div><b>${avg(x.ride)}</b><span>دقايق بالطريق (معدل)</span></div>
+        <div><b>${avg(x.full)}</b><span>دقايق من الطلب للتوصيل</span></div>
+        <div><b>${x.open}</b><span>معه هلأ</span></div>
+      </div></div>`;
+}
+const DRV_RANGES = [['today', LANG === 'he' ? 'היום' : 'اليوم'], ['yesterday', 'مبارح'], ['week', 'آخر 7 أيام'], ['month', 'هالشهر'], ['lastmonth', 'الشهر الماضي']];
+function renderDrv(){
+  if(!DRV.orders && !DRV.loading){ drvLoad(); return; }
+  const list = DRIVERS.map(d => `<div class="card dvr ${d.active ? '' : 'off'}">
+      <div class="dvh"><div><b>${esc(d.name)}</b> <span class="muted ltr">${esc(d.phone)}</span> ${d.active ? '<span class="pill g">فعّال</span>' : '<span class="pill">موقّف</span>'}</div>
+        <span class="pin" title="الكود">🔑 <span class="ltr">${esc(d.pin || '')}</span></span></div>
+      <div class="acts">
+        <a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(d.phone)}?text=${encodeURIComponent(drvShareMsg(d))}">💬 ابعتله الدخول</a>
+        <button class="btn sm gh" onclick="drvToggle('${d.id}')">${d.active ? '⛔ إيقاف' : '✅ تفعيل'}</button>
+        <button class="btn sm gh" onclick="drvPin('${d.id}')">🔑 كود جديد</button>
+        <button class="btn sm gh" onclick="drvDel('${d.id}')">🗑️ حذف</button>
+      </div></div>`).join('');
+  const stats = DRV.orders ? drvStats(DRV.orders) : [];
+  $('vDrv').innerHTML = `<h2 class="sec">🛵 السائقين <span class="muted">(${DRIVERS.length})</span></h2>
+    <div class="card">
+      <label style="font-weight:800;font-size:14px;display:block;margin-bottom:8px">+ سائق جديد</label>
+      <div class="f3">
+        <div class="f"><label>الاسم</label><input id="dvName" placeholder="مثلاً: أبو علي"></div>
+        <div class="f"><label>رقم التلفون (هو اسم الدخول)</label><input id="dvPhone" inputmode="tel" dir="ltr" placeholder="05xxxxxxxx"></div>
+        <div class="f"><label>الكود (كلمة السر)</label><input id="dvPin" inputmode="numeric" dir="ltr" value="${randPin()}"></div>
+      </div>
+      <button class="btn red" id="dvAdd" onclick="addDriver()">+ إضافة</button>
+      <div class="muted" style="margin-top:8px">السائق بيدخل على <b class="ltr">driver.html</b> برقم تلفونه والكود. بيشوف بس طلبات التوصيل الجاهزة — ما بيقدر يفتح اللوحة. بتقدر توقفه بأي وقت.</div>
+    </div>
+    ${list || '<div class="empty"><div class="e">🛵</div><div>ما في سائقين بعد</div></div>'}
+    <h2 class="sec">📊 تقرير السائقين</h2>
+    <div class="bar">
+      <select onchange="drvLoad(this.value)">${DRV_RANGES.map(([k, t]) => `<option value="${k}" ${DRV.range === k ? 'selected' : ''}>${t}</option>`).join('')}</select>
+      <button class="btn sm gh" onclick="drvLoad()">🔄</button>
+      <button class="btn sm red" onclick="drvPrint()">🖨️ PDF / طباعة</button>
+    </div>
+    ${DRV.loading ? '<div class="empty"><div class="e">⏳</div></div>' : !stats.length ? '<div class="empty"><div class="e">📭</div><div>ما في توصيلات بهالفترة</div></div>' :
+      stats.map(x => `<div class="card dvc" onclick="if(!event.target.closest('table'))DRV.open=DRV.open==='${x.key}'?'':'${x.key}',render()">${drvCard(x)}
+        ${DRV.open === x.key ? `<div class="rep" style="padding:10px 0 0;max-width:none"><h3>🕐 حسب الساعة (وقت ما أخذ الطلب)</h3>${drvHours(x)}<h3>🧾 كل الطلبات</h3>${drvTable(x)}</div>` : ''}</div>`).join('')}`;
+}
+function drvPrint(){
+  const stats = DRV.orders ? drvStats(DRV.orders) : []; if(!stats.length){ alert('ما في توصيلات بهالفترة'); return; }
+  const [a, b] = drvRangeDates(DRV.range), lbl = (DRV_RANGES.find(r => r[0] === DRV.range) || [])[1] || '';
+  const body = `<div class="rep"><div class="rh"><div><div class="rt">${esc(LX(SET,'name') || '')}</div><div class="rs2">${esc(LX(SET,'addr') || '')}</div></div>
+    <div style="text-align:end"><div class="rt2">🛵 تقرير السائقين</div><div class="rs2">${esc(lbl)} · ${esc(a.toLocaleDateString('he-IL'))} – ${esc(new Date(b - 1).toLocaleDateString('he-IL'))}</div></div></div>
+    ${stats.map(x => drvCard(x, true) + '<h3>🕐 حسب الساعة</h3>' + drvHours(x) + '<h3>🧾 الطلبات</h3>' + drvTable(x)).join('<div style="page-break-after:always"></div>')}
+    <div class="rfoot">${esc(new Date().toLocaleString(LANG === 'he' ? 'he-IL' : 'ar-EG'))}</div></div>`;
+  let f = $('prnFrame'); if(f) f.remove();
+  f = document.createElement('iframe'); f.id = 'prnFrame'; f.style.cssText = 'position:fixed;width:0;height:0;border:0;left:-9999px;top:0';
+  document.body.appendChild(f);
+  const d = f.contentWindow.document;
+  d.open(); d.write(`<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>drivers</title><style>${REP_CSS}${DRV_CSS}</style></head><body>${body}</body></html>`); d.close();
+  trNode(d.documentElement);
+  setTimeout(() => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} }, 600);
+}
+const DRV_CSS = `
+  .dvs{border:1.5px solid #eee;border-radius:14px;padding:10px 12px;margin:10px 0}
+  .dvh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .dvk{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+  .dvk>div{background:#f7f5f3;border-radius:10px;padding:7px 9px}.dvk b{display:block;font-size:17px}.dvk span{font-size:11.5px;color:#666}
+  .dvk .neg b{color:#c0392b}`;
+/* نقطة ولاء للطلبات اللي السائق علّمها "وصلت" */
+const LOY_BUSY = {};
+function loySync(){
+  const since = Date.now() - 24 * 3600e3;
+  ORDERS.forEach(o => { if(o.status === 'done' && !o.lp && o.driverUid && !LOY_BUSY[o.id] && o.createdAtStr && new Date(o.createdAtStr).getTime() > since){ LOY_BUSY[o.id] = 1; loyCount(o); } });
 }
 
 /* ========= تنبيهات الإعدادات ========= */

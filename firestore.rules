@@ -15,6 +15,13 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
     }
 
+    // سائق فعّال = اله وثيقة في drivers فيها active: true (صاحب المحل بيفتحه من اللوحة)
+    function isDriver() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.active == true;
+    }
+
     // ---------- المنيو والإعدادات ----------
     match /settings/{id}      { allow read: if true; allow write: if isStaff(); }
     match /categories/{id}    { allow read: if true; allow write: if isStaff(); }
@@ -46,6 +53,26 @@ service cloud.firestore {
                     && !(request.resource.data.customer.phone in
                          get(/databases/$(database)/documents/settings/main).data.get('blocked', []));
       allow read, update, delete: if isStaff();
+
+      // السائق: بيشوف بس طلبات التوصيل اللي بالتحضير أو جاهزة
+      allow read: if isDriver()
+                  && resource.data.type == 'delivery'
+                  && resource.data.status in ['prep', 'ready'];
+      // السائق: بياخذ الطلب / بيرجّعه / بيعلّم وصل — وما بيقدر يغيّر إشي ثاني
+      allow update: if isDriver()
+                    && resource.data.type == 'delivery'
+                    && resource.data.status == 'ready'
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['driver','driverUid','driverPhone','driverAt','status','paid','collected','deliveredAt'])
+                    && request.resource.data.status in ['ready', 'done']
+                    && resource.data.get('driverUid', '') in ['', request.auth.uid]
+                    && request.resource.data.get('driverUid', '') in ['', request.auth.uid];
+    }
+
+    // ---------- السائقين ----------
+    match /drivers/{uid} {
+      allow read: if isStaff() || (request.auth != null && request.auth.uid == uid);
+      allow write: if isStaff();
     }
 
     // ---------- تتبّع الطلب (بدون معلومات شخصية) ----------
@@ -53,7 +80,9 @@ service cloud.firestore {
       allow get: if true;
       allow create: if request.resource.data.status == 'new'
                     && request.resource.data.keys().hasOnly(['status','type','at','eta']);
-      allow update: if isStaff();
+      allow update: if isStaff()
+                    || (isDriver() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+                        && request.resource.data.status == 'done');
       allow list, delete: if false;
     }
 
