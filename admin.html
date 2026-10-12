@@ -314,6 +314,22 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 
 .drvsel{border:1.5px solid var(--line);border-radius:10px;padding:4px 8px;font-family:inherit;font-weight:800;font-size:12.5px;background:#fff}
 .drvsel.on{border-color:#1e8e4e;background:#e6f6ec;color:#1e8e4e}
+
+#dvMapOv{position:fixed;inset:0;z-index:300;background:#fff;display:none;flex-direction:column}
+#dvMapOv .dvtop{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#111;color:#fff}
+#dvMapOv .dvtop .muted{color:#aaa;font-size:12px}
+#dvMap{flex:1;min-height:200px}
+#dvList{max-height:34vh;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:6px;background:#f5f3f1}
+.dvrow{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:0;border-radius:12px;padding:10px 12px;font-family:inherit;font-size:14px;cursor:pointer;text-align:start}
+.dvrow span{color:#555;font-size:13px}
+.dvw{background:none;border:0}
+.dvpin{position:absolute;left:0;top:0;display:flex;align-items:center;gap:4px;background:#1e8e4e;color:#fff;border-radius:999px;padding:4px 10px 4px 6px;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.3);border:2px solid #fff;transform:translate(-50%,-50%)}
+.dvpin span{font-size:18px}.dvpin i{background:#fff;color:#111;border-radius:9px;padding:0 6px;font-style:normal;font-size:11px}
+.dvpin.s-late{background:#e67e22}.dvpin.s-old,.dvpin.s-off{background:#888}
+.dvdest{position:absolute;left:0;top:0;display:flex;align-items:center;gap:2px;background:#fff;border:2px solid #1f7ae0;border-radius:10px;padding:2px 6px;font-size:13px;font-weight:800;white-space:nowrap;transform:translate(-50%,-50%)}
+.dvshop{font-size:24px;text-align:center}
+.dvpop{line-height:1.6;font-family:inherit}.dvpop hr{border:0;border-top:1px solid #eee;margin:6px 0}
+.dvn{background:#1e8e4e;color:#fff;border-radius:9px;padding:0 6px;font-style:normal;font-size:11px;margin-inline-start:3px}
 </style>
 </head>
 <body>
@@ -334,7 +350,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 <header>
   <div class="hrow">
     <div class="t">لوحة التحكم<small id="hSub">—</small></div>
-    <div style="display:flex;gap:7px"><button class="hbtn langsw" onclick="toggleLang()">עברית</button><button class="hbtn" onclick="doLogout()">خروج</button></div>
+    <div style="display:flex;gap:7px"><button class="hbtn" id="dvMapBtn" onclick="openDrvMap()">🗺️ السائقين</button><button class="hbtn langsw" onclick="toggleLang()">עברית</button><button class="hbtn" onclick="doLogout()">خروج</button></div>
   </div>
   <div class="tabs">
     <button class="tb on" data-v="orders"  onclick="tab('orders')">🧾 الطلبات<span class="n" id="nNew" style="display:none">0</span></button>
@@ -589,6 +605,11 @@ function LX(o, f){
 }
 /* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد، سائق ===== */
 Object.assign(HE, {
+  'السائقين':'שליחים', 'وين السائقين هلأ':'איפה השליחים עכשיו', 'وين السائقين هلأ (خريطة مباشرة)':'איפה השליחים עכשיו (מפה חיה)', 'وين السائق؟':'איפה השליח?',
+  'فاضي':'פנוי', 'هلأ':'עכשיו', 'آخر تحديث':'עדכון אחרון', 'آخر مرة':'נראה לאחרונה', 'خارج الشغل':'לא במשמרת', 'ما فتح صفحة السائق':'לא פתח את דף השליח',
+  'ما في سائقين — ضيفهم من تاب 🛵 السائقين':'אין שליחים — הוסיפו אותם בלשונית 🛵 שליחים',
+  'طلب تلفون':'הזמנה טלפונית', 'طلب بالمحل':'הזמנה במקום', 'كاشير (طلب محل / تلفون)':'קופה (הזמנה במקום / טלפון)', 'خصومات بالكاشير':'הנחות בקופה',
+  'من وين إجت الطلبات':'מאיפה הגיעו ההזמנות', 'الموقع':'האתר', 'بالمحل (كاشير)':'במקום (קופה)', 'تلفون':'טלפון',
   'الإشعارات شغّالة':'התראות פעילות', 'بدون إشعارات':'בלי התראות', 'إشعارات للتلفون (بترنّ حتى لو مسكّر)':'התראות לטלפון (מצלצל גם כשהוא נעול)',
   'مفتاح Web Push (من Firebase)':'מפתח Web Push (מ־Firebase)', 'المفتاح مش مزبوط — انسخه كامل':'המפתח לא תקין — העתיקו אותו במלואו', 'حفظ':'שמירה', 'تم الحفظ ✓':'נשמר ✓',
   'Firebase ← ⚙️ Project settings ← Cloud Messaging ← Web Push certificates ← Generate key pair ← انسخ المفتاح والصقه هون.':'Firebase ← ⚙️ Project settings ← Cloud Messaging ← Web Push certificates ← Generate key pair ← העתיקו את המפתח והדביקו כאן.',
@@ -631,6 +652,11 @@ HE_RULES.push(
   [/^بعد (\d+) س (\d+) د$/, m => 'בעוד ' + m[1] + ' שע׳ ' + m[2] + ' דק׳'],
   [/^بعد (\d+) د$/, m => 'בעוד ' + m[1] + ' דק׳'],
   [/^بعد (\d+) أيام$/, m => 'בעוד ' + m[1] + ' ימים'],
+  [/^(🟢 )?معه (\d+) طلبات · (.+)$/, m => (m[1] || '') + 'אצלו ' + m[2] + ' הזמנות · ' + trText(m[3])],
+  [/^فاضي · (.+)$/, m => 'פנוי · ' + trText(m[1])],
+  [/^قبل (\d+) د$/, m => 'לפני ' + m[1] + ' דק׳'],
+  [/^آخر تحديث (.+)$/, m => 'עדכון אחרון ' + trText(m[1])],
+  [/^آخر مرة (.+)$/, m => 'נראה לאחרונה ' + trText(m[1])],
   [/^تحذف السائق (.+)؟ ما رح يقدر يدخل\. طلباته القديمة بتضل بالتقارير\.$/, m => 'למחוק את השליח ' + m[1] + '? הוא לא יוכל להיכנס. ההזמנות הישנות שלו יישארו בדוחות.'],
   [/^المجموع \((\d+)\)$/, m => 'סה״כ (' + m[1] + ')'],
   [/^ضل (\d+)$/, m => 'נשארו ' + m[1]],
@@ -1027,6 +1053,7 @@ function renderOrders(){
       <div class="lines">${lines}${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}</div>
       <div class="meta">
         <span class="pill ${o.type==='pickup'?'b':''}">${o.type==='pickup'?'🏪 استلام':'🛵 توصيل'}</span>
+        ${c.src==='phone'?'<span class="pill a">📞 طلب تلفون</span>':c.src==='shop'?'<span class="pill a">🏪 طلب بالمحل</span>':''}
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
         ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
         ${c.addr?`<span>📍 ${esc(c.addr)}</span>`:''}
@@ -1171,7 +1198,7 @@ function ticketHtml(o){
         (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
     }).join('');
     parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
-      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${c.sched ? `<div class="ty inv">⏰ <span>مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}${lines}
+      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${c.sched ? `<div class="ty inv">⏰ <span>مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}${c.src==='phone' ? '<div class="c">📞 طلب تلفون</div>' : c.src==='shop' ? '<div class="c">🏪 طلب بالمحل</div>' : ''}${lines}
       <div class="payl">${PAY_T[payOf(o)] || ''} · ${o.paid ? '✅ مدفوع' : 'لسا مش مدفوع'}</div>
       ${c.wheel && c.wheelType === 'gift' ? `<div class="nt">🎁 هدية مع الطلب: ${esc(c.wheel)}</div>` : ''}
       ${c.bdayGift && c.bdayType === 'gift' ? `<div class="nt">🎂 <span>هدية عيد ميلاد مع الطلب</span>: <span>${esc(c.bdayGift)}</span></div>` : ''}
@@ -1441,7 +1468,9 @@ function drvListen(){
   db.collection('drivers').onSnapshot(s => {
     DRIVERS = s.docs.map(d => ({id: d.id, ...d.data()})).filter(d => !d.removed).sort((a, b) => String(a.name).localeCompare(String(b.name)));
     if(view === 'drv') render();
+    drvLocBadge(); if(DVOPEN) drvMapDraw();
   }, err => console.error('drivers', err));
+  drvLocListen();
 }
 async function addDriver(){
   const name = val('dvName'), ph = phKey(val('dvPhone')), pin = val('dvPin');
@@ -1575,6 +1604,7 @@ function renderDrv(){
   const list = DRIVERS.map(d => `<div class="card dvr ${d.active ? '' : 'off'}">
       <div class="dvh"><div><b>${esc(d.name)}</b> <span class="muted ltr">${esc(d.phone)}</span> ${d.active ? '<span class="pill g">فعّال</span>' : '<span class="pill">موقّف</span>'} ${(d.fcm || []).length ? '<span class="pill b">🔔 الإشعارات شغّالة</span>' : '<span class="pill a">🔕 بدون إشعارات</span>'}</div>
         <span class="pin" title="الكود">🔑 <span class="ltr">${esc(d.pin || '')}</span></span></div>
+      <div class="muted" style="margin-top:6px;cursor:pointer" onclick="drvFocus('${d.id}')">📍 ${esc(drvStatusTxt(d))}</div>
       <div class="acts">
         <a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(d.phone)}?text=${encodeURIComponent(drvShareMsg(d))}">💬 ابعتله الدخول</a>
         <button class="btn sm gh" onclick="drvToggle('${d.id}')">${d.active ? '⛔ إيقاف' : '✅ تفعيل'}</button>
@@ -1583,6 +1613,7 @@ function renderDrv(){
       </div></div>`).join('');
   const stats = DRV.orders ? drvStats(DRV.orders) : [];
   $('vDrv').innerHTML = `<h2 class="sec">🛵 السائقين <span class="muted">(${DRIVERS.length})</span></h2>
+    <button class="btn red full" style="margin-bottom:12px" onclick="openDrvMap()">🗺️ وين السائقين هلأ (خريطة مباشرة)</button>
     <div class="card">
       <label style="font-weight:800;font-size:14px;display:block;margin-bottom:8px">+ سائق جديد</label>
       <div class="f3">
@@ -1643,7 +1674,8 @@ function drvSelHtml(o){
   if(['done','cancel'].includes(o.status) || !DRIVERS.length) return pill;
   const opts = DRIVERS.filter(d => d.active || d.id === o.driverUid);
   return `<select class="drvsel ${o.driverUid ? 'on' : ''}" onclick="event.stopPropagation()" onchange="assignDrv('${o.id}', this.value)">
-    <option value="">🛵 لكل السائقين</option>${opts.map(d => `<option value="${d.id}" ${o.driverUid === d.id ? 'selected' : ''}>🛵 ${esc(d.name)}</option>`).join('')}</select>`;
+    <option value="">🛵 لكل السائقين</option>${opts.map(d => `<option value="${d.id}" ${o.driverUid === d.id ? 'selected' : ''}>🛵 ${esc(d.name)}</option>`).join('')}</select>` +
+    (o.driverUid ? `<button class="btn sm gh" onclick="drvFocus('${o.driverUid}')" title="وين السائق؟">📍</button>` : '');
 }
 async function assignDrv(id, uid){
   const d = DRIVERS.find(x => x.id === uid);
@@ -1666,6 +1698,99 @@ function loySync(){
   const since = Date.now() - 24 * 3600e3;
   ORDERS.forEach(o => { if(o.status === 'done' && !o.lp && o.driverUid && !LOY_BUSY[o.id] && o.createdAtStr && new Date(o.createdAtStr).getTime() > since){ LOY_BUSY[o.id] = 1; loyCount(o); } });
 }
+
+/* ============ 🗺️ وين السائقين هلأ (خريطة مباشرة) ============ */
+let DRVLOC = {}, DVMAP = null, DVLAYER = null, DVOPEN = false, DVFIT = false, DVTICK = null;
+function drvLocListen(){
+  db.collection('driverLoc').onSnapshot(s => {
+    DRVLOC = {}; s.docs.forEach(d => { DRVLOC[d.id] = d.data(); });
+    if(DVOPEN) drvMapDraw();
+    drvLocBadge();
+  }, e => console.error('driverLoc', e));
+}
+const locAge = L => L && L.at ? Math.max(0, Math.round((Date.now() - new Date(L.at).getTime()) / 60000)) : 9999;
+function locState(L){
+  if(!L || (!L.lat && !L.lng)) return 'none';
+  if(!L.on) return 'off';
+  const a = locAge(L);
+  return a <= 3 ? 'live' : a <= 15 ? 'late' : 'old';
+}
+const drvOrders = uid => ORDERS.filter(o => o.driverUid === uid && ['new', 'prep', 'ready'].includes(o.status));
+function drvLocBadge(){
+  const n = DRIVERS.filter(d => d.active && locState(DRVLOC[d.id]) === 'live').length;
+  const b = $('dvMapBtn'); if(b) b.innerHTML = '🗺️ <span>السائقين</span>' + (n ? ' <i class="dvn">' + n + '</i>' : '');
+  trNode && b && trNode(b);
+}
+function drvStatusTxt(d){
+  const L = DRVLOC[d.id], st = locState(L), a = locAge(L), n = drvOrders(d.id).length;
+  const ago = a < 1 ? 'هلأ' : a < 60 ? ('قبل ' + a + ' د') : (L && L.at ? hm2(new Date(L.at)) : '');
+  return st === 'live' ? '🟢 ' + (n ? 'معه ' + n + ' طلبات' : 'فاضي') + ' · ' + ago
+    : st === 'late' ? '🟠 ' + 'آخر تحديث' + ' ' + ago
+    : st === 'old' ? '⚪ ' + 'آخر مرة' + ' ' + ago
+    : st === 'off' ? '🔴 ' + 'خارج الشغل'
+    : '— ' + 'ما فتح صفحة السائق';
+}
+async function openDrvMap(focus){
+  let ov = $('dvMapOv');
+  if(!ov){
+    ov = document.createElement('div'); ov.id = 'dvMapOv';
+    ov.innerHTML = '<div class="dvtop"><b>🗺️ <span>وين السائقين هلأ</span></b><span class="muted" style="flex:1" id="dvUpd"></span><button class="btn sm gh" onclick="DVFIT=false;drvMapDraw()">🎯</button><button class="btn sm gh" onclick="closeDrvMap()">✕</button></div>' +
+      '<div id="dvMap"><div class="zload">⏳</div></div><div id="dvList"></div>';
+    document.body.appendChild(ov);
+    trNode(ov);
+  }
+  ov.style.display = 'flex'; DVOPEN = true; document.body.style.overflow = 'hidden';
+  try{
+    const LF = await loadLeaflet();
+    if(!DVMAP){
+      $('dvMap').innerHTML = '';
+      DVMAP = LF.map('dvMap', {zoomControl: true}).setView(SET.shopLoc || RAHAT, 13);
+      LF.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap'}).addTo(DVMAP);
+      DVLAYER = LF.layerGroup().addTo(DVMAP);
+    }
+    DVFIT = true; drvMapDraw();
+    setTimeout(() => { if(!DVMAP) return; DVMAP.invalidateSize({animate: false}); DVFIT = false; drvMapDraw(focus); }, 250);
+    clearInterval(DVTICK); DVTICK = setInterval(() => { if(DVOPEN) drvMapDraw(); }, 30000);
+  }catch(e){ $('dvMap').innerHTML = '<div class="zload">⚠️ ' + esc(e.message) + '</div>'; }
+}
+function closeDrvMap(){ const ov = $('dvMapOv'); if(ov) ov.style.display = 'none'; DVOPEN = false; document.body.style.overflow = ''; clearInterval(DVTICK); }
+function drvMapDraw(focus){
+  const LF = window.LF; if(!DVMAP || !LF) return;
+  DVLAYER.clearLayers();
+  const pts = [];
+  if(SET.shopLoc){ LF.marker(SET.shopLoc, {icon: LF.divIcon({className: 'dvshop', html: '🏪', iconSize: [30, 30]})}).addTo(DVLAYER); pts.push(SET.shopLoc); }
+  const list = DRIVERS.filter(d => d.active || DRVLOC[d.id]);
+  let focusLL = null;
+  list.forEach(d => {
+    const L = DRVLOC[d.id], st = locState(L);
+    if(st === 'none') return;
+    const ll = [L.lat, L.lng]; pts.push(ll);
+    const ords = drvOrders(d.id);
+    const pop = '<div class="dvpop"><b>🛵 ' + esc(d.name) + '</b><br><a href="tel:' + esc(d.phone || '') + '">📞 ' + esc(d.phone || '') + '</a> · ' +
+      '<a target="_blank" href="https://wa.me/' + waPhone(d.phone || '') + '">💬</a><br>' + esc(trText(drvStatusTxt(d))) +
+      (ords.length ? '<hr>' + ords.map(o => '#' + esc(o.no || ordNo(o)) + ' · ' + esc((o.customer || {}).name || '') + '<br><small>' + esc((o.customer || {}).addr || '') + '</small>').join('<br>') : '') + '</div>';
+    const m = LF.marker(ll, {icon: LF.divIcon({className: 'dvw', html: '<div class="dvpin s-' + st + '"><span>🛵</span><b>' + esc(d.name) + '</b>' + (ords.length ? '<i>' + ords.length + '</i>' : '') + '</div>', iconSize: [0, 0]})}).addTo(DVLAYER).bindPopup(pop);
+    if(st === 'live' && L.acc > 30) LF.circle(ll, {radius: Math.min(L.acc, 300), color: '#1e8e4e', weight: 1, fillOpacity: .06}).addTo(DVLAYER);
+    ords.forEach(o => {
+      const c = o.customer || {}; if(!c.loc) return;
+      LF.marker(c.loc, {icon: LF.divIcon({className: 'dvw', html: '<div class="dvdest">🏠<b>#' + esc(o.no || ordNo(o)) + '</b></div>', iconSize: [0, 0]})}).addTo(DVLAYER)
+        .bindPopup('<b>#' + esc(o.no || ordNo(o)) + '</b> ' + esc(c.name || '') + '<br>' + esc(c.addr || '') + '<br>🛵 ' + esc(d.name));
+      LF.polyline([ll, c.loc], {color: '#1f7ae0', weight: 2, dashArray: '6 6'}).addTo(DVLAYER);
+      pts.push(c.loc);
+    });
+    if(focus === d.id){ focusLL = ll; setTimeout(() => m.openPopup(), 300); }
+  });
+  if(focusLL){ DVMAP.setView(focusLL, 16, {animate: false}); DVFIT = true; }
+  else if(!DVFIT && pts.length){ DVFIT = true; if(pts.length === 1) DVMAP.setView(pts[0], 15, {animate: false}); else DVMAP.fitBounds(pts, {padding: [70, 70], maxZoom: 16, animate: false}); }
+  const el = $('dvList');
+  if(el){
+    el.innerHTML = list.length ? list.map(d => '<button class="dvrow" onclick="drvMapDraw(\'' + d.id + '\')"><b>' + esc(d.name) + '</b><span>' + esc(drvStatusTxt(d)) + '</span></button>').join('')
+      : '<div class="muted" style="padding:10px">' + 'ما في سائقين — ضيفهم من تاب 🛵 السائقين' + '</div>';
+    trNode(el);
+  }
+  const u = $('dvUpd'); if(u){ u.textContent = hm2(new Date()); }
+}
+function drvFocus(uid){ openDrvMap(uid); }
 
 /* ========= تنبيهات الإعدادات ========= */
 function setupWarnings(){
@@ -2306,18 +2431,20 @@ function prizeParts(o){
   }
   const gift = c.wheel && c.wheelType === 'gift' ? Number(c.wheelVal || 0) : 0;
   const bdayD = c.bdayGift ? Number(c.bdayDisc || 0) : 0, bdayG = c.bdayGift && c.bdayType === 'gift' ? Number(c.bdayVal || 0) : 0;
-  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel - bdayD) * 100) / 100);
-  return {reward, wheel, gift, coupon, bdayD, bdayG};
+  const posD = Number(c.posDisc || 0);
+  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel - bdayD - posD) * 100) / 100);
+  return {reward, wheel, gift, coupon, bdayD, bdayG, posD};
 }
 function calcReport(list){
   const ok = list.filter(o => o.status !== 'cancel');
   const vr = vatRate() / 100;
-  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0,
+  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0, posD: 0, bySrc: {},
     byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set()};
   ok.forEach(o => {
     const t = Number(o.total || 0), c = o.customer || {}, pp = prizeParts(o);
     R.gross += t; R.sub += Number(o.subtotal || 0); R.fees += Number(o.fee || 0); R.disc += Number(o.discount || 0);
-    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift; R.bdayD += pp.bdayD; R.bdayG += pp.bdayG;
+    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift; R.bdayD += pp.bdayD; R.bdayG += pp.bdayG; R.posD += pp.posD;
+    const sk = c.src || 'web'; R.bySrc[sk] = R.bySrc[sk] || [0, 0]; R.bySrc[sk][0]++; R.bySrc[sk][1] += t;
     const pk = c.pay || 'cash'; R.byPay[pk] = R.byPay[pk] || [0, 0]; R.byPay[pk][0]++; R.byPay[pk][1] += t;
     const ty = o.type === 'pickup' ? 'pickup' : 'delivery'; R.byType[ty][0]++; R.byType[ty][1] += t;
     if(c.zone){ R.byZone[c.zone] = R.byZone[c.zone] || [0, 0]; R.byZone[c.zone][0]++; R.byZone[c.zone][1] += t; }
@@ -2371,6 +2498,7 @@ function reportDocHtml(R, ym){
       <tr><td>🎁 هدايا الولاء</td><td class="n neg">${R.reward ? '-' : ''}${rmoney(R.reward)}</td></tr>
       <tr><td>🎡 خصومات العجلة</td><td class="n neg">${R.wheel ? '-' : ''}${rmoney(R.wheel)}</td></tr>
       ${R.bdayD ? `<tr><td>🎂 خصومات عيد الميلاد</td><td class="n neg">-${rmoney(R.bdayD)}</td></tr>` : ''}
+      ${R.posD ? `<tr><td>🏷️ خصومات بالكاشير</td><td class="n neg">-${rmoney(R.posD)}</td></tr>` : ''}
       <tr class="b"><td>مجموع المدخول (شامل מע״מ)</td><td class="n">${rmoney(R.gross)}</td></tr>
       <tr><td>מע״מ ${vatRate()}%</td><td class="n">${rmoney(R.vat)}</td></tr>
       <tr class="b"><td>المدخول قبل מע״מ</td><td class="n">${rmoney(R.net)}</td></tr>
@@ -2380,6 +2508,9 @@ function reportDocHtml(R, ym){
     <h3>💳 حسب طريقة الدفع</h3>
     <table class="rtb"><tr class="hd"><td>الطريقة</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
       ${Object.entries(R.byPay).map(([k, v]) => `<tr><td>${esc(PT(k))}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
+    <h3>📥 من وين إجت الطلبات</h3>
+    <table class="rtb"><tr class="hd"><td></td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
+      ${[['web','🌐 الموقع'],['shop','🏪 بالمحل (كاشير)'],['phone','📞 تلفون']].filter(([k]) => R.bySrc[k]).map(([k, l]) => `<tr><td>${l}</td><td class="n">${R.bySrc[k][0]}</td><td class="n">${rmoney(R.bySrc[k][1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
     <h3>🛵 توصيل / استلام</h3>
     <table class="rtb"><tr class="hd"><td></td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
       <tr><td>🛵 توصيل</td><td class="n">${R.byType.delivery[0]}</td><td class="n">${rmoney(R.byType.delivery[1])}</td></tr>
@@ -2493,7 +2624,7 @@ async function repXlsxBlob(){
   const wb = X.utils.book_new(); wb.Workbook = {Views: [{RTL: true}]};
   const sum = [[tr('تقرير شهري') + ' — ' + (LX(SET,'name') || ''), monthName(REP.month)], SET.osek ? ['עוסק / ח.פ', SET.osek] : [], [],
     [tr('المبيعات (قبل الخصومات والتوصيل)'), r2(R.sub)], [tr('رسوم التوصيل'), r2(R.fees)], [tr('خصومات الكوبونات'), -r2(R.coupon)],
-    [tr('هدايا الولاء'), -r2(R.reward)], [tr('خصومات العجلة'), -r2(R.wheel)], [tr('خصومات عيد الميلاد'), -r2(R.bdayD)], [tr('مجموع المدخول (شامل מע״מ)'), r2(R.gross)],
+    [tr('هدايا الولاء'), -r2(R.reward)], [tr('خصومات العجلة'), -r2(R.wheel)], [tr('خصومات عيد الميلاد'), -r2(R.bdayD)], [tr('خصومات بالكاشير'), -r2(R.posD)], [tr('مجموع المدخول (شامل מע״מ)'), r2(R.gross)],
     ['מע״מ ' + vatRate() + '%', r2(R.vat)], [tr('المدخول قبل מע״מ'), r2(R.net)], [tr('طلبات'), R.count], [tr('معدل الطلب'), r2(R.avg)],
     [tr('تكلفة الجوائز'), r2(R.prizeCost)], [tr('لسا مش مدفوع'), r2(R.unpaid)], [], [tr('حسب طريقة الدفع')],
     ...Object.entries(R.byPay).map(([k, v]) => [tr(PAY_T[k] || k), v[0], r2(v[1])])];

@@ -59,6 +59,8 @@ details{margin-top:8px}summary{font-weight:800;font-size:13.5px;color:var(--mute
 details div{font-size:14px;padding:3px 0}
 .empty{text-align:center;color:var(--muted);padding:50px 10px}.empty .e{font-size:50px}
 .sec{font-size:15px;margin:16px 4px 8px;color:var(--muted)}
+.duty{display:flex;align-items:center;gap:10px;background:#e6f6ec;color:#155e34;border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.duty.off{background:#f0eeec;color:#444}.duty.bad{background:#fff1f2;color:#a3141a}.duty small{opacity:.8;font-size:12px}
 .snd{display:flex;align-items:center;gap:12px;width:100%;background:#e3242b;color:#fff;border-radius:16px;padding:14px;margin-bottom:12px;font-family:inherit;font-size:15px;animation:sndp 1.4s infinite}
 .snd .ic{font-size:30px}.snd small{opacity:.85;font-size:12px}
 @keyframes sndp{50%{box-shadow:0 0 0 8px rgba(227,36,43,.25)}}
@@ -124,6 +126,9 @@ const HE = {
   'بالآيفون: اكبس زر المشاركة ⬆️ تحت بـ Safari، وبعدين "إضافة إلى الشاشة الرئيسية" ➕':'באייפון: לחצו על כפתור השיתוף ⬆️ למטה ב־Safari, ואז "הוספה למסך הבית" ➕',
   'بالأندرويد: اكبس ⋮ فوق بـ Chrome، وبعدين "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"':'באנדרואיד: לחצו ⋮ למעלה ב־Chrome, ואז "התקנת האפליקציה" או "הוספה למסך הבית"',
   'الرنّة شغّالة':'הצלצול פועל','اكبس هون لتشغيل الرنّة':'לחצו כאן להפעלת הצלצול','لازم كل مرة بتفتح الصفحة — عشان التلفون يرنّ لما يوصل طلب':'בכל פעם שפותחים את הדף — כדי שהטלפון יצלצל כשמגיעה הזמנה',
+  'بلّشت الشغل':'התחלת משמרת','خلّصت الشغل':'סיימת משמרת','خارج الشغل':'לא במשמרת','موقعك مش ظاهر للمحل':'המיקום שלך לא מוצג למסעדה','بلّش الشغل':'התחלת משמרת',
+  'لازم تسمح بالموقع':'צריך לאשר מיקום','اكبس 🔒 جنب العنوان فوق ← الموقع ← سماح، وبعدين حدّث الصفحة':'לחצו על 🔒 ליד הכתובת למעלה ← מיקום ← אישור, ואז רעננו את הדף',
+  'بالشغل':'במשמרת','موقعك ظاهر للمحل':'המיקום שלך מוצג למסעדה','عم ندوّر على موقعك...':'מחפשים את המיקום שלך...','خلّصت':'סיום',
   'اليوم':'היום','بكرا':'מחר','الإجمالي':'סה״כ','الزبون دفع':'הלקוח שילם',
   'اكتب رقم التلفون والكود':'כתבו טלפון וקוד','رقم التلفون أو الكود غلط':'טלפון או קוד שגויים','حسابك موقّف — احكي مع صاحب المحل':'החשבון שלך מושבת — דברו עם בעל העסק','المحل':'המסעדה'
 };
@@ -164,6 +169,7 @@ function doLogin(){
   });
 }
 async function doLogout(){
+  try{ geoStop(); }catch(e){}
   // التلفون ما عاد يرنّ بعد الخروج
   try{ const tk = localStorage.getItem('pz_fcm'); if(tk && UID && ROLE === 'driver') await db.collection('drivers').doc(UID).update({fcm: firebase.firestore.FieldValue.arrayRemove(tk)}); localStorage.removeItem('pz_fcm'); }catch(e){}
   auth.signOut().then(() => location.reload());
@@ -203,6 +209,7 @@ async function start(u){
     }
   }catch(e){ denied('حسابك موقّف — احكي مع صاحب المحل'); return; }
   applyLang();
+  geoStart();
   db.collection('drivers').doc(u.uid).onSnapshot(d => { if(d.exists && (!d.data().active || d.data().removed)) denied('حسابك موقّف — احكي مع صاحب المحل'); }, () => {});
   db.collection('settings').doc('main').onSnapshot(d => { SET = d.exists ? d.data() : {}; $('hShop').textContent = (LANG === 'he' && SET.name_he) || SET.name || ''; registerPush(); });
   db.collection('orders').where('type', '==', 'delivery').where('status', 'in', ['new', 'prep', 'ready']).onSnapshot(s => {
@@ -285,7 +292,7 @@ function render(){
   }else{
     h = mine.length ? mine.map(o => card(o, 'mine')).join('') : `<div class="empty"><div class="e">🛵</div><div>${t('ما معك طلبات')}</div></div>`;
   }
-  $('main').innerHTML = soundHtml() + instHtml() + sum + h;
+  $('main').innerHTML = dutyHtml() + soundHtml() + instHtml() + sum + h;
 }
 async function take(id){
   const ref = db.collection('orders').doc(id);
@@ -333,7 +340,7 @@ document.addEventListener('visibilitychange', () => { if(document.visibilityStat
 async function soundOn(){
   audioUnlock(); SOUND_OK = true; try{ sessionStorage.setItem('pz_drv_snd', '1'); }catch(e){}
   try{ if('Notification' in window && Notification.permission === 'default') await Notification.requestPermission(); }catch(e){}
-  wakeOn(); beep(); toast('🔔 ' + t('الرنّة شغّالة')); render(); registerPush();
+  wakeOn(); beep(); toast('🔔 ' + t('الرنّة شغّالة')); render(); registerPush(); geoStart();
 }
 function beep(){
   try{
@@ -361,6 +368,47 @@ function ack(){ UNSEEN = false; clearInterval(RING_T); try{ navigator.serviceWor
 function soundHtml(){
   if(SOUND_OK && (PUSH_OK || !SET.vapid || ROLE !== 'driver' || !('Notification' in window) || Notification.permission === 'denied')) return '';
   return `<button class="snd" onclick="soundOn()"><span class="ic">🔔</span><span style="flex:1;text-align:start"><b>${t('اكبس هون لتشغيل الرنّة')}</b><br><small>${t('لازم كل مرة بتفتح الصفحة — عشان التلفون يرنّ لما يوصل طلب')}</small></span></button>`;
+}
+/* ============ 📍 مشاركة الموقع مع المحل — وقت الشغل بس ============ */
+let GEO_W = null, GEO_LAST = null, GEO_SENT = 0, GEO_ERR = '', ONDUTY = true, GEO_HB = null;
+try{ ONDUTY = localStorage.getItem('pz_drv_duty') !== '0'; }catch(e){}
+function distM(a, b){
+  const R = 6371000, r = x => x * Math.PI / 180, dLa = r(b.lat - a.lat), dLo = r(b.lng - a.lng);
+  const h = Math.sin(dLa / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLo / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function geoSend(on){
+  if(ROLE !== 'driver' || !UID) return;
+  const L = GEO_LAST || {lat: 0, lng: 0, acc: 0};
+  GEO_SENT = Date.now();
+  db.collection('driverLoc').doc(UID).set({lat: L.lat, lng: L.lng, acc: L.acc, at: new Date().toISOString(), name: ME, on: !!on}).catch(e => console.error('loc', e));
+}
+function geoStart(){
+  if(ROLE !== 'driver' || !ONDUTY || GEO_W != null) return;
+  if(!navigator.geolocation){ GEO_ERR = 'err'; render(); return; }
+  GEO_W = navigator.geolocation.watchPosition(p => {
+    const c = p.coords, pt = {lat: +c.latitude.toFixed(6), lng: +c.longitude.toFixed(6), acc: Math.round(c.accuracy || 0)};
+    const moved = !GEO_LAST || distM(GEO_LAST, pt) > 40, wasErr = GEO_ERR;
+    GEO_ERR = ''; GEO_LAST = pt;
+    if(Date.now() - GEO_SENT > 25000 || (moved && Date.now() - GEO_SENT > 8000)) geoSend(true);
+    if(wasErr) render();
+  }, e => { GEO_ERR = e.code === 1 ? 'denied' : 'err'; render(); }, {enableHighAccuracy: true, maximumAge: 10000, timeout: 30000});
+  clearInterval(GEO_HB); GEO_HB = setInterval(() => { if(ONDUTY && GEO_LAST && Date.now() - GEO_SENT > 55000) geoSend(true); }, 20000);
+}
+function geoStop(){
+  if(GEO_W != null){ try{ navigator.geolocation.clearWatch(GEO_W); }catch(e){} GEO_W = null; }
+  clearInterval(GEO_HB); geoSend(false);
+}
+function setDuty(on){
+  ONDUTY = on; try{ localStorage.setItem('pz_drv_duty', on ? '1' : '0'); }catch(e){}
+  if(on) geoStart(); else geoStop();
+  toast(on ? '🟢 ' + t('بلّشت الشغل') : '🔴 ' + t('خلّصت الشغل')); render();
+}
+function dutyHtml(){
+  if(ROLE !== 'driver') return '';
+  if(!ONDUTY) return `<div class="duty off"><span style="flex:1">🔴 <b>${t('خارج الشغل')}</b><br><small>${t('موقعك مش ظاهر للمحل')}</small></span><button class="btn green sm" onclick="setDuty(true)">🟢 ${t('بلّش الشغل')}</button></div>`;
+  if(GEO_ERR === 'denied') return `<div class="duty bad"><span style="flex:1">📍 <b>${t('لازم تسمح بالموقع')}</b><br><small>${t('اكبس 🔒 جنب العنوان فوق ← الموقع ← سماح، وبعدين حدّث الصفحة')}</small></span></div>`;
+  return `<div class="duty"><span style="flex:1">🟢 <b>${t('بالشغل')}</b><br><small>${GEO_LAST ? t('موقعك ظاهر للمحل') : t('عم ندوّر على موقعك...')}</small></span><button class="btn sm" onclick="setDuty(false)">🔴 ${t('خلّصت')}</button></div>`;
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 /* 📲 تنزيل الصفحة كتطبيق على التلفون */
