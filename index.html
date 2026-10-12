@@ -422,6 +422,7 @@ a.cta{text-decoration:none;justify-content:center}
 #trkPill{position:fixed;z-index:39;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:9px;
   background:#1a1a1a;color:#fff;border-radius:999px;padding:10px 16px;font-family:inherit;font-weight:800;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.3);white-space:nowrap;max-width:calc(100% - 32px)}
 #trkPill .go{color:#f5b301}
+#trkPill .trkx{background:rgba(255,255,255,.15);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:12px;margin-inline-start:2px}
 #trkPill .pulse{width:10px;height:10px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 0 rgba(61,220,132,.7);animation:pl 1.6s infinite}
 @keyframes pl{70%{box-shadow:0 0 0 10px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
 .trk-no{text-align:center;color:var(--ink-2);margin-top:6px}.trk-no b{color:var(--ink);font-size:18px}
@@ -470,6 +471,11 @@ a.cta{text-decoration:none;justify-content:center}
 .wh-pin{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:30px;color:var(--ink);z-index:2;text-shadow:0 2px 0 #fff}
 .wh-r{font-size:20px;font-weight:900;margin-top:16px}
 .reg-hero{font-size:60px;text-align:center}
+.logout{display:block;width:100%;margin:22px 0 10px;background:#fff;border:1.5px solid var(--line);color:var(--red);border-radius:15px;padding:13px;font-family:inherit;font-weight:800;font-size:15px;cursor:pointer}
+.bdr{display:flex;gap:8px}.bdr select{flex:1}
+.loy.bday{background:linear-gradient(135deg,#fff3e0,#fff);border-color:#f5b301}
+.sched select{font-weight:800}
+.bdg.so{background:#1a1a1a;color:#fff}
 .whc{border:1.5px solid #f5b301}
 .prof{cursor:pointer}.prof .chg{color:var(--red);font-weight:800;font-size:13px}
 /* عروض بأوقات */
@@ -697,6 +703,24 @@ function LX(o, f){
   if(LANG === 'he'){ const h = o[f + '_he']; if(h != null && String(h).trim() !== '') return h; }
   return o[f] == null ? '' : o[f];
 }
+/* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد ===== */
+Object.assign(HE, {
+  'تسجيل خروج':'התנתקות', 'تسجّل خروج؟ بنمسح اسمك ورقمك وطلباتك من هالجهاز.':'להתנתק? נמחק את השם, הטלפון וההזמנות שלך מהמכשיר הזה.', 'تم تسجيل الخروج ✓':'התנתקת ✓',
+  'متى بدك الطلب؟':'מתי תרצו את ההזמנה?', 'بأسرع وقت':'כמה שיותר מהר', 'بوقت محدد':'לשעה מסוימת',
+  'بنوصّلك الطلب على هالوقت':'נביא לכם את ההזמנה בשעה הזו', 'بيكون طلبك جاهز على هالوقت':'ההזמנה תהיה מוכנה בשעה הזו',
+  'المطعم مسكّر هلأ':'המסעדה סגורה עכשיו', 'بس بتقدر تطلب مسبق لوقت بنكون فاتحين فيه':'אבל אפשר להזמין מראש לשעה שאנחנו פתוחים',
+  'طلب مسبق':'הזמנה מראש', 'نفذت الكمية':'אזל מהמלאי', 'الوقت اللي اخترته فات — اختار وقت ثاني':'השעה שבחרתם עברה — בחרו שעה אחרת',
+  'عيد ميلاد سعيد! هديتك':'יום הולדת שמח! המתנה שלך', 'استعمل هدية عيد ميلادك بهالطلب':'השתמשו במתנת יום ההולדת בהזמנה הזו',
+  'الهدية بتنضاف لحالها على طلبك الجاي':'המתנה תתווסף אוטומטית להזמנה הבאה שלכם',
+  'عيد ميلادك (اختياري — وبتوصلك هدية)':'יום ההולדת שלך (לא חובה — ומקבלים מתנה)', 'يوم':'יום', 'شهر':'חודש',
+  'الهدية بتشتغل إذا سجّلت تاريخك قبل عيد ميلادك بأسبوعين على الأقل':'המתנה תופעל אם התאריך נרשם לפחות שבועיים לפני יום ההולדת',
+  'عيد ميلاد سعيد يا':'יום הולדת שמח', 'عيد ميلاد سعيد':'יום הולדת שמח', 'هديتك منّا':'המתנה שלך מאיתנו',
+  'بتنضاف لحالها على طلبك':'תתווסף אוטומטית להזמנה שלך', 'يلا اطلب':'יאללה להזמין', 'هدية عيد الميلاد':'מתנת יום הולדת', 'هدية':'מתנה'
+});
+HE_RULES.push(
+  [/^ضل بس (\d+) من: (.+)$/, m => 'נשארו רק ' + m[1] + ' מ: ' + m[2]],
+  [/^نفذت الكمية: (.+)$/, m => 'אזל מהמלאי: ' + m[1]]
+);
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -925,6 +949,7 @@ const base = it => (it.sale && it.sale < it.price) ? Number(it.sale) : Number(it
 function badges(it){
   const b = [];
   if(it.available === false) b.push('<span class="bdg k">غير متوفر</span>');
+  else if(soldOut(it)) b.push('<span class="bdg so">نفذت الكمية</span>');
   if(it.tag) b.push('<span class="bdg">🔥 ' + esc(LX(it,'tag')) + '</span>');
   if(it.sale && it.sale < it.price) b.push('<span class="bdg r">خصم ' + Math.round((1-it.sale/it.price)*100) + '%</span>');
   return b.length ? '<div class="bdgs">' + b.join('') + '</div>' : '';
@@ -934,7 +959,7 @@ function prTxt(it){
   return '<span class="ltr">₪' + base(it) + '</span>' + s;
 }
 function card(it){
-  const off = it.available === false;
+  const off = it.available === false || soldOut(it);
   return '<div class="pc' + (off?' off':'') + '" onclick="' + (off?'':"openP('"+it.id+"')") + '">' +
     '<div class="ph">' + badges(it) + '<img src="' + pic(it) + '" alt="' + esc(LX(it,'name')) + '" loading="lazy"></div>' +
     '<div class="bd"><div class="nm">' + esc(LX(it,'name')) + '</div><div class="ds">' + esc(LX(it,'desc')) + '</div>' +
@@ -955,7 +980,7 @@ let _trkInit = false;
 let _xInit = false;
 function paint(){
   try{ instBanner(); }catch(e){}
-  if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); }catch(e){} }, 0); }
+  if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); bdayMaybe(); }catch(e){} }, 0); }
   if(!_trkInit && typeof trkPill === 'function'){ _trkInit = true; setTimeout(() => { trkListen(); trkPill(); }, 0); }
   try{ const n = activeDeals().length, el = $('tDealsN'); if(el){ el.style.display = n ? '' : 'none'; el.textContent = n; } if(view === 'deals') renderDeals(); }catch(e){}
   $('brandName').textContent = LX(SET,'name');
@@ -1047,7 +1072,7 @@ function renderMe(){
     '<div class="rowcard prof" onclick="openReg(false)"><div class="hd"><span class="ic">👤</span><span style="flex:1">' +
       (_ph ? '<b>' + esc(_nm) + '</b><br><span class="ltr" style="color:var(--muted);font-size:12.5px">' + esc(_ph) + '</span>' : '<b>سجّل بالموقع</b><br><span style="color:var(--muted);font-size:12.5px">عشان نقاط الولاء والطلب الأسرع</span>') +
       '</span><span class="chg">' + (_ph ? 'تعديل' : 'تسجيل') + '</span></div></div>' +
-    loyCard(false) + wheelRowHtml() +
+    loyCard(false) + wheelRowHtml() + bdayRowHtml(false) +
     (typeof canInstall === 'function' && canInstall() ? '<button class="alldeals" style="width:100%;margin:0 0 12px" onclick="doInstall()"><span>📲 نزّل التطبيق على التلفون</span><span class="ar">←</span></button>' : '') +
     '<div class="rowcard"><div class="hd"><span class="ic">🏪</span>' +
       '<span style="flex:1">' + esc(LX(SET,'name')) + '<br><span style="font-weight:600;color:var(--muted);font-size:12.5px">' + esc(LX(SET,'addr')) + '</span></span>' +
@@ -1059,7 +1084,17 @@ function renderMe(){
       '<div class="r" onclick="callRest()"><div class="ic">📞</div><div class="tx"><b>اتصل فينا</b><span class="ltr">' +
         esc(SET.phone ? ('0' + String(SET.phone).slice(3)) : '') + '</span></div></div>' +
     '</div>' +
-    '<h2 style="font-size:18px;margin:22px 0 12px;padding:0">طلباتي</h2>' + orders;
+    '<h2 style="font-size:18px;margin:22px 0 12px;padding:0">طلباتي</h2>' + orders +
+    (_ph ? '<button class="logout" onclick="custLogout()">🚪 تسجيل خروج</button>' : '');
+}
+/* تسجيل خروج: بيمسح معلومات الزبون من هالجهاز (الاسم، الرقم، العنوان، الطلبات السابقة) */
+function custLogout(){
+  if(!confirm('تسجّل خروج؟ بنمسح اسمك ورقمك وطلباتك من هالجهاز.')) return;
+  try{ ['pz_name','pz_phone','pz_addr','pz_orders','pz_track','pz_loc','pz_bday','pz_bday_at','pz_bday_pop'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+  hist = []; LOY = null; useReward = false; TRK = null; CLOC = null;
+  try{ if(trkUnsub) trkUnsub(); }catch(e){}
+  const el = $('trkPill'); if(el) el.style.display = 'none';
+  renderMe(); toast('تم تسجيل الخروج ✓');
 }
 function onSearch(){ searchQ = $('q').value.trim(); renderHome(); }
 function jumpFirst(){ if(CATS[0]) openCat(CATS[0].id); }
@@ -1099,6 +1134,7 @@ function openCat(id){
 /* ============ صفحة المنتج ============ */
 function openP(id){
   cur = byId(id); if(!cur) return;
+  if(soldOut(cur)){ toast('نفذت الكمية 😔'); cur = null; return; }
   qty = 1; note = ''; sel = {}; side = {}; pzShown = {};
   (cur.opts||[]).forEach(g => {
     const G = grp(g); if(!G) return;
@@ -1430,7 +1466,7 @@ function drawDeal(){
       ((LANG === 'he' ? p.lh : p.labels).length ? '<small>' + esc((LANG === 'he' ? p.lh : p.labels).join(' · ')) + '</small>' : '') +
       (p.extra ? '<small class="ltr">+₪' + p.extra + '</small>' : '') +
       '<button onclick="dealRemove(' + i + ',' + k + ')" aria-label="شيل">✕</button></div>').join('');
-    const items = (s.items || []).map(byId).filter(it => it && it.available !== false);
+    const items = (s.items || []).map(byId).filter(it => it && it.available !== false && !soldOut(it));
     const grid = full ? '' : '<div class="dl-grid">' + items.map(it =>
       '<button class="dl-it" onclick="dealPick(' + i + ',\'' + it.id + '\')"><span class="ph"><img src="' + pic(it) + '" alt="" loading="lazy"></span>' +
       '<span class="nm">' + esc(LX(it,'name')) + '</span>' + ((it.opts || []).length ? '<span class="op">⚙️ إضافات</span>' : '') + '</button>').join('') + '</div>';
@@ -1471,7 +1507,7 @@ function dealAdd(){
     img: d.img || '', catId: '', icon: d.emoji || '🍕', unit: Number(d.price) + dealExtra(), qty: 1, note: '',
     labels: all.map(p => p.n + (p.labels.length ? ' (' + p.labels.join('، ') + ')' : '')),
     lh: all.map(p => tr(p) + (p.lh.length ? ' (' + p.lh.join(', ') + ')' : '')),
-    sub: all.map(p => ({n: p.n, nh: p.nh, labels: p.labels, lh: p.lh, note: p.note}))});
+    sub: all.map(p => ({id: p.id, n: p.n, nh: p.nh, labels: p.labels, lh: p.lh, note: p.note}))});
   DL = null;
   save(); paintCart(); closeSheet(); toast('أُضيف العرض للسلة ✓');
 }
@@ -1508,14 +1544,14 @@ function dealCards(){ return activeDeals().map(dealBig).join('<div style="height
 /* ============ تتبّع الطلب ============ */
 let TRK = null, trkUnsub = null, trkDoc = null;
 try{ TRK = JSON.parse(localStorage.getItem('pz_track') || 'null'); }catch(e){}
-if(TRK && Date.now() - new Date(TRK.at).getTime() > 4 * 3600e3) TRK = null;
+if(TRK && Date.now() - new Date(TRK.sched || TRK.at).getTime() > 4 * 3600e3) TRK = null;
 const etaMin = () => { const n = String(SET.prepTime || '').match(/\d+/g); return n ? Number(n[n.length - 1]) : 35; };
 const TSTEPS = {
   delivery: [['new','📥','استلمنا طلبك'], ['prep','👨‍🍳','عم نحضّره'], ['ready','🛵','طالع مع السائق'], ['done','✅','وصل — بالهنا والشفا']],
   pickup:   [['new','📥','استلمنا طلبك'], ['prep','👨‍🍳','عم نحضّره'], ['ready','🏪','جاهز للاستلام'], ['done','✅','استلمته — بالهنا والشفا']]
 };
 function trkStart(id, order){
-  TRK = {id, at: order.createdAt, type: order.type, total: order.total, status: 'new', no: ''};
+  TRK = {id, at: order.createdAt, type: order.type, total: order.total, status: 'new', no: '', sched: (order.customer || {}).sched || ''};
   try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
   trkListen();
 }
@@ -1527,6 +1563,7 @@ function trkListen(){
     const x = d.data(), was = TRK.status;
     TRK.status = x.status || TRK.status; TRK.no = x.no || TRK.no;
     try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+    if(['done','cancel'].includes(TRK.status) && !TRK.end){ TRK.end = Date.now(); try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){} }
     if(was && was !== TRK.status){
       try{ navigator.vibrate && navigator.vibrate([120, 60, 120]); }catch(e){}
       const st = (TSTEPS[TRK.type] || TSTEPS.delivery).find(s => s[0] === TRK.status);
@@ -1535,7 +1572,18 @@ function trkListen(){
     trkPill(); if($('trkBox')) trkDraw();
   }, () => {});
 }
-function trkActive(){ return !!TRK && (!['done','cancel'].includes(TRK.status) || Date.now() - new Date(TRK.at).getTime() < 30 * 60e3); }
+/* الشارة بتختفي: الطلب الملغي بعد دقيقة، الواصل بعد 15 دقيقة (عشان التقييم) — أو لما الزبون يكبس ✕ */
+function trkActive(){
+  if(!TRK || TRK.hide || TRK.rated) return false;
+  if(!['done','cancel'].includes(TRK.status)) return true;
+  return Date.now() - (TRK.end || 0) < (TRK.status === 'cancel' ? 60e3 : 15 * 60e3);
+}
+function trkHide(ev){
+  if(ev) ev.stopPropagation();
+  if(TRK){ TRK.hide = true; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){} }
+  const el = $('trkPill'); if(el) el.style.display = 'none';
+}
+setInterval(() => { try{ const el = $('trkPill'); if(el && el.style.display !== 'none' && !trkActive()) el.style.display = 'none'; }catch(e){} }, 10000);
 function trkPill(){
   let el = $('trkPill');
   if(!el){ el = document.createElement('button'); el.id = 'trkPill'; el.onclick = openTrack; document.body.appendChild(el); }
@@ -1543,7 +1591,8 @@ function trkPill(){
   const steps = TSTEPS[TRK.type] || TSTEPS.delivery;
   const st = TRK.status === 'cancel' ? ['cancel','❌','انلغى الطلب'] : (steps.find(s => s[0] === TRK.status) || steps[0]);
   el.style.display = '';
-  el.innerHTML = '<span class="pulse"></span><span>' + st[1] + ' ' + esc(st[2]) + '</span><span class="go">تابع ←</span>';
+  el.innerHTML = '<span class="pulse"' + (TRK.status === 'cancel' ? ' style="background:#e3242b;animation:none"' : '') + '></span><span>' + st[1] + ' ' + esc(st[2]) + '</span><span class="go">تابع ←</span>' +
+    (['done','cancel'].includes(TRK.status) ? '<span class="trkx" onclick="trkHide(event)" aria-label="إغلاق">✕</span>' : '');
   trNode(el);
 }
 function openTrack(){
@@ -1557,7 +1606,7 @@ function trkDraw(){
   const box = $('trkBox'); if(!box || !TRK) return;
   const steps = TSTEPS[TRK.type] || TSTEPS.delivery;
   const idx = Math.max(0, steps.findIndex(s => s[0] === TRK.status));
-  const at = new Date(TRK.at), eta = new Date(at.getTime() + (etaMin() + (TRK.type === 'delivery' ? 10 : 0)) * 60e3);
+  const at = new Date(TRK.at), eta = TRK.sched ? new Date(TRK.sched) : new Date(at.getTime() + (etaMin() + (TRK.type === 'delivery' ? 10 : 0)) * 60e3);
   const hm = d => d.toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG', {hour:'2-digit', minute:'2-digit'});
   if(TRK.status === 'cancel'){
     box.innerHTML = '<div class="trk-x">❌</div><div class="trk-t">انلغى الطلب</div><div class="muted" style="text-align:center">إذا في سؤال اتصل فينا</div>';
@@ -1566,7 +1615,7 @@ function trkDraw(){
       (TRK.no ? '<div class="trk-no">طلب رقم <b>#' + esc(TRK.no) + '</b></div>' : '') +
       '<div class="trk-big">' + steps[idx][1] + '</div>' +
       '<div class="trk-t">' + esc(steps[idx][2]) + '</div>' +
-      (idx < steps.length - 1 ? '<div class="trk-eta">' + (TRK.type === 'delivery' ? 'بيوصلك تقريباً الساعة' : 'بيكون جاهز تقريباً الساعة') + ' <b class="ltr">' + hm(eta) + '</b></div>' : '') +
+      (idx < steps.length - 1 ? (TRK.sched ? '<div class="trk-eta">⏰ <span>طلب مسبق</span>: <span>' + esc(dayLabel(eta)) + '</span> <b class="ltr">' + hm2(eta) + '</b></div>' : '<div class="trk-eta">' + (TRK.type === 'delivery' ? 'بيوصلك تقريباً الساعة' : 'بيكون جاهز تقريباً الساعة') + ' <b class="ltr">' + hm(eta) + '</b></div>') : '') +
       '<div class="trk-steps">' + steps.map((s, i) =>
         '<div class="ts ' + (i < idx ? 'done' : i === idx ? 'now' : '') + '"><span class="dot">' + (i < idx ? '✓' : s[1]) + '</span><span class="lb">' + esc(s[2]) + '</span></div>').join('') + '</div>' +
       (TRK.status === 'done' ? rateHtml() : '<div class="muted" style="text-align:center;margin-top:10px">الصفحة بتتحدّث لحالها — مش لازم تعمل إشي</div>');
@@ -1608,7 +1657,7 @@ async function doInstall(){
 /* ============ 🍟 بدك معها؟ (اقتراحات بالسلة) ============ */
 function upsellHtml(){
   const inCart = new Set(cart.map(l => l.id));
-  const ups = avail().filter(i => i.upsell && !inCart.has(i.id)).slice(0, 6);
+  const ups = avail().filter(i => i.upsell && !inCart.has(i.id) && !soldOut(i)).slice(0, 6);
   if(!ups.length) return '';
   return '<div class="sum ups"><h4>🍟 بدك معها؟</h4><div class="upg">' + ups.map(it =>
     '<button class="up" onclick="upAdd(\'' + it.id + '\')"><span class="ph"><img src="' + pic(it) + '" alt="" loading="lazy"></span>' +
@@ -1678,6 +1727,7 @@ function openReg(withWheel){
     (withWheel ? '<div class="reg-hero">🎡</div><div class="wh-t">سجّل باسمك ورقمك، ولفّ عجلة الحظ واربح هدية على أول طلب!</div>' : '') +
     '<div class="fld"><label>الاسم</label><input class="inp" id="rgN" placeholder="اسمك" value="' + esc(nm) + '"></div>' +
     '<div class="fld"><label>رقم الهاتف</label><input class="inp" id="rgP" type="tel" inputmode="tel" placeholder="05x-xxxxxxx" value="' + esc(ph) + '"></div>' +
+    bdayFieldHtml() +
     '<div class="muted" style="font-size:12px">بنستعمل رقمك بس للطلبات ونقاط الولاء.</div></div>';
   $('ft').innerHTML = '<button class="cta" onclick="doReg(' + (withWheel ? 'true' : 'false') + ')">' + (withWheel ? '✓ سجّل ولفّ العجلة' : '✓ حفظ') + '</button>';
   cur = null; show();
@@ -1687,6 +1737,7 @@ function doReg(withWheel){
   if(!nm){ alert('لو سمحت اكتب اسمك'); return; }
   if(!ph){ alert('رقم التلفون مش صحيح — اكتبه هيك: 05xxxxxxxx'); return; }
   try{ localStorage.setItem('pz_name', nm); localStorage.setItem('pz_phone', ph); }catch(e){}
+  bdayRead();
   LOY = null; loyLoad(true);
   if(withWheel) openWheel(); else { closeSheet(); renderMe(); toast('تم الحفظ ✓'); }
 }
@@ -1777,7 +1828,8 @@ function sendRate(){
   if(!TRK || !rateStars) return;
   const txt = ($('rateTxt') ? $('rateTxt').value : '').trim().slice(0, 500);
   let nm = ''; try{ nm = (localStorage.getItem('pz_name') || '').trim().split(/\s+/)[0].slice(0, 30); }catch(e){}
-  const done = () => { TRK.rated = true; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){} trkDraw(); toast('شكراً على التقييم 🙏'); };
+  const done = () => { TRK.rated = true; TRK.hide = true; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+    trkDraw(); trkPill(); toast('شكراً على التقييم 🙏'); setTimeout(() => { if($('trkBox')) closeSheet(); }, 1600); };
   if(live && db) db.collection('reviews').add({stars: rateStars, text: txt, name: nm, order: TRK.id, at: new Date().toISOString()}).then(done).catch(done);
   else done();
 }
@@ -1950,6 +2002,139 @@ function closeMapPick(){
   const ov = $('mapPick'); if(ov){ ov.classList.remove('on'); ov.innerHTML = ''; }
 }
 
+/* ============ 🕐 طلب مسبق ============ */
+let SCHED = '';
+const preCfg = () => (SET.preorder && SET.preorder.on) ? SET.preorder : null;
+const hm2 = t => String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+function dayLabel(t){
+  const a = new Date(), d0 = new Date(a.getFullYear(), a.getMonth(), a.getDate()), d1 = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  const k = Math.round((d1 - d0) / 864e5);
+  return k === 0 ? 'اليوم' : k === 1 ? 'بكرا' : DAYS[t.getDay()] + ' ' + t.getDate() + '/' + (t.getMonth() + 1);
+}
+function preSlots(){
+  const c = preCfg(); if(!c) return [];
+  const lead = Math.max(10, Number(c.lead) || 30), days = Math.min(6, Math.max(0, Number(c.days == null ? 1 : c.days)));
+  const now = new Date(), min = now.getTime() + lead * 60e3, out = [];
+  for(let k = 0; k <= days; k++){
+    const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k), wd = d0.getDay();
+    const H = (SET.hours || {})[wd] || (SET.hours || {})[String(wd)];
+    if(!H || !H[0] || !H[1]) continue;
+    const o = mins(H[0]); let cl = mins(H[1]); if(cl <= o) cl += 1440;
+    for(let m = Math.ceil((o + 15) / 15) * 15; m <= cl - 15; m += 15){
+      const t = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), 0, m);
+      if(t.getTime() >= min) out.push(t);
+    }
+  }
+  return out.slice(0, 500);
+}
+function schedHtml(){
+  const c = preCfg(); if(!c) return '';
+  const open = status().open, slots = preSlots();
+  if(!slots.length){ SCHED = ''; return ''; }
+  const iso = slots.map(t => t.toISOString());
+  if(!open && !SCHED) SCHED = iso[0];
+  if(SCHED && !iso.includes(SCHED)) SCHED = open ? '' : iso[0];
+  const groups = {};
+  slots.forEach(t => { const k = dayLabel(t); (groups[k] = groups[k] || []).push(t); });
+  return '<div class="rowcard sched"><div class="hd"><span class="ic">🕐</span><span>متى بدك الطلب؟</span></div>' +
+    '<div class="seg" style="margin:10px 0 0">' +
+      (open ? '<button class="' + (!SCHED ? 'on' : '') + '" onclick="SCHED=\'\';openCart()">⚡ بأسرع وقت</button>' : '') +
+      '<button class="' + (SCHED ? 'on' : '') + '" onclick="if(!SCHED)SCHED=preSlots()[0].toISOString();openCart()">📅 بوقت محدد</button></div>' +
+    (SCHED ? '<select class="inp" id="schedSel" style="margin-top:10px" onchange="SCHED=this.value;openCart()">' +
+      Object.entries(groups).map(([k, a]) => '<optgroup label="' + esc(trText(k)) + '">' +
+        a.map(t => '<option value="' + t.toISOString() + '"' + (t.toISOString() === SCHED ? ' selected' : '') + '>' + esc(k) + ' ' + hm2(t) + '</option>').join('') + '</optgroup>').join('') +
+      '</select><div class="muted" style="font-size:12px;margin-top:6px">' + (otype === 'delivery' ? 'بنوصّلك الطلب على هالوقت' : 'بيكون طلبك جاهز على هالوقت') + '</div>' : '') +
+    '</div>';
+}
+
+/* ============ 📦 المخزون ============ */
+const hasStock = it => it && it.stock != null && it.stock !== '';
+const soldOut = it => hasStock(it) && Number(it.stock) <= 0;
+/* كم بدنا من كل صنف بالسلة (مع أصناف العروض) */
+function cartNeed(){
+  const need = {};
+  cart.forEach(l => {
+    if(l.sub && l.sub.length) l.sub.forEach(p => { if(p.id) need[p.id] = (need[p.id] || 0) + l.qty; });
+    else if(l.id) need[l.id] = (need[l.id] || 0) + l.qty;
+  });
+  return need;
+}
+function stockProblem(){
+  const need = cartNeed();
+  for(const id in need){
+    const it = byId(id);
+    if(hasStock(it) && need[id] > Number(it.stock))
+      return Number(it.stock) > 0 ? 'ضل بس ' + Number(it.stock) + ' من: ' + LX(it, 'name') : 'نفذت الكمية: ' + LX(it, 'name');
+  }
+  return '';
+}
+
+/* ============ 🎂 هدية عيد الميلاد ============ */
+let useBday = true;
+const bdayCfg = () => (SET.bday && SET.bday.on) ? SET.bday : null;
+const myBday = () => { try{ return localStorage.getItem('pz_bday') || ''; }catch(e){ return ''; } };
+function bdaySet(v){
+  if(!/^\d{2}-\d{2}$/.test(v || '')) return;
+  try{ if(v !== myBday()){ localStorage.setItem('pz_bday', v); localStorage.setItem('pz_bday_at', new Date().toISOString()); } }catch(e){}
+}
+/* بيرجع سنة عيد الميلاد إذا الهدية فعّالة هلأ */
+function bdayLive(){
+  const c = bdayCfg(), b = myBday(); if(!c || !/^\d{2}-\d{2}$/.test(b)) return 0;
+  let at = '', used = '';
+  try{ at = localStorage.getItem('pz_bday_at') || ''; used = localStorage.getItem('pz_bday_used') || ''; }catch(e){}
+  if(!at || Date.now() - new Date(at).getTime() < 14 * 864e5) return 0;
+  const now = new Date(), [mm, dd] = b.split('-').map(Number), w = Math.max(0, Math.min(15, Number(c.days == null ? 3 : c.days)));
+  for(const y of [now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1]){
+    const diff = (now - new Date(y, mm - 1, dd)) / 864e5;
+    if(diff >= -w && diff < w + 1 && used !== String(y)) return y;
+  }
+  return 0;
+}
+const bdayLabel = () => { const c = bdayCfg() || {}; return LX(c, 'text') || (c.type === 'percent' ? 'خصم ' + Number(c.value || 0) + '%' : c.type === 'fixed' ? 'خصم ₪' + Number(c.value || 0) : 'هدية'); };
+function bdayDisc(){
+  if(!useBday || !bdayLive()) return 0;
+  const c = bdayCfg(), s = sub(), v = Number(c.value || 0);
+  if(c.type === 'percent') return Math.round(s * Math.min(v, 50)) / 100;
+  if(c.type === 'fixed') return Math.min(v, s);
+  return 0;
+}
+const bdayOn = () => !!(useBday && bdayLive());
+function bdayRowHtml(inCart){
+  if(!bdayLive()) return '';
+  return '<div class="loy win bday"><div class="lt">🎂 عيد ميلاد سعيد! هديتك: <b>' + esc(bdayLabel()) + '</b></div>' +
+    (inCart ? '<label class="usew"><input type="checkbox" ' + (useBday ? 'checked' : '') + ' onchange="useBday=this.checked;openCart()"> استعمل هدية عيد ميلادك بهالطلب' +
+      (bdayDisc() ? ' <b class="ltr">(-₪' + bdayDisc() + ')</b>' : '') + '</label>' : '<div class="muted">الهدية بتنضاف لحالها على طلبك الجاي 🎁</div>') + '</div>';
+}
+/* خانة تاريخ الميلاد (يوم + شهر) */
+function bdayFieldHtml(){
+  if(!bdayCfg()) return '';
+  const b = myBday(), [mm, dd] = b ? b.split('-') : ['', ''];
+  const opt = (n, cur) => Array.from({length: n}, (_, k) => { const v = String(k + 1).padStart(2, '0'); return '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + (k + 1) + '</option>'; }).join('');
+  return '<div class="fld"><label>🎂 عيد ميلادك (اختياري — وبتوصلك هدية)</label><div class="bdr">' +
+    '<select class="inp" id="bdD"><option value="">يوم</option>' + opt(31, dd) + '</select>' +
+    '<select class="inp" id="bdM"><option value="">شهر</option>' + opt(12, mm) + '</select></div>' +
+    (b ? '' : '<div class="muted" style="font-size:11.5px;margin-top:4px">الهدية بتشتغل إذا سجّلت تاريخك قبل عيد ميلادك بأسبوعين على الأقل</div>') + '</div>';
+}
+function bdayRead(){
+  const d = $('bdD') ? $('bdD').value : '', m = $('bdM') ? $('bdM').value : '';
+  if(d && m) bdaySet(m + '-' + d);
+}
+function bdayMaybe(){
+  if(!bdayLive()) return;
+  const k = new Date().toDateString();
+  try{ if(localStorage.getItem('pz_bday_pop') === k) return; localStorage.setItem('pz_bday_pop', k); }catch(e){}
+  setTimeout(() => {
+    if($('sheet').classList.contains('on')) return;
+    let nm = ''; try{ nm = localStorage.getItem('pz_name') || ''; }catch(e){}
+    $('sc').innerHTML = '<div class="ctop"><h3>🎂</h3><button onclick="closeSheet()">✕</button></div><div class="cwrap" style="text-align:center">' +
+      '<div class="reg-hero">🎉🎂🎈</div><div class="wh-t">عيد ميلاد سعيد' + (nm ? ' يا <b>' + esc(nm) + '</b>' : '') + '!</div>' +
+      '<div class="wh-r">🎁 هديتك منّا: <b>' + esc(bdayLabel()) + '</b></div>' +
+      '<div class="muted" style="margin-top:8px">بتنضاف لحالها على طلبك 🎁</div></div>';
+    $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">🍕 يلا اطلب</button>';
+    cur = null; show();
+  }, 3000);
+}
+
 function sub(){ return cart.reduce((s,l) => s + l.unit*l.qty, 0); }
 function couponDisc(){
   if(!coupon) return 0;
@@ -1960,7 +2145,7 @@ function couponDisc(){
 /* كل الخصومات: كوبون + هدية الولاء + جائزة العجلة */
 function discount(){
   const s = sub();
-  return Math.min(s, Math.round((couponDisc() + (typeof rewardDisc === 'function' ? rewardDisc() : 0) + (typeof wheelDisc === 'function' ? wheelDisc() : 0)) * 100) / 100);
+  return Math.min(s, Math.round((couponDisc() + (typeof rewardDisc === 'function' ? rewardDisc() : 0) + (typeof wheelDisc === 'function' ? wheelDisc() : 0) + (typeof bdayDisc === 'function' ? bdayDisc() : 0)) * 100) / 100);
 }
 function fee(){
   if(otype === 'pickup') return 0;
@@ -2018,7 +2203,7 @@ function openCart(){
   let body;
   if(cart.length){
     body = '<div class="ctop"><h3>سلة المشتريات</h3><button onclick="clearCart()">🗑</button></div><div class="cwrap">' +
-      (!s.open ? '<div class="closed">المطعم مغلق حالياً 🌙<br>جهّز طلبك وابعته لما يفتح (<span class="ltr">' + s.hours + '</span>)</div>' : '') +
+      (!s.open ? (preCfg() && preSlots().length ? '<div class="closed">المطعم مسكّر هلأ 🌙<br>بس بتقدر تطلب مسبق لوقت بنكون فاتحين فيه 👇</div>' : '<div class="closed">المطعم مغلق حالياً 🌙<br>جهّز طلبك وابعته لما يفتح (<span class="ltr">' + s.hours + '</span>)</div>') : '') +
       '<div class="seg">' +
         '<button class="' + (otype==='delivery'?'on':'') + '" onclick="setType(\'delivery\')">🛵 توصيل</button>' +
         '<button class="' + (otype==='pickup'?'on':'') + '" onclick="setType(\'pickup\')">🏪 استلام من المحل</button></div>' +
@@ -2026,7 +2211,7 @@ function openCart(){
       '<div class="rowcard"><div class="hd"><span class="ic">✏️</span><span>إضافة ملاحظة للطلب</span></div>' +
         '<textarea class="ta" style="margin-top:10px;min-height:54px" placeholder="مثال: الجرس خربان، دق تلفون" ' +
         'oninput="orderNote=this.value">' + esc(orderNote) + '</textarea></div>' +
-      upsellHtml() + loyCard(true) + wheelRowHtml() +
+      upsellHtml() + schedHtml() + loyCard(true) + wheelRowHtml() + bdayRowHtml(true) +
       '<div class="rowcard"><div class="hd"><span class="ic">%</span><span>لديك كوبون خصم؟</span></div>' +
         (coupon
           ? '<div class="cpn-ok"><span>✓ ' + esc(coupon.code) + ' — خصم ' +
@@ -2040,6 +2225,7 @@ function openCart(){
         '<input class="inp" id="nm" placeholder="اسمك" value="' + esc(localStorage.getItem('pz_name')||'') + '"></div>' +
       '<div class="fld"><label>رقم الهاتف</label>' +
         '<input class="inp" id="ph" type="tel" inputmode="tel" placeholder="05x-xxxxxxx" value="' + esc(localStorage.getItem('pz_phone')||'') + '"></div>' +
+      (myBday() ? '' : bdayFieldHtml()) +
       locCardHtml() +
       (otype==='delivery' ? '<div class="fld"><label>العنوان</label>' +
         '<input class="inp" id="ad" placeholder="الحي، الشارع، رقم البيت" value="' + esc(localStorage.getItem('pz_addr')||'') + '"></div>' : '') +
@@ -2048,10 +2234,12 @@ function openCart(){
         (couponDisc() ? '<div class="r disc"><span>خصم</span><span class="ltr">-₪' + couponDisc() + '</span></div>' : '') +
         (rewardDisc() ? '<div class="r disc"><span>🎁 هدية الولاء</span><span class="ltr">-₪' + rewardDisc() + '</span></div>' : '') +
         (wheelDisc() ? '<div class="r disc"><span>🎡 جائزة العجلة</span><span class="ltr">-₪' + wheelDisc() + '</span></div>' : '') +
+        (bdayDisc() ? '<div class="r disc"><span>🎂 هدية عيد الميلاد</span><span class="ltr">-₪' + bdayDisc() + '</span></div>' : '') +
         '<div class="r"><span>رسوم التوصيل</span><span>' + (otype==='pickup' ? 'مجاني' : lb ? '—' : nis(fee())) + '</span></div>' +
         '<div class="tot"><span>المجموع الكلي</span><b>' + nis(total()) + '</b></div></div>' +
       '<div class="inf">' +
-        '<div class="r"><div class="ic">🕐</div><div class="tx"><b>وقت التوصيل المتوقع</b><span class="hot">' + esc(LX(SET,'prepTime')||'25 - 35 دقيقة') + '</span></div></div>' +
+        (SCHED ? '<div class="r"><div class="ic">⏰</div><div class="tx"><b>طلب مسبق</b><span class="hot">' + esc(dayLabel(new Date(SCHED))) + ' <span class="ltr">' + hm2(new Date(SCHED)) + '</span></span></div></div>'
+          : '<div class="r"><div class="ic">🕐</div><div class="tx"><b>وقت التوصيل المتوقع</b><span class="hot">' + esc(LX(SET,'prepTime')||'25 - 35 دقيقة') + '</span></div></div>') +
         (otype==='delivery' && !lb ? '<div class="r"><div class="ic">🛵</div><div class="tx"><b>رسوم التوصيل</b><span class="ltr">₪' + Number(fee()) + '</span></div></div>' : '') +
         '</div>' + payHtml() +
       (otype==='delivery' && over && sub() < over
@@ -2066,7 +2254,7 @@ function openCart(){
   $('sc').innerHTML = body;
   const ok = sub() >= min, nx = s.open ? '' : nextOpen();
   $('ft').innerHTML = cart.length
-    ? (!s.open
+    ? (!s.open && !SCHED
         ? '<button class="cta" disabled><span>😴 المحل مسكّر هلأ' + (nx ? ' — بنفتح ' + nx : '') + '</span></button>'
         : lb === 'pick' ? '<button class="cta" onclick="openMapPick()"><span>📍 حدد موقع التوصيل</span></button>'
         : lb === 'out' ? '<button class="cta" onclick="setType(\'pickup\')"><span>❌ خارج منطقة التوصيل — اختار استلام</span></button>'
@@ -2109,10 +2297,13 @@ function sendOrder(){
   const name  = ($('nm') ? $('nm').value : '').trim();
   const phoneRaw = ($('ph') ? $('ph').value : '').trim();
   const phone = normPhone(phoneRaw);
-  if(!status().open){ alert('المحل مسكّر هلأ' + (nextOpen() ? '، بنفتح ' + nextOpen() : '')); return; }
+  if(!status().open && !SCHED){ alert('المحل مسكّر هلأ' + (nextOpen() ? '، بنفتح ' + nextOpen() : '')); return; }
+  if(SCHED && new Date(SCHED).getTime() < Date.now() + 5 * 60e3){ SCHED = ''; alert('الوقت اللي اخترته فات — اختار وقت ثاني'); openCart(); return; }
+  const stp = stockProblem(); if(stp){ alert(stp); return; }
   if(name && phoneRaw && !phone){ alert('رقم التلفون مش صحيح — اكتبه هيك: 05xxxxxxxx'); if($('ph')) $('ph').focus(); return; }
   const addr  = ($('ad') ? $('ad').value : '').trim();
   if(!name || !phone){ alert('لو سمحت اكتب الاسم ورقم الهاتف'); return; }
+  bdayRead();
   if(otype === 'delivery' && !addr){ alert('لو سمحت اكتب العنوان للتوصيل'); return; }
   if((SET.blocked || []).includes(phone)){ alert('ما بنقدر نستقبل طلبات من هاد الرقم — لو سمحت اتصل بالمطعم'); return; }
   if(locBlock() === 'pick'){ openMapPick(); return; }
@@ -2127,15 +2318,18 @@ function sendOrder(){
   const snapSub = sub(), snapDisc = discount(), snapFee = fee(), snapTot = total();
   const order = {
     items: cart.flatMap(l => l.sub && l.sub.length
-      ? [Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:[], note:l.note||'', deal:true}, l.nh ? {name_he:l.nh} : {})]
-          .concat(l.sub.map(p => Object.assign({name:p.n, qty:l.qty, unit:0, labels:p.labels||[], note:p.note||'', sub:true},
+      ? [Object.assign({id:l.id||'', name:l.n, qty:l.qty, unit:l.unit, labels:[], note:l.note||'', deal:true}, l.nh ? {name_he:l.nh} : {})]
+          .concat(l.sub.map(p => Object.assign({id:p.id||'', name:p.n, qty:l.qty, unit:0, labels:p.labels||[], note:p.note||'', sub:true},
             p.nh ? {name_he:p.nh} : {}, p.lh ? {labels_he:p.lh} : {})))
-      : [Object.assign({name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
+      : [Object.assign({id:l.id||'', name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
           l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})]),
     customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
       rewardDisc() ? {reward: rewardDisc()} : {},
       wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0), wheelDisc: wheelDisc()} : {},
       couponDisc() ? {couponDisc: couponDisc()} : {},
+      SCHED ? {sched: SCHED} : {},
+      myBday() ? {bday: myBday()} : {},
+      bdayOn() ? {bdayGift: bdayLabel(), bdayType: bdayCfg().type || 'gift', bdayVal: Number(bdayCfg().value || 0), bdayDisc: bdayDisc()} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
     coupon: coupon ? coupon.code : '', fee: snapFee, total: snapTot,
@@ -2153,6 +2347,8 @@ function sendOrder(){
   if(snapDisc) msg += '\nخصم' + (coupon ? ' (' + coupon.code + ')' : '') + ': -₪' + snapDisc.toFixed(2);
   if(wheelLive()) msg += '\n🎡 جائزة: ' + (WHEEL.label || '');
   if(rewardDisc()) msg += '\n🎁 هدية الولاء';
+  if(bdayOn()) msg += '\n🎂 هدية عيد ميلاد: ' + bdayLabel();
+  if(SCHED) msg += '\n⏰ طلب مسبق: ' + dayLabel(new Date(SCHED)) + ' ' + hm2(new Date(SCHED));
   msg += '\nالتوصيل: ' + (otype==='pickup' ? 'استلام من المحل' : '₪' + snapFee.toFixed(2));
   msg += '\n*الإجمالي: ₪' + snapTot.toFixed(2) + '*';
   msg += '\n\n👤 ' + name + '\n📞 ' + phone;
@@ -2165,6 +2361,8 @@ function sendOrder(){
     window.open('https://wa.me/' + (SET.phone || window.WHATSAPP) + '?text=' + encodeURIComponent(msg), '_blank');
     if(wheelLive()){ WHEEL.used = true; try{ localStorage.setItem('pz_wheel', JSON.stringify(WHEEL)); }catch(e){} }
     if(useReward){ useReward = false; LOY = null; }
+    if(bdayOn()){ try{ localStorage.setItem('pz_bday_used', String(bdayLive())); }catch(e){} }
+    SCHED = '';
     cart = []; coupon = null; orderNote = '';
     save(); paintCart(); closeSheet(); renderMe();
     toast(saved ? 'تم إرسال طلبك ✓' : 'تم فتح واتساب — ابعت الرسالة');

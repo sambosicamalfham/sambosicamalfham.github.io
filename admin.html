@@ -275,6 +275,13 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 #vRep .hours i{display:block;height:10px;background:#f5b301;border-radius:5px}.hours b{font-size:11px}
 #vRep .muted{color:#888;font-weight:400}.ltr{direction:ltr;unicode-bidi:isolate}
 #vRep .rfoot{margin-top:18px;font-size:11px;color:#888;border-top:1px dashed #ccc;padding-top:8px}
+
+.stw{cursor:pointer;background:#fff7e0;border-color:#f5b301;color:#7a5600}
+.schb{background:#1f7ae0;color:#fff;border-radius:10px;padding:6px 10px;font-weight:900;margin:6px 0;display:inline-block}
+.age.sch{background:#e8f0fe;color:#174ea6}
+.bdl{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}.bdl:last-of-type{border-bottom:0}
+.bdl .b{background:#fff3e0;color:#a35b00;border-radius:9px;padding:3px 9px;font-weight:800;font-size:12.5px;white-space:nowrap}
+.drvlink{display:flex;align-items:center;gap:10px;background:#111;color:#fff;border-radius:14px;padding:12px 14px;text-decoration:none;font-weight:800;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -546,6 +553,38 @@ function LX(o, f){
   if(LANG === 'he'){ const h = o[f + '_he']; if(h != null && String(h).trim() !== '') return h; }
   return o[f] == null ? '' : o[f];
 }
+/* ===== ترجمات: طلب مسبق، مخزون، عيد ميلاد، سائق ===== */
+Object.assign(HE, {
+  'مشاركة التقرير':'שיתוף הדוח', 'الملفات جاهزة':'הקבצים מוכנים', 'شارك هلأ (واتساب / إيميل)':'שתפו עכשיו (וואטסאפ / מייל)', 'نزّل الملفين':'הורדת שני הקבצים',
+  'نزّل وافتح واتساب':'הורדה ופתיחת וואטסאפ', 'نزّل وافتح الإيميل':'הורדה ופתיחת מייל', 'تم التنزيل':'הורד',
+  'بالكمبيوتر: نزّل الملفين، وبعدين بالواتساب أو الإيميل اكبس 📎 وأرفقهم من مجلد ההורדות.':'במחשב: הורידו את שני הקבצים, ואז בוואטסאפ או במייל לחצו 📎 וצרפו אותם מתיקיית ההורדות.',
+  'المشاركة مش مدعومة هون — نزّلتلك الملفين، أرفقهم من مجلد ההורדות.':'השיתוף לא נתמך כאן — הורדנו את שני הקבצים, צרפו אותם מתיקיית ההורדות.',
+  'خلصوا':'אזלו', 'ضل':'נשארו', 'قرّبوا يخلصوا':'עומדים להיגמר', 'صفحة السائق':'דף השליח', 'طلب مسبق':'הזמנה מראש', 'مسبق':'מראש',
+  'هدية عيد ميلاد':'מתנת יום הולדת', 'هدية عيد ميلاد مع الطلب':'מתנת יום הולדת עם ההזמנה', 'مع':'אצל', 'نفذ':'אזל',
+  'المخزون — كم قطعة ضل؟ (فاضي = بلا حدود)':'מלאי — כמה יחידות נשארו? (ריק = ללא הגבלה)',
+  'لما يوصل 0 بيطلع للزبون "نفذت الكمية" وما بيقدر يطلبه. بينقص لحاله مع كل طلب.':'כשמגיע ל־0 הלקוח רואה "אזל מהמלאי" ולא יכול להזמין. יורד אוטומטית עם כל הזמנה.',
+  'بلا حدود':'ללא הגבלה', 'كم قطعة ضل؟ (فاضي = بلا حدود)':'כמה יחידות נשארו? (ריק = ללא הגבלה)', 'المخزون':'מלאי', 'اكتب رقم':'כתבו מספר',
+  'أعياد ميلاد قريبة':'ימי הולדת קרובים', 'هنّيه':'לברך', 'بكرا':'מחר',
+  'الهدية بتنضاف لحالها للزبون بالموقع بأيام عيد ميلاده. الرسالة بس تذكير لطيف.':'המתנה מתווספת ללקוח אוטומטית באתר בימי יום ההולדת. ההודעה היא רק תזכורת נחמדה.',
+  'الزبون بيقدر يطلب لساعة معيّنة (حتى لو المحل مسكّر هلأ)':'הלקוח יכול להזמין לשעה מסוימת (גם כשהמסעדה סגורה עכשיו)',
+  'كم يوم لقدّام؟ (0 = اليوم بس)':'כמה ימים קדימה? (0 = רק היום)', 'أقل وقت قبل الطلب (دقايق)':'זמן מינימלי מראש (דקות)',
+  'الأوقات بتطلع كل ربع ساعة حسب ساعات الدوام. الطلب المسبق بيطلع عندك بشارة زرقا ⏰ وبعدّاد لوقته.':'השעות מוצגות כל רבע שעה לפי שעות הפתיחה. הזמנה מראש תופיע אצלך עם תג כחול ⏰ וספירה לאחור.',
+  'نبّهني لما يضل من الصنف أقل من':'התריעו לי כשנשאר מפריט פחות מ',
+  'الكمية لكل صنف بتحطها من ✏️ تعديل الصنف أو من ⋯ ← 📦 المخزون. بتنقص لحالها مع كل طلب، وبترجع إذا لغيت الطلب.':'את הכמות לכל פריט קובעים ב־✏️ עריכת פריט או ב־⋯ ← 📦 מלאי. יורדת אוטומטית עם כל הזמנה וחוזרת אם ההזמנה בוטלה.',
+  'هدية عيد الميلاد':'מתנת יום הולדת', 'تفعيل (الزبون بيسجّل تاريخ ميلاده وبتوصله الهدية لحالها)':'הפעלה (הלקוח רושם תאריך לידה ומקבל את המתנה אוטומטית)',
+  'نوع الهدية':'סוג המתנה', 'القيمة (% أو ₪ أو تكلفة الهدية)':'ערך (% או ₪ או עלות המתנה)', 'صالحة كم يوم قبل وبعد؟':'בתוקף כמה ימים לפני ואחרי?',
+  'مرة بالسنة لكل زبون. التاريخ لازم يكون مسجّل قبل بأسبوعين على الأقل (عشان ما حدا يغيّر تاريخه ويستغل). تكلفتها بتنحسب بالتقارير مع الجوائز.':'פעם בשנה לכל לקוח. התאריך חייב להירשם לפחות שבועיים מראש (כדי שאף אחד לא ישנה תאריך כדי לנצל). העלות נספרת בדוחות יחד עם הפרסים.',
+  'خصومات عيد الميلاد':'הנחות יום הולדת', 'خصم عيد الميلاد لازم يكون 50% أو أقل':'הנחת יום הולדת חייבת להיות 50% או פחות',
+  'هدية (صنف ببلاش)':'מתנה (פריט חינם)', 'خصم %':'הנחה %', 'خصم ₪':'הנחה ₪', 'هدية':'מתנה'
+});
+HE_RULES.push(
+  [/^بعد (\d+) س (\d+) د$/, m => 'בעוד ' + m[1] + ' שע׳ ' + m[2] + ' דק׳'],
+  [/^بعد (\d+) د$/, m => 'בעוד ' + m[1] + ' דק׳'],
+  [/^بعد (\d+) أيام$/, m => 'בעוד ' + m[1] + ' ימים'],
+  [/^ضل (\d+)$/, m => 'נשארו ' + m[1]],
+  [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · \S+ (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
+  [/^(.+) \((\d+)\)$/, m => { const t = trCore(m[1]); return t == null ? null : t + ' (' + m[2] + ')'; }]
+);
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -747,6 +786,7 @@ function onLogin(u){
     lastNewCount = nNew; firstOrdersLoad = false;
     if(view==='orders') render();
     autoPrint();
+    try{ stockSync(); }catch(e){}
   }, err => console.error(err));
 }
 
@@ -892,12 +932,13 @@ const ST = {
 function renderOrders(){
   const live = ORDERS.filter(o => ['new','prep','ready'].includes(o.status));
   const list = ordFilter === 'live' ? live : ORDERS;
-  const head = setupWarnings() + todaySummary() + `
+  const head = setupWarnings() + stockWarn() + todaySummary() + `
     <h2 class="sec">الطلبات</h2>
     <div class="bar">
       <button class="btn sm ${ordFilter==='live'?'red':'gh'}" onclick="ordFilter='live';render()">الحالية (${live.length})</button>
       <button class="btn sm ${ordFilter==='all'?'red':'gh'}" onclick="ordFilter='all';render()">الكل (${ORDERS.length})</button>
       <button class="btn sm gh" onclick="ding()">🔔 جرّب الصوت</button>
+      <a class="btn sm gh" href="driver.html" target="_blank">🛵 صفحة السائق</a>
     </div>
     <div class="bar prn">
       <span class="muted">🖨️ الطباعة:</span>
@@ -924,7 +965,7 @@ function renderOrders(){
     return `<div class="card ord ${cls}">
       <div class="top">
         <div><div class="who"><span class="ono">#${ordNo(o)}</span> ${esc(c.name||'—')} <span class="pill ${st.c}">${st.t}</span>${(() => { const n = custCount(o); return n >= 2 ? ` <span class="pill a" title="عدد طلبات هالزبون">⭐ ${n} طلبات</span>` : (n === 1 ? ' <span class="pill b">زبون جديد</span>' : ''); })()}</div>
-          <div class="when">${esc(when)} ${ageHtml(o)}</div></div>
+          <div class="when">${esc(when)} ${ageHtml(o)}</div>${c.sched ? `<div class="schb">⏰ <span>طلب مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}</div>
         <div class="tot">${money(o.total)}</div>
       </div>
       <div class="lines">${lines}${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}</div>
@@ -939,6 +980,8 @@ function renderOrders(){
         <span class="pill ${o.paid?'g':'a'}">${PAY_T[payOf(o)] || ''} · ${o.paid?'✅ مدفوع':'⏳ مش مدفوع'}</span>
         ${c.reward ? `<span class="pill r">🎁 هدية ولاء -₪${Number(c.reward)}</span>` : ''}
         ${c.wheel ? `<span class="pill r">🎡 جائزة: ${esc(c.wheel)}</span>` : ''}
+        ${c.bdayGift ? `<span class="pill r">🎂 <span>هدية عيد ميلاد</span>: <span>${esc(c.bdayGift)}</span></span>` : ''}
+        ${o.driver ? `<span class="pill g">🛵 <span>مع</span>: <span data-nt>${esc(o.driver)}</span></span>` : ''}
       </div>
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
@@ -967,6 +1010,7 @@ function setStatus(id, s){
   const o = ORDERS.find(x => x.id === id);
   db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
   if(s === 'done' && o && !o.lp) loyCount(o);
+  if(s === 'cancel' && o) stockBack(o);
   if(s === 'ready') notifyReady(id);
 }
 /* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
@@ -1070,9 +1114,10 @@ function ticketHtml(o){
         (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
     }).join('');
     parts.push(`<div class="tk"><div class="c">مطبخ · ${esc(time)}</div><div class="no">${no}</div>
-      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${lines}
+      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${c.sched ? `<div class="ty inv">⏰ <span>مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}${lines}
       <div class="payl">${PAY_T[payOf(o)] || ''} · ${o.paid ? '✅ مدفوع' : 'لسا مش مدفوع'}</div>
       ${c.wheel && c.wheelType === 'gift' ? `<div class="nt">🎁 هدية مع الطلب: ${esc(c.wheel)}</div>` : ''}
+      ${c.bdayGift && c.bdayType === 'gift' ? `<div class="nt">🎂 <span>هدية عيد ميلاد مع الطلب</span>: <span>${esc(c.bdayGift)}</span></div>` : ''}
       ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}</div>`);
   }
 
@@ -1084,6 +1129,7 @@ function ticketHtml(o){
     parts.push(`<div class="tk"><h3>${esc(SET.name||'')}</h3>
       <div class="c">${d.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG')} · ${esc(time)}</div>
       <div class="no" style="font-size:26px">${no}</div>
+      ${c.sched ? `<div class="ty">⏰ <span>مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}
       <table>${rows}</table>
       ${sub ? `<div class="sm"><span>المجموع</span><span>${sub.toFixed(2)} ₪</span></div>` : ''}
       ${disc ? `<div class="sm"><span>خصم${o.coupon?' ('+esc(o.coupon)+')':''}</span><span>-${disc.toFixed(2)} ₪</span></div>` : ''}
@@ -1155,11 +1201,15 @@ function prepMax(){
 }
 function ageHtml(o){
   if(!o.createdAtStr || !['new','prep','ready'].includes(o.status)) return '';
+  const sc = (o.customer || {}).sched;
+  if(sc && new Date(sc).getTime() > Date.now()) return `<span class="age sch" data-sch="${esc(sc)}"></span>`;
   return `<span class="age" data-t="${esc(o.createdAtStr)}" data-s="${esc(o.status)}"></span>`;
 }
 function tickAges(){
   const lim = prepMax(), now = Date.now();
   document.querySelectorAll('.age').forEach(el => {
+    if(el.dataset.sch){ const m = Math.max(0, Math.round((new Date(el.dataset.sch).getTime() - now) / 60000));
+      el.textContent = '⏰ ' + (m < 60 ? 'بعد ' + m + ' د' : 'بعد ' + Math.floor(m/60) + ' س ' + (m%60) + ' د'); el.classList.toggle('warn', m <= lim); return; }
     const m = Math.max(0, Math.floor((now - new Date(el.dataset.t).getTime()) / 60000));
     el.textContent = '⏱ ' + (m < 60 ? m + ' د' : Math.floor(m/60) + ' س ' + (m%60) + ' د');
     el.classList.toggle('late', el.dataset.s !== 'ready' && m >= lim);
@@ -1216,6 +1266,110 @@ function todaySummary(){
   `</div>`;
 }
 
+/* ============ 🕐 طلب مسبق ============ */
+const hm2 = t => String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+function schedTxt(iso){
+  const t = new Date(iso), a = new Date();
+  const k = Math.round((new Date(t.getFullYear(), t.getMonth(), t.getDate()) - new Date(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5);
+  return (k === 0 ? (LANG === 'he' ? 'היום' : 'اليوم') : k === 1 ? (LANG === 'he' ? 'מחר' : 'بكرا') : t.toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG', {weekday: 'short', day: 'numeric', month: 'numeric'})) + ' ' + hm2(t);
+}
+
+/* ============ 📦 المخزون ============ */
+const hasStock = it => it && it.stock != null && it.stock !== '';
+const lowAt = () => (SET.lowStock == null || SET.lowStock === '' ? 3 : Number(SET.lowStock));
+function stockPill(it){
+  if(!hasStock(it)) return '';
+  const n = Number(it.stock);
+  return n <= 0 ? '<span class="pill r">📦 نفذ</span>' : n <= lowAt() ? `<span class="pill a">📦 ضل ${n}</span>` : `<span class="pill">📦 ${n}</span>`;
+}
+function stockWarn(){
+  const out = ITEMS.filter(i => hasStock(i) && Number(i.stock) <= 0), low = ITEMS.filter(i => hasStock(i) && Number(i.stock) > 0 && Number(i.stock) <= lowAt());
+  if(!out.length && !low.length) return '';
+  return `<div class="warnbox stw" onclick="tab('items')">📦 ${out.length ? `<b>خلصوا:</b> ${out.map(i => esc(LX(i,'name'))).join('، ')}` : ''}${out.length && low.length ? '<br>' : ''}${low.length ? `<b>قرّبوا يخلصوا:</b> ${low.map(i => esc(LX(i,'name')) + ' (' + Number(i.stock) + ')').join('، ')}` : ''}</div>`;
+}
+const STK_BUSY = {};
+function stockNeed(o){
+  const need = {};
+  (o.items || []).forEach(i => { if(i.id && !i.deal) need[i.id] = (need[i.id] || 0) + (Number(i.qty) || 0); });
+  return need;
+}
+/* بننقص المخزون مرة وحدة لكل طلب (transaction — حتى لو اللوحة مفتوحة على كذا جهاز) */
+async function stockApply(o){
+  if(o.stk || STK_BUSY[o.id] || o.status === 'cancel') return;
+  const need = stockNeed(o), ids = Object.keys(need).filter(id => hasStock(ITEMS.find(x => x.id === id)));
+  if(!ids.length) return;
+  STK_BUSY[o.id] = true;
+  const alerts = [];
+  try{
+    await db.runTransaction(async tx => {
+      const oref = db.collection('orders').doc(o.id), od = await tx.get(oref);
+      if(!od.exists || od.data().stk) return;
+      const refs = ids.map(id => db.collection('items').doc(id)), docs = [];
+      for(const r of refs) docs.push(await tx.get(r));
+      docs.forEach((d, k) => {
+        if(!d.exists || !hasStock(d.data())) return;
+        const left = Math.max(0, Number(d.data().stock) - need[ids[k]]);
+        tx.update(refs[k], {stock: left});
+        if(left <= lowAt()) alerts.push((LX(d.data(), 'name') || '') + ': ' + left);
+      });
+      tx.update(oref, {stk: true});
+    });
+    if(alerts.length) toast('📦 ' + alerts.join(' · '));
+  }catch(e){ console.error('stock', e); }
+  delete STK_BUSY[o.id];
+}
+function stockSync(){
+  const since = Date.now() - 24 * 3600e3;
+  ORDERS.forEach(o => { if(!o.stk && o.status !== 'cancel' && o.createdAtStr && new Date(o.createdAtStr).getTime() > since) stockApply(o); });
+}
+/* إلغاء طلب = بترجع الكمية */
+async function stockBack(o){
+  if(!o || o.stk !== true) return;
+  const FV = firebase.firestore.FieldValue, need = stockNeed(o), b = db.batch();
+  Object.keys(need).forEach(id => { if(hasStock(ITEMS.find(x => x.id === id))) b.update(db.collection('items').doc(id), {stock: FV.increment(need[id])}); });
+  b.update(db.collection('orders').doc(o.id), {stk: 'back'});
+  try{ await b.commit(); }catch(e){ console.error('stock back', e); }
+}
+async function editStock(id){
+  const it = ITEMS.find(x => x.id === id); if(!it) return;
+  const v = prompt(trText('كم قطعة ضل؟ (فاضي = بلا حدود)') + '\n' + (LX(it,'name') || ''), hasStock(it) ? String(it.stock) : '');
+  if(v === null) return;
+  const t = v.trim();
+  if(t !== '' && !/^\d+$/.test(t)){ alert('اكتب رقم'); return; }
+  try{ await db.collection('items').doc(id).update({stock: t === '' ? null : Number(t)}); closeModal(); toast('تم ✓'); }
+  catch(e){ alert(e.message); }
+}
+
+/* ============ 🎂 أعياد الميلاد ============ */
+function bdayNext(b){
+  if(!/^\d{2}-\d{2}$/.test(b || '')) return null;
+  const [mm, dd] = b.split('-').map(Number), now = new Date(), t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let d = new Date(now.getFullYear(), mm - 1, dd); if(d < t0) d = new Date(now.getFullYear() + 1, mm - 1, dd);
+  return {date: d, days: Math.round((d - t0) / 864e5)};
+}
+function bdayGiftTxt(he){
+  const c = SET.bday || {};
+  const t = he ? (c.text_he || c.text) : c.text;
+  if(t) return t;
+  return c.type === 'percent' ? (he ? 'הנחה ' : 'خصم ') + Number(c.value || 0) + '%' : c.type === 'fixed' ? (he ? 'הנחה ₪' : 'خصم ₪') + Number(c.value || 0) : (he ? 'מתנה' : 'هدية');
+}
+function bdayMsg(x){
+  const he = x.lang === 'he', shop = he ? (SET.name_he || SET.name || '') : (SET.name || ''), url = location.origin + '/';
+  return he
+    ? `🎂 יום הולדת שמח ${x.name}! 🎉\nמכל הצוות של ${shop} — מחכה לך מתנה: ${bdayGiftTxt(true)} בהזמנה הבאה באתר 🍕\n${url}`
+    : `🎂 عيد ميلاد سعيد يا ${x.name}! 🎉\nمن كل فريق ${shop} — هديتك: ${bdayGiftTxt(false)} بتستناك على طلبك الجاي بالموقع 🍕\n${url}`;
+}
+function bdayListHtml(all){
+  if(!(SET.bday || {}).on) return '';
+  const up = all.map(x => Object.assign(x, {bn: bdayNext(x.bday)})).filter(x => x.bn && x.bn.days <= 7).sort((a, b) => a.bn.days - b.bn.days);
+  if(!up.length) return '';
+  return `<h2 class="sec">🎂 أعياد ميلاد قريبة <span class="muted">(${up.length})</span></h2><div class="card">
+    ${up.map(x => `<div class="bdl"><span class="b">${x.bn.days === 0 ? '🎉 اليوم' : x.bn.days === 1 ? 'بكرا' : `بعد ${x.bn.days} أيام`}</span>
+      <span style="flex:1"><b>${esc(x.name)}</b> <span class="muted ltr">${esc(x.bday.split('-').reverse().join('/'))}</span></span>
+      ${waPhone(x.phone) ? `<a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(x.phone)}?text=${encodeURIComponent(bdayMsg(x))}">💬 هنّيه</a>` : ''}</div>`).join('')}
+    <div class="muted" style="margin-top:6px">الهدية بتنضاف لحالها للزبون بالموقع بأيام عيد ميلاده. الرسالة بس تذكير لطيف.</div></div>`;
+}
+
 /* ========= تنبيهات الإعدادات ========= */
 function setupWarnings(){
   const w = [];
@@ -1262,7 +1416,7 @@ function renderItems(){
           ${it.tag?`<span class="pill a">${esc(it.tag)}</span>`:''}
           ${it.sale&&it.sale<it.price?`<span class="pill r">خصم</span>`:''}
           ${it.available===false?'<span class="pill">غير متوفر</span>':''}
-          ${!it.img?'<span class="pill">بدون صورة</span>':''}${it.dealOnly?'<span class="pill b">🎯 بس للعروض</span>':''}
+          ${!it.img?'<span class="pill">بدون صورة</span>':''}${it.dealOnly?'<span class="pill b">🎯 بس للعروض</span>':''}${stockPill(it)}
         </div>
       </div>
       <div class="pr">${it.sale&&it.sale<it.price
@@ -1294,6 +1448,7 @@ function itemMenu(id){
   const it = ITEMS.find(x=>x.id===id); if(!it) return;
   openModal('إجراءات', `
     <button class="btn full gh" style="margin-bottom:9px" onclick="closeModal();editItem('${id}')">✏️ تعديل</button>
+    <button class="btn full gh" style="margin-bottom:9px" onclick="editStock('${id}')">📦 المخزون${hasStock(it) ? ' (' + Number(it.stock) + ')' : ''}</button>
     <button class="btn full gh" style="margin-bottom:9px" onclick="toggleAvail('${id}')">${it.available===false?'✅ تفعيل الصنف':'⛔ إيقاف مؤقت'}</button>
     <button class="btn full gh" style="margin-bottom:9px" onclick="toggleBest('${id}')">${it.best?'➖ شيل من الأكثر مبيعاً':'🔥 ضيف للأكثر مبيعاً'}</button>
     <button class="btn full gh" style="margin-bottom:9px" onclick="dupItem('${id}')">📋 نسخة منه</button>
@@ -1365,6 +1520,8 @@ function editItem(id){
         `</div><button type="button" class="btn sm gh" style="margin-top:6px" onclick="ogResetOrder()">↺ حسب الترتيب العام</button>`
         : '<div class="muted">ما في مجموعات — أنشئها من تبويب الخيارات</div>'}
     </div>
+    <div class="f"><label>📦 المخزون — كم قطعة ضل؟ (فاضي = بلا حدود)</label><input id="iStock" type="number" min="0" inputmode="numeric" value="${hasStock(it) ? Number(it.stock) : ''}" placeholder="بلا حدود">
+      <div class="muted" style="margin-top:4px">لما يوصل 0 بيطلع للزبون "نفذت الكمية" وما بيقدر يطلبه. بينقص لحاله مع كل طلب.</div></div>
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
     <label class="chk"><input type="checkbox" id="iAvail" ${it.available!==false?'checked':''}><span>✅ متوفر للطلب</span></label>
     <label class="chk"><input type="checkbox" id="iDealOnly" ${it.dealOnly?'checked':''}><span>🎯 بس جوا العروض (مخفي من المنيو)</span></label>
@@ -1379,7 +1536,8 @@ function editItem(id){
       catId: val('iCat'), img: window._pickImg || '',
       tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
-      best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked, upsell: $('iUpsell').checked
+      best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked, upsell: $('iUpsell').checked,
+      stock: val('iStock') === '' ? null : Math.max(0, Math.floor(num('iStock')))
     };
     if(id) await db.collection('items').doc(id).update(data);
     else await db.collection('items').add(Object.assign(data, {order:(ITEMS.length+1)*10}));
@@ -1702,11 +1860,12 @@ function custList(){
   const src = CUST_ORDERS || ORDERS, by = {};
   src.forEach(o => {
     const c = o.customer || {}, k = phKey(c.phone); if(!k) return;
-    const x = by[k] || (by[k] = {phone:k, names:{}, orders:[], spent:0, last:'', addr:'', loc:null, zone:'', lang:''});
+    const x = by[k] || (by[k] = {phone:k, names:{}, orders:[], spent:0, last:'', addr:'', loc:null, zone:'', lang:'', bday:''});
     x.orders.push(o);
     if(c.name) x.names[c.name] = (x.names[c.name]||0) + 1;
     if(o.status !== 'cancel') x.spent += Number(o.total||0);
-    if(!x.last || String(o.createdAtStr) > x.last){ x.last = String(o.createdAtStr||''); x.addr = c.addr || x.addr; x.loc = c.loc || x.loc; x.zone = c.zone || x.zone; x.lang = c.lang || x.lang; }
+    if(!x.last || String(o.createdAtStr) > x.last){ x.last = String(o.createdAtStr||''); x.addr = c.addr || x.addr; x.loc = c.loc || x.loc; x.zone = c.zone || x.zone; x.lang = c.lang || x.lang; x.bday = c.bday || x.bday; }
+    else if(!x.bday && c.bday) x.bday = c.bday;
   });
   return Object.values(by).map(x => (x.name = Object.entries(x.names).sort((a,b) => b[1]-a[1]).map(e => e[0])[0] || '—', x))
     .sort((a,b) => b.last.localeCompare(a.last));
@@ -1737,7 +1896,7 @@ async function renderCust(){
   const q = custQ.trim().toLowerCase();
   const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
-  $('vCust').innerHTML = reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
+  $('vCust').innerHTML = bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
       <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
@@ -1759,10 +1918,12 @@ async function renderCust(){
             ${x.addr?`<span>📍 ${esc(x.addr)}</span>`:''}
             ${x.zone?`<span class="pill">🗺️ ${esc(x.zone)}</span>`:''}
             ${x.loc?`<a href="${mapsLink(x.loc)}" target="_blank">🗺️ الخريطة</a> <a href="${wazeLink(x.loc)}" target="_blank">🚗 Waze</a>`:''}
+            ${x.bday?`<span class="pill a">🎂 <span class="ltr">${esc(x.bday.split('-').reverse().join('/'))}</span></span>`:''}
           </div>
           ${(() => { const pz = []; x.orders.forEach(o => { const pp = prizeParts(o), c = o.customer || {};
               if(pp.reward) pz.push(['🎁 هدية الولاء', o.createdAtStr, pp.reward]);
-              if(pp.wheel || pp.gift) pz.push(['🎡 ' + (c.wheel || ''), o.createdAtStr, pp.wheel + pp.gift]); });
+              if(pp.wheel || pp.gift) pz.push(['🎡 ' + (c.wheel || ''), o.createdAtStr, pp.wheel + pp.gift]);
+              if(c.bdayGift) pz.push(['🎂 ' + c.bdayGift, o.createdAtStr, pp.bdayD + pp.bdayG]); });
             return pz.length ? `<div class="cpz"><b>🏆 الجوائز اللي ربحها:</b>${pz.map(p => `<div>${esc(p[0])} · ${esc(d(p[1]))} · <span class="ltr">${rmoney(p[2])}</span></div>`).join('')}<div class="muted">المجموع: <span class="ltr">${rmoney(pz.reduce((s, p) => s + p[2], 0))}</span></div></div>` : ''; })()}
           <div class="acts" style="margin:8px 0">
             <button class="btn sm ${isBlocked(x.phone)?'gh':'gh'}" onclick="toggleBlock('${x.phone}')">${isBlocked(x.phone)?'✅ فك الحظر':'🚫 حظر'}</button>
@@ -1847,32 +2008,34 @@ function prizeParts(o){
     else if(c.wheelType === 'fixed') wheel = Math.min(Number(c.wheelVal || 0), sub);
   }
   const gift = c.wheel && c.wheelType === 'gift' ? Number(c.wheelVal || 0) : 0;
-  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel) * 100) / 100);
-  return {reward, wheel, gift, coupon};
+  const bdayD = c.bdayGift ? Number(c.bdayDisc || 0) : 0, bdayG = c.bdayGift && c.bdayType === 'gift' ? Number(c.bdayVal || 0) : 0;
+  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel - bdayD) * 100) / 100);
+  return {reward, wheel, gift, coupon, bdayD, bdayG};
 }
 function calcReport(list){
   const ok = list.filter(o => o.status !== 'cancel');
   const vr = vatRate() / 100;
-  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0,
+  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0,
     byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set()};
   ok.forEach(o => {
     const t = Number(o.total || 0), c = o.customer || {}, pp = prizeParts(o);
     R.gross += t; R.sub += Number(o.subtotal || 0); R.fees += Number(o.fee || 0); R.disc += Number(o.discount || 0);
-    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift;
+    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift; R.bdayD += pp.bdayD; R.bdayG += pp.bdayG;
     const pk = c.pay || 'cash'; R.byPay[pk] = R.byPay[pk] || [0, 0]; R.byPay[pk][0]++; R.byPay[pk][1] += t;
     const ty = o.type === 'pickup' ? 'pickup' : 'delivery'; R.byType[ty][0]++; R.byType[ty][1] += t;
     if(c.zone){ R.byZone[c.zone] = R.byZone[c.zone] || [0, 0]; R.byZone[c.zone][0]++; R.byZone[c.zone][1] += t; }
     const d = new Date(o.createdAtStr); R.byHour[d.getHours()]++;
     const dk = d.getDate();
     const D = R.days[dk] = R.days[dk] || {n: 0, gross: 0, fees: 0, disc: 0, prizes: 0};
-    D.n++; D.gross += t; D.fees += Number(o.fee || 0); D.disc += Number(o.discount || 0); D.prizes += pp.reward + pp.wheel + pp.gift;
+    D.n++; D.gross += t; D.fees += Number(o.fee || 0); D.disc += Number(o.discount || 0); D.prizes += pp.reward + pp.wheel + pp.gift + pp.bdayD + pp.bdayG;
     (o.items || []).forEach(i => { if(i.sub) return; const k = iName(i); R.items[k] = R.items[k] || [0, 0]; R.items[k][0] += Number(i.qty) || 0; R.items[k][1] += (Number(i.unit) || 0) * (Number(i.qty) || 0); });
     if(!o.paid) R.unpaid += t;
     if(phKey(c.phone)) R.customers.add(phKey(c.phone));
     if(pp.reward) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎁 ' + (LANG === 'he' ? 'מתנת מועדון' : 'هدية الولاء'), cost: pp.reward, no: o.id});
     if(pp.wheel || pp.gift) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎡 ' + c.wheel, cost: pp.wheel + pp.gift, no: o.id});
+    if(c.bdayGift) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎂 ' + c.bdayGift, cost: pp.bdayD + pp.bdayG, no: o.id});
   });
-  R.prizeCost = R.reward + R.wheel + R.gift;
+  R.prizeCost = R.reward + R.wheel + R.gift + R.bdayD + R.bdayG;
   R.net = R.gross / (1 + vr); R.vat = R.gross - R.net;
   R.avg = R.count ? R.gross / R.count : 0;
   return R;
@@ -1910,10 +2073,11 @@ function reportDocHtml(R, ym){
       <tr><td>خصومات الكوبونات</td><td class="n neg">${R.coupon ? '-' : ''}${rmoney(R.coupon)}</td></tr>
       <tr><td>🎁 هدايا الولاء</td><td class="n neg">${R.reward ? '-' : ''}${rmoney(R.reward)}</td></tr>
       <tr><td>🎡 خصومات العجلة</td><td class="n neg">${R.wheel ? '-' : ''}${rmoney(R.wheel)}</td></tr>
+      ${R.bdayD ? `<tr><td>🎂 خصومات عيد الميلاد</td><td class="n neg">-${rmoney(R.bdayD)}</td></tr>` : ''}
       <tr class="b"><td>مجموع المدخول (شامل מע״מ)</td><td class="n">${rmoney(R.gross)}</td></tr>
       <tr><td>מע״מ ${vatRate()}%</td><td class="n">${rmoney(R.vat)}</td></tr>
       <tr class="b"><td>المدخول قبل מע״מ</td><td class="n">${rmoney(R.net)}</td></tr>
-      ${R.gift ? `<tr><td>🎁 هدايا أصناف ببلاش (تكلفة تقديرية)</td><td class="n neg">${rmoney(R.gift)}</td></tr>` : ''}
+      ${R.gift + R.bdayG ? `<tr><td>🎁 هدايا أصناف ببلاش (تكلفة تقديرية)</td><td class="n neg">${rmoney(R.gift + R.bdayG)}</td></tr>` : ''}
       <tr><td>طلبات ملغية (مش محسوبة)</td><td class="n">${R.cancel}</td></tr>
     </table>
     <h3>💳 حسب طريقة الدفع</h3>
@@ -2013,6 +2177,9 @@ async function repPdfBlob(){
   wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:820px;background:#fff';
   wrap.innerHTML = '<style>' + REP_CSS.replace(/body\{[^}]*\}/, '') + '</style>' + $('repDoc').outerHTML;
   wrap.setAttribute('dir', 'rtl'); document.body.appendChild(wrap);
+  /* html2canvas بيضيّع المسافات بالعربي/العبري — منبدّلها بمسافة ثابتة */
+  (function fixSp(n){ if(n.nodeType === 3){ if(!n.nodeValue.trim()) return; n.nodeValue = n.nodeValue.replace(/([\p{L}\p{N}\p{Extended_Pictographic}₪)%]) (?=[\p{L}\p{N}\p{Extended_Pictographic}₪(])/gu, '$1\u00a0'); return; }
+    if(n.nodeType === 1 && n.tagName !== 'STYLE') n.childNodes.forEach(fixSp); })(wrap);
   try{
     return await window.html2pdf().set({margin: [8, 8, 10, 8], filename: repFileName('pdf'), image: {type: 'jpeg', quality: 0.96},
       html2canvas: {scale: 2.2, useCORS: true, backgroundColor: '#ffffff'}, jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
@@ -2029,7 +2196,7 @@ async function repXlsxBlob(){
   const wb = X.utils.book_new(); wb.Workbook = {Views: [{RTL: true}]};
   const sum = [[tr('تقرير شهري') + ' — ' + (LX(SET,'name') || ''), monthName(REP.month)], SET.osek ? ['עוסק / ח.פ', SET.osek] : [], [],
     [tr('المبيعات (قبل الخصومات والتوصيل)'), r2(R.sub)], [tr('رسوم التوصيل'), r2(R.fees)], [tr('خصومات الكوبونات'), -r2(R.coupon)],
-    [tr('هدايا الولاء'), -r2(R.reward)], [tr('خصومات العجلة'), -r2(R.wheel)], [tr('مجموع المدخول (شامل מע״מ)'), r2(R.gross)],
+    [tr('هدايا الولاء'), -r2(R.reward)], [tr('خصومات العجلة'), -r2(R.wheel)], [tr('خصومات عيد الميلاد'), -r2(R.bdayD)], [tr('مجموع المدخول (شامل מע״מ)'), r2(R.gross)],
     ['מע״מ ' + vatRate() + '%', r2(R.vat)], [tr('المدخول قبل מע״מ'), r2(R.net)], [tr('طلبات'), R.count], [tr('معدل الطلب'), r2(R.avg)],
     [tr('تكلفة الجوائز'), r2(R.prizeCost)], [tr('لسا مش مدفوع'), r2(R.unpaid)], [], [tr('حسب طريقة الدفع')],
     ...Object.entries(R.byPay).map(([k, v]) => [tr(PAY_T[k] || k), v[0], r2(v[1])])];
@@ -2069,19 +2236,28 @@ function repSummary(){
   return L.join('\n');
 }
 function tr2(s){ return typeof trText === 'function' ? trText(s) : s; }
+/* المشاركة بتصير بخطوتين: بنجهّز الملفات، وبعدين كبسة جديدة "شارك" (المتصفح بيرفض المشاركة إذا الكبسة قديمة) */
+let SHARE_FILES = null;
 async function repShare(){
   try{
     toast('⏳ جاري تجهيز الملفات...');
-    const files = [new File([await repPdfBlob()], repFileName('pdf'), {type: 'application/pdf'}),
+    SHARE_FILES = [new File([await repPdfBlob()], repFileName('pdf'), {type: 'application/pdf'}),
                    new File([await repXlsxBlob()], repFileName('xlsx'), {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})];
-    if(navigator.canShare && navigator.canShare({files})){
-      await navigator.share({files, title: repFileName('pdf'), text: repSummary()});
-    }else{
-      files.forEach(f => dl(f, f.name));
-      alert('نزّلتلك الملفين (PDF + Excel).\nهلأ افتح واتساب أو الإيميل وأرفقهم من مجلد التنزيلات (הורדות) — أو استعمل زر "💬 ملخص بالواتساب".');
-    }
+    const can = !!(navigator.canShare && navigator.canShare({files: SHARE_FILES}));
+    openModal('📤 مشاركة التقرير', `<div class="muted" style="margin-bottom:12px">الملفات جاهزة: <b class="ltr">${esc(repFileName('pdf'))}</b> + <b class="ltr">${esc(repFileName('xlsx'))}</b></div>
+      ${can ? '<button class="btn red full" style="margin-bottom:9px" onclick="repShareNow()">📤 شارك هلأ (واتساب / إيميل)</button>' : ''}
+      <button class="btn gh full" style="margin-bottom:9px" onclick="repShareDl()">⬇️ نزّل الملفين</button>
+      <button class="btn gh full" style="margin-bottom:9px" onclick="repShareDl();repWa()">💬 نزّل وافتح واتساب</button>
+      <button class="btn gh full" onclick="repShareDl();repMail()">✉️ نزّل وافتح الإيميل</button>
+      <div class="muted" style="margin-top:10px">بالكمبيوتر: نزّل الملفين، وبعدين بالواتساب أو الإيميل اكبس 📎 وأرفقهم من مجلد ההורדות.</div>`, null);
   }catch(e){ if(e && e.name !== 'AbortError') alert(e.message); }
 }
+async function repShareNow(){
+  if(!SHARE_FILES) return;
+  try{ await navigator.share({files: SHARE_FILES, title: repFileName('pdf'), text: repSummary()}); closeModal(); }
+  catch(e){ if(e && e.name === 'AbortError') return; repShareDl(); alert('المشاركة مش مدعومة هون — نزّلتلك الملفين، أرفقهم من مجلد ההורדות.'); }
+}
+function repShareDl(){ (SHARE_FILES || []).forEach(f => dl(f, f.name)); toast('⬇️ تم التنزيل'); }
 function repWa(){ window.open('https://wa.me/?text=' + encodeURIComponent(repSummary()), '_blank'); }
 function repMail(){
   const to = SET.reportEmail || '';
@@ -2766,6 +2942,32 @@ function renderSet(){
     </div>
     ${blockedHtml()}
     <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🕐 طلب مسبق</label>
+      <label class="chk"><input type="checkbox" id="poOn" ${(SET.preorder||{}).on?'checked':''}><span>الزبون بيقدر يطلب لساعة معيّنة (حتى لو المحل مسكّر هلأ)</span></label>
+      <div class="f3">
+        <div class="f"><label>كم يوم لقدّام؟ (0 = اليوم بس)</label><input id="poDays" type="number" min="0" max="6" value="${(SET.preorder||{}).days==null?1:(SET.preorder||{}).days}"></div>
+        <div class="f"><label>أقل وقت قبل الطلب (دقايق)</label><input id="poLead" type="number" min="10" value="${(SET.preorder||{}).lead||30}"></div>
+      </div>
+      <div class="muted">الأوقات بتطلع كل ربع ساعة حسب ساعات الدوام. الطلب المسبق بيطلع عندك بشارة زرقا ⏰ وبعدّاد لوقته.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">📦 المخزون</label>
+      <div class="f"><label>نبّهني لما يضل من الصنف أقل من</label><input id="sLow" type="number" min="0" value="${lowAt()}"></div>
+      <div class="muted">الكمية لكل صنف بتحطها من ✏️ تعديل الصنف أو من ⋯ ← 📦 المخزون. بتنقص لحالها مع كل طلب، وبترجع إذا لغيت الطلب.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎂 هدية عيد الميلاد</label>
+      <label class="chk"><input type="checkbox" id="bdOn" ${(SET.bday||{}).on?'checked':''}><span>تفعيل (الزبون بيسجّل تاريخ ميلاده وبتوصله الهدية لحالها)</span></label>
+      <div class="f3">
+        <div class="f"><label>نوع الهدية</label><select id="bdType">${[['percent','خصم %'],['fixed','خصم ₪'],['gift','هدية (صنف ببلاش)']].map(([k,t])=>`<option value="${k}" ${((SET.bday||{}).type||'percent')===k?'selected':''}>${t}</option>`).join('')}</select></div>
+        <div class="f"><label>القيمة (% أو ₪ أو تكلفة الهدية)</label><input id="bdVal" type="number" min="0" value="${(SET.bday||{}).value==null?15:(SET.bday||{}).value}"></div>
+        <div class="f"><label>صالحة كم يوم قبل وبعد؟</label><input id="bdDays" type="number" min="0" max="15" value="${(SET.bday||{}).days==null?3:(SET.bday||{}).days}"></div>
+      </div>
+      <div class="f"><label>شو الهدية؟ (بتطلع للزبون)</label><input id="bdTxt" value="${esc((SET.bday||{}).text||'')}" placeholder="بيتسا شخصية ببلاش"></div>
+      ${heField('bdTxtHe', (SET.bday||{}).text_he, 'الهدية بالعبري')}
+      <div class="muted">مرة بالسنة لكل زبون. التاريخ لازم يكون مسجّل قبل بأسبوعين على الأقل (عشان ما حدا يغيّر تاريخه ويستغل). تكلفتها بتنحسب بالتقارير مع الجوائز.</div>
+    </div>
+    <div class="card">
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎁 نقاط الولاء</label>
       <label class="chk"><input type="checkbox" id="lyOn" ${(SET.loyalty||{}).on?'checked':''}><span>تفعيل نقاط الولاء</span></label>
       <div class="f3">
@@ -2824,6 +3026,9 @@ async function saveSet(){
     payMethods: Object.fromEntries(Object.keys(PAY_T).map(k => [k, !!($('pm_' + k) && $('pm_' + k).checked)])),
     bitPhone: val('sBit').replace(/[^\d]/g, ''), payboxLink: val('sPaybox'), onlineUrl: val('sOnline'),
     osek: val('sOsek'), vat: num('sVat'), reportEmail: val('sRepMail'),
+    preorder: {on: $('poOn').checked, days: Math.min(6, Math.max(0, Math.floor(num('poDays')))), lead: Math.max(10, num('poLead') || 30)},
+    lowStock: Math.max(0, num('sLow')),
+    bday: {on: $('bdOn').checked, type: $('bdType').value, value: num('bdVal'), days: Math.min(15, Math.max(0, Math.floor(num('bdDays')))), text: val('bdTxt'), text_he: val('bdTxtHe')},
     loyalty: {on: $('lyOn').checked, every: Math.max(2, num('lyEvery') || 10), value: num('lyVal') || 0, text: val('lyTxt'), text_he: val('lyTxtHe')},
     wheel: {on: $('whOn').checked, prizes: [...document.querySelectorAll('#whRows .whr')].map(r => ({
       label: r.querySelector('.wl').value.trim(), label_he: r.querySelector('.wlh').value.trim(), type: r.querySelector('.wt').value,
@@ -2831,6 +3036,7 @@ async function saveSet(){
   };
   if(data.wheel.on && data.wheel.prizes.filter(p => p.chance > 0).length < 2){ alert('العجلة بدها جائزتين على الأقل'); return; }
   if(data.wheel.prizes.some(p => p.type === 'percent' && p.value > 50)){ alert('خصم العجلة لازم يكون 50% أو أقل'); return; }
+  if(data.bday.type === 'percent' && data.bday.value > 50){ alert('خصم عيد الميلاد لازم يكون 50% أو أقل'); return; }
   if(data.onlineUrl && !/^https:\/\//i.test(data.onlineUrl)){ alert('رابط الدفع لازم يبلّش بـ https://'); return; }
   if(data.payboxLink && !/^https:\/\//i.test(data.payboxLink)){ alert('رابط PayBox لازم يبلّش بـ https://'); return; }
   try{ await db.collection('settings').doc('main').set(data, {merge:true}); toast('تم الحفظ ✓'); }
