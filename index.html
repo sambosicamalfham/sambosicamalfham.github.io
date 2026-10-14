@@ -406,6 +406,11 @@ a.cta{text-decoration:none;justify-content:center}
 .cat.dealchip .bx{background:linear-gradient(135deg,#e3242b,#ff7a3d);color:#fff;border-color:transparent}
 .cat.dealchip .lb{color:var(--red);font-weight:900}
 .deal .fbadge{display:inline-block;background:#f5b301;color:#1a1a1a;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-bottom:6px}
+.dscroll{display:flex;gap:10px;overflow-x:auto;padding:8px 16px 10px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.dscroll::-webkit-scrollbar{display:none}
+.dscroll .dtile{flex:0 0 44%;max-width:210px;scroll-snap-align:start}
+.dscroll .dtile .ph{height:96px}
+.dtile .ft s{color:var(--muted);font-size:11px;font-weight:600}
 .dgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .dtile{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);text-align:start;display:flex;flex-direction:column;font-family:inherit;padding:0;border:none}
 .dtile .ph{height:120px;position:relative;background:linear-gradient(135deg,#2a1a12,#1a1a1a);display:grid;place-items:center;overflow:hidden}
@@ -1158,8 +1163,8 @@ function renderHome(){
   const actD = activeDeals();
   if(actD.length){
     const feat = actD.filter(d => d.featured);
-    const show = (feat.length ? feat : actD).slice(0, 3);
-    html += '<div style="height:6px"></div>' + show.map(dealBig).join('<div style="height:12px"></div>');
+    const show = feat.concat(actD.filter(d => !d.featured)).slice(0, 10);
+    html += '<div class="dscroll">' + show.map(dealTile).join('') + '</div>';
     if(actD.length > show.length)
       html += '<button class="alldeals" onclick="go(\'deals\')"><span>🎯 كل العروض</span><b>' + actD.length + '</b><span class="ar">←</span></button>';
   }
@@ -1762,7 +1767,7 @@ function dealTile(d){
       (d.featured ? '<span class="fb">⭐</span>' : '') + dealTimer(d) + '</span>' +
     '<span class="bd"><span class="nm">' + esc(LX(d,'title')) + '</span>' +
     '<span class="ds">' + esc(LX(d,'desc')) + '</span>' +
-    '<span class="ft"><b class="ltr">₪' + Number(d.price) + '</b><span class="go">' + (dealSlots(d).length ? 'اختار' : '+') + '</span></span></span></button>';
+    '<span class="ft"><b class="ltr">₪' + Number(d.price) + (Number(d.was) > Number(d.price) ? ' <s>₪' + Number(d.was) + '</s>' : '') + '</b><span class="go">' + (dealSlots(d).length ? 'اختار' : '+') + '</span></span></span></button>';
 }
 function renderDeals(){
   const ds = activeDeals();
