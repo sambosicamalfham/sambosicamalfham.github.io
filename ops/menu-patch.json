@@ -1,5 +1,5 @@
 {
- "_note": "بيندمج جوّا Firebase حسب الـ id — ما بيمسح إشي. (المشروبات، الإضافات الجانبية، الصلصات كأصناف بالمنيو) + تورتيا نباتية بقسم لحال.",
+ "_note": "بيندمج جوّا Firebase حسب الـ id — ما بيمسح إشي. (مشروبات/إضافات/صلصات كأصناف + المكسيكاني مقسّم: عادي، كفول، مشولاش، مروباع، نباتي)",
  "categories": {
   "cat_d15": {
    "name": "مشروبات 1.5 لتر",
@@ -23,7 +23,30 @@
    "name": "تورتيا نباتية",
    "name_he": "טורטיה צמחונית",
    "icon": "🌯",
-   "order": 65
+   "order": 64
+  },
+  "c2": {
+   "name": "مكسيكاني عادي",
+   "name_he": "מקסיקני רגיל",
+   "order": 60
+  },
+  "cat_kfol": {
+   "name": "مكسيكاني كفول",
+   "name_he": "מקסיקני כפול",
+   "icon": "🌯",
+   "order": 61
+  },
+  "cat_mshl": {
+   "name": "مكسيكاني مشولاش",
+   "name_he": "מקסיקני משולש",
+   "icon": "🌯",
+   "order": 62
+  },
+  "cat_mrb": {
+   "name": "مكسيكاني مروباع",
+   "name_he": "מקסיקני מרובע",
+   "icon": "🌯",
+   "order": 63
   }
  },
  "items": {
@@ -585,6 +608,51 @@
   },
   "fvSM0FMXCHNuEefGzHsM": {
    "catId": "cat_veg"
+  },
+  "Nvxe4j2EqxVxOPZNpvNg": {
+   "catId": "cat_kfol"
+  },
+  "NAqSbtTEKfbjj2jceADN": {
+   "catId": "cat_kfol"
+  },
+  "FQj0b1V6zLHH5gaipDTB": {
+   "catId": "cat_kfol"
+  },
+  "VMYjqhsP5bpuF4Ix6NXv": {
+   "catId": "cat_kfol"
+  },
+  "c4UMu8Izey0klNy9nUFX": {
+   "catId": "cat_kfol"
+  },
+  "PdyZF2QiKmSa6eAu37PQ": {
+   "catId": "cat_mshl"
+  },
+  "eqRvqL8mOE29qQnATiZx": {
+   "catId": "cat_mshl"
+  },
+  "UbiWA6BWoIifOVxAqnjK": {
+   "catId": "cat_mshl"
+  },
+  "P3ToJfORmnZDsCr5B7m3": {
+   "catId": "cat_mshl"
+  },
+  "oyE7DUtLh6Xn0TdLN3zG": {
+   "catId": "cat_mshl"
+  },
+  "WYXywR1F83wxKPYKxsUY": {
+   "catId": "cat_mrb"
+  },
+  "PBruLuoQRXoxaZBDPVfr": {
+   "catId": "cat_mrb"
+  },
+  "kNS4PHkk7DFBdN3cYWki": {
+   "catId": "cat_mrb"
+  },
+  "CAJqejS7m7xjarktKhoR": {
+   "catId": "cat_mrb"
+  },
+  "Uij9k9gWnenlCN75QZDZ": {
+   "catId": "cat_mrb"
   }
  }
 }
