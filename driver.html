@@ -57,6 +57,7 @@ main{padding:14px 14px;max-width:640px;margin:0 auto}
 .muted{color:var(--muted)}
 .pill{display:inline-block;background:#f0eeec;border-radius:9px;padding:2px 9px;font-size:12.5px;font-weight:800}
 .pill.g{background:#e6f6ec;color:var(--green)}.pill.a{background:#fff3d6;color:#8a5a00}.pill.b{background:#e8f0fe;color:#174ea6}.pill.r{background:#ffe9eb;color:#b3141b}
+.dnote{background:#fff4d6;border:2px solid #f5b301;border-radius:12px;padding:8px 11px;font-size:16px;font-weight:800;margin:4px 0 6px;line-height:1.5}
 .addr{font-size:17px;font-weight:800;margin:10px 0 4px;line-height:1.5}
 .note{background:#fff8e1;border-radius:10px;padding:7px 10px;font-size:14px;margin:6px 0;font-weight:700}
 .money{margin:10px 0;border-radius:12px;padding:10px 12px;font-weight:900;font-size:17px;display:flex;justify-content:space-between;align-items:center}
@@ -266,6 +267,7 @@ function card(o, mode){
     <div style="margin-top:8px">${o.status === 'ready' ? `<span class="pill g">✅ ${t('جاهز')}</span>` : o.status === 'prep' ? `<span class="pill a">👨‍🍳 ${t('عم يتحضّر')}</span>` : `<span class="pill r">🆕 ${t('طلب جديد')}</span>`}</div>
     ${c.sched ? `<div style="margin-top:8px"><span class="pill b">⏰ ${t('طلب مسبق')}: ${esc(schedTxt(c.sched))}</span></div>` : ''}
     <div class="addr">📍 ${esc(c.addr || '—')}</div>
+    ${c.dnote ? `<div class="dnote">🛵 ${esc(c.dnote)}</div>` : ''}
     ${c.zone ? `<span class="pill">🗺️ ${esc(c.zone)}</span>` : ''}
     ${o.note ? `<div class="note">📝 ${esc(o.note)}</div>` : ''}
     <div class="money ${due ? 'due' : 'paid'}"><span>${due ? '💰 ' + t('لازم تجمع') : '✅ ' + t('مدفوع')} · ${esc(payT(c.pay))}</span><span class="ltr">₪${Number(o.total || 0).toFixed(2)}</span></div>

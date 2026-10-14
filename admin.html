@@ -330,6 +330,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
 .dvshop{font-size:24px;text-align:center}
 .dvpop{line-height:1.6;font-family:inherit}.dvpop hr{border:0;border-top:1px solid #eee;margin:6px 0}
 .dvn{background:#1e8e4e;color:#fff;border-radius:9px;padding:0 6px;font-style:normal;font-size:11px;margin-inline-start:3px}
+.rvp{display:flex;align-items:center;gap:10px;margin-top:8px}.rvp img{width:84px;height:84px;object-fit:cover;border-radius:10px;cursor:zoom-in}
 </style>
 </head>
 <body>
@@ -968,7 +969,9 @@ function onLogin(u){
     try{ numSync(); }catch(e){}
     try{ dailySync(); }catch(e){}
     try{ onceSync(); }catch(e){}
+    try{ loadSync(); }catch(e){}
   }, err => console.error(err));
+  setInterval(() => { try{ loadSync(true); }catch(e){} }, 10 * 60e3);
 }
 
 /* صوت التنبيه */
@@ -1115,12 +1118,13 @@ const ST = {
 function renderOrders(){
   const live = ORDERS.filter(o => ['new','prep','ready'].includes(o.status));
   const list = ordFilter === 'live' ? live : ORDERS;
-  const head = outsideHtml() + extraWarn() + setupWarnings() + stockWarn() + todaySummary() + `
+  const head = outsideHtml() + extraWarn() + setupWarnings() + stockWarn() + repRemind() + todaySummary() + `
     <h2 class="sec">الطلبات</h2>
     <div class="bar">
       <button class="btn sm ${ordFilter==='live'?'red':'gh'}" onclick="ordFilter='live';render()">الحالية (${live.length})</button>
       <button class="btn sm ${ordFilter==='all'?'red':'gh'}" onclick="ordFilter='all';render()">الكل (${ORDERS.length})</button>
       <button class="btn sm gh" onclick="ding()">🔔 جرّب الصوت</button>
+      <button class="btn sm gh" onclick="sendReport()">📲 تقرير اليوم بالواتساب</button>
       <a class="btn sm gh" href="driver.html" target="_blank">🛵 صفحة السائق</a>
     </div>
     <div class="bar prn">
@@ -1163,6 +1167,7 @@ function renderOrders(){
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
         ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
         ${c.addr?`<span>📍 ${esc(c.addr)}</span>`:''}
+        ${c.dnote?`<span class="pill a">🛵 <span>للسائق</span>: ${esc(c.dnote)}</span>`:''}
         ${c.zone?`<span class="pill">🗺️ ${esc(c.zone)}</span>`:''}
         ${c.loc?`<a href="${mapsLink(c.loc)}" target="_blank">🗺️ الخريطة</a><a href="${wazeLink(c.loc)}" target="_blank">🚗 Waze</a>`:''}
         <span class="muted">توصيل: <span class="ltr">${Number(o.fee||0)} ₪</span></span>
@@ -1317,7 +1322,7 @@ function ticketHtml(o){
       ${c.bdayGift && c.bdayType === 'gift' ? `<div class="nt">🎂 <span>هدية عيد ميلاد مع الطلب</span>: <span>${esc(c.bdayGift)}</span></div>` : ''}
       ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}
       <div class="inf">👤 ${esc(c.name||'')} · <span dir="ltr">${esc(c.phone||'')}</span>
-        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}</div>
+        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.dnote ? '<br>🛵 <b>'+esc(c.dnote)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}</div>
       ${invoiceHtml(o)}</div>`);
     return ticketDoc(parts, no);
   }
@@ -1356,7 +1361,7 @@ function ticketHtml(o){
       <div class="sm"><span>الدفع</span><span>${PAY_T[payOf(o)] || ''}</span></div>
       ${o.paid ? '<div class="ty">✅ مدفوع</div>' : `<div class="ty inv">لازم تجمع: ${Number(o.total||0).toFixed(2)} ₪</div>`}
       <div class="inf">👤 ${esc(c.name||'')}<br>📞 ${esc(c.phone||'')}
-        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
+        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.dnote ? '<br>🛵 <b>'+esc(c.dnote)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
         ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
   }
   return ticketDoc(parts, no);
@@ -1640,6 +1645,59 @@ function todaySummary(){
       const ks = Object.keys(by); return ks.length ? box(ks.map(k => `<span class="pm">${(PAY_T[k]||k).split(' ')[0]} <span class="ltr">${by[k].toFixed(0)}₪</span></span>`).join(' '), 'حسب طريقة الدفع') : ''; })() +
     box(`<span class="ltr">${t.filter(o => !o.paid && o.status !== 'cancel').reduce((s,o) => s + Number(o.total||0), 0).toFixed(0)} ₪</span>`, 'لسا مش مدفوع') +
   `</div>`;
+}
+
+
+/* ============ ⏱️ ضغط الطلبات — بنكتب عدد الطلبات الشغّالة عشان الموقع يزيد وقت التحضير لحاله ============ */
+let LOAD_W = null;
+function loadSync(tick){
+  if(!db || !ORDERS) return;
+  const n = ORDERS.filter(o => ['new', 'prep'].includes(o.status)).length;
+  const old = SET.load || {}, age = Date.now() - new Date(old.at || 0).getTime();
+  if(LOAD_W === n && !(tick && age > 50 * 60e3)) return;
+  if(Number(old.n) === n && age < 50 * 60e3 && LOAD_W !== null){ LOAD_W = n; return; }
+  LOAD_W = n;
+  db.collection('settings').doc('main').set({load: {n, at: new Date().toISOString()}}, {merge: true}).catch(() => {});
+}
+
+/* ============ 📲 تقرير آخر اليوم على الواتساب ============ */
+function reportText(){
+  const k = dayKey(new Date().toISOString());
+  const t = ORDERS.filter(o => o.createdAtStr && dayKey(o.createdAtStr) === k && o.status !== 'cancel');
+  const cx = ORDERS.filter(o => o.createdAtStr && dayKey(o.createdAtStr) === k && o.status === 'cancel').length;
+  const rev = t.reduce((s, o) => s + Number(o.total || 0), 0);
+  const cnt = {};
+  t.forEach(o => (o.items || []).forEach(i => { if(i.sub) return; const n = iName(i); cnt[n] = (cnt[n] || 0) + (Number(i.qty) || 0); }));
+  const top = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const del = t.filter(o => o.type !== 'pickup').length;
+  const before = new Set(ORDERS.filter(o => o.createdAtStr && dayKey(o.createdAtStr) < k).map(o => phKey((o.customer || {}).phone)));
+  const newC = new Set(t.map(o => phKey((o.customer || {}).phone)).filter(p => p && !before.has(p))).size;
+  const by = {}; t.forEach(o => { const p = payOf(o); by[p] = (by[p] || 0) + Number(o.total || 0); });
+  const unpaid = t.filter(o => !o.paid).reduce((s, o) => s + Number(o.total || 0), 0);
+  const d = new Date().toLocaleDateString('ar-EG', {weekday: 'long', day: 'numeric', month: 'numeric'});
+  return ['📊 *تقرير اليوم* — ' + d, '',
+    '🧾 الطلبات: *' + t.length + '*' + (cx ? ' (ملغي: ' + cx + ')' : ''),
+    '💰 الدخل: *₪' + rev.toFixed(0) + '*', '📈 معدل الطلب: ₪' + (t.length ? (rev / t.length).toFixed(0) : 0),
+    '🛵 توصيل: ' + del + ' · 🏪 استلام: ' + (t.length - del),
+    '🆕 زباين جداد: ' + newC, '',
+    '🔥 *الأكثر طلباً:*'].concat(top.length ? top.map((x, i) => (i + 1) + '. ' + x[0] + ' (' + x[1] + ')') : ['—'],
+    ['', '💳 *حسب الدفع:*'], Object.keys(by).map(p => '• ' + ((PAY_T[p] || p)) + ': ₪' + by[p].toFixed(0)),
+    unpaid ? ['⏳ لسا مش مدفوع: ₪' + unpaid.toFixed(0)] : []).join('\n');
+}
+function sendReport(){
+  let ph = String(SET.reportPhone || SET.phone || '').replace(/\D/g, '');
+  if(ph.startsWith('0')) ph = '972' + ph.slice(1);
+  window.open('https://wa.me/' + ph + '?text=' + encodeURIComponent(reportText()), '_blank');
+  try{ localStorage.setItem('pz_rep_sent', new Date().toDateString()); }catch(e){}
+  render();
+}
+/* بعد الساعة 11 بالليل — تذكير يبعت التقرير (مرّة باليوم) */
+function repRemind(){
+  const h = new Date().getHours(); if(h < 23 && h > 3) return '';
+  let sent = ''; try{ sent = localStorage.getItem('pz_rep_sent') || ''; }catch(e){}
+  if(sent === new Date().toDateString()) return '';
+  return '<div class="warnbox" style="background:#e9f7ef;border-color:#1e8e4e;color:#14532d;display:flex;align-items:center;gap:10px">' +
+    '<span style="flex:1">📊 <b>تقرير اليوم جاهز</b> — ابعته لحالك على الواتساب بكبسة</span><button class="btn sm red" onclick="sendReport()">📲 ابعت</button></div>';
 }
 
 /* ============ 🕐 طلب مسبق ============ */
@@ -2607,7 +2665,21 @@ function reviewsHtml(){
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
   return `<h2 class="sec">⭐ التقييمات <span class="muted">(${REVIEWS.length})</span></h2>
     <div class="card"><div class="ravg"><b>${avg.toFixed(1)}</b><span class="rs">${'★'.repeat(Math.round(avg))}<i>${'★'.repeat(5 - Math.round(avg))}</i></span></div>
-    ${REVIEWS.slice(0, 30).map(r => `<div class="rv"><div class="top"><span class="rs">${'★'.repeat(Number(r.stars)||0)}<i>${'★'.repeat(5-(Number(r.stars)||0))}</i></span><span class="muted">${esc(r.name||'')} · ${esc(d(r.at))}</span></div>${r.text?`<div>${esc(r.text)}</div>`:''}</div>`).join('')}</div>`;
+    ${REVIEWS.slice(0, 30).map(r => `<div class="rv"><div class="top"><span class="rs">${'★'.repeat(Number(r.stars)||0)}<i>${'★'.repeat(5-(Number(r.stars)||0))}</i></span><span class="muted">${esc(r.name||'')} · ${esc(d(r.at))}</span></div>${r.text?`<div>${esc(r.text)}</div>`:''}
+      ${r.img ? `<div class="rvp"><img src="${esc(r.img)}" alt="" onclick="window.open().document.write('<img src=&quot;'+this.src+'&quot; style=&quot;max-width:100%&quot;>')">
+        <button class="btn sm ${r.pub ? 'gh' : 'red'}" onclick="galToggle('${r.id}')">${r.pub ? '🙈 شيلها من الموقع' : '📸 اعرضها بالموقع'}</button></div>` : ''}</div>`).join('')}</div>`;
+}
+/* 📸 صورة من زبون → بتطلع بالموقع بقسم "من زباينا" */
+async function galToggle(id){
+  const r = (REVIEWS || []).find(x => x.id === id); if(!r || !r.img) return;
+  try{
+    if(r.pub){ await db.collection('gallery').doc(id).delete(); await db.collection('reviews').doc(id).update({pub: false}); r.pub = false; toast('انشالت من الموقع'); }
+    else{
+      await db.collection('gallery').doc(id).set({img: r.img, stars: Number(r.stars) || 5, text: (r.text || '').slice(0, 200), name: r.name || '', at: r.at || new Date().toISOString()});
+      await db.collection('reviews').doc(id).update({pub: true}); r.pub = true; toast('✓ صارت بالموقع');
+    }
+    render();
+  }catch(e){ alert(e.message); }
 }
 async function renderCust(){
   await loadCustOrders(); await loadReviews();
@@ -4111,6 +4183,14 @@ function renderSet(){
         <div class="f"><label>التقييم</label><input id="sRate" value="${esc(SET.rating||'')}"></div>
       </div>
       <div class="f"><label>عدد التقييمات</label><input id="sRateN" value="${esc(SET.ratingCount||'')}" placeholder="+2,000"></div>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" id="bzOn" ${(SET.busy||{}).on === false ? '' : 'checked'}><span>🔥 لما يكون في ضغط طلبات — زيد وقت التحضير بالموقع لحاله</span></label>
+      <div class="f3">
+        <div class="f"><label>إذا الطلبات الشغّالة أكثر من</label><input id="bzTh" type="number" value="${(SET.busy||{}).th ?? 4}"></div>
+        <div class="f"><label>زيد دقايق لكل طلب زيادة</label><input id="bzPer" type="number" value="${(SET.busy||{}).per ?? 5}"></div>
+        <div class="f"><label>أكثر إشي (دقايق)</label><input id="bzMax" type="number" value="${(SET.busy||{}).max ?? 40}"></div>
+      </div>
+      <div class="muted" style="font-size:12.5px">مثال: إذا في 7 طلبات جديدة/عم تتحضّر → (7-4)×5 = 15 دقيقة زيادة. لازم لوحة التحكم تكون مفتوحة بالمحل.</div>
+      <div class="f" style="margin-top:8px"><label>📲 رقم الواتساب لتقرير آخر اليوم</label><input id="sRepPh" type="tel" dir="ltr" value="${esc(SET.reportPhone||'')}" placeholder="${esc(SET.phone||'05x-xxxxxxx')}"></div>
     </div>
     <div class="card">
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:11px">ساعات الدوام</label>
@@ -4276,6 +4356,8 @@ async function saveSet(){
     logo: val('sLogo'), cover: val('sCover'),
     deliveryFee: num('sFee'), freeishOver: num('sOver'), reducedFee: num('sRed'),
     minOrder: num('sMin'), prepTime: val('sPrep'),
+    busy: {on: $('bzOn').checked, th: Math.max(0, num('bzTh')), per: Math.max(0, num('bzPer')), max: Math.max(0, num('bzMax'))},
+    reportPhone: val('sRepPh').replace(/[^\d+]/g, ''),
     name_he: val('sNameHe'), addr_he: val('sAddrHe'), tagline_he: val('sTagHe'), prepTime_he: val('sPrepHe'),
     heroTitle_he: val('sHtHe'), heroSub_he: val('sHsHe'),
     rating: val('sRate'), ratingCount: val('sRateN'),
