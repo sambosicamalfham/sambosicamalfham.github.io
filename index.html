@@ -461,6 +461,21 @@ a.cta{text-decoration:none;justify-content:center}
 #instBar .tx{flex:1;display:flex;flex-direction:column}#instBar .tx b{font-size:14.5px}#instBar .tx small{font-size:12px;opacity:.75}
 #instBar .ok{background:var(--red);color:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-family:inherit}
 #instBar .x{color:#fff;opacity:.6;font-size:16px;padding:4px}
+.iosw{text-align:center;padding-top:8px}
+.iosn{display:flex;justify-content:center;gap:8px;margin:4px 0 10px}
+.iosn i{font-style:normal;width:30px;height:30px;border-radius:50%;background:#e4e2df;color:#777;display:grid;place-items:center;font-weight:900;font-size:14px}
+.iosn i.on{background:var(--red);color:#fff;transform:scale(1.15)}.iosn i.d{background:#1e8e4e;color:#fff}
+.iosart{display:flex;justify-content:center}.iosvg{direction:ltr;unicode-bidi:isolate;width:min(68vw,250px);height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.18))}
+.iost{display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;font-weight:900;margin:14px 0 6px}
+.iost b{width:36px;height:36px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:19px;flex:none}
+.iosd{font-size:17px;line-height:1.75;margin:0 6px 12px}.iosd small{display:block;font-size:13.5px;color:var(--muted);margin-top:6px;line-height:1.6}
+.iosvg .pulse{animation:iosP 1.2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.iosvg .fing text{animation:iosT 1.2s ease-in-out infinite}
+.iosvg .bob{animation:iosT 1s ease-in-out infinite}
+.iosvg .pulse2{animation:iosP2 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes iosP{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes iosT{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes iosP2{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 .iosg .st{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:13px;margin-bottom:9px;font-size:14.5px;line-height:1.6}
 .iosg .st>b{width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex:none}
 /* اقتراحات */
@@ -679,6 +694,7 @@ html.a11y-hc .hero .shade{background:rgba(0,0,0,.82)}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
 const HE = {
+  'نزّل التطبيق على الآيفون':'הורידו את האפליקציה לאייפון','اكبس على التلات نقاط ⋯':'לחצו על שלוש הנקודות ⋯','اكبس "مشاركة"':'לחצו "שיתוף"','اكبس "إضافة إلى الشاشة الرئيسية"':'לחצו "הוספה למסך הבית"','اكبس "إضافة"':'לחצו "הוסף"','خلص! 🎉':'זהו! 🎉','اكبس زر المشاركة':'לחצו על כפתור השיתוף','افتح الموقع بسفاري':'פתחו את האתר בספארי','نسخ الرابط':'העתקת הקישור','تمام 👍':'סבבה 👍',
   // أيام
   'الأحد':'ראשון','الإثنين':'שני','الثلاثاء':'שלישי','الأربعاء':'רביעי','الخميس':'חמישי','الجمعة':'שישי','السبت':'שבת',
   // حالة المحل
@@ -1898,14 +1914,83 @@ function instBanner(){
 function instHide(){ try{ localStorage.setItem('pz_inst_x', Date.now() + 7 * 864e5); }catch(e){} instBanner(); }
 async function doInstall(){
   if(_instEvt){ _instEvt.prompt(); try{ await _instEvt.userChoice; }catch(e){} _instEvt = null; instBanner(); return; }
-  if(isIOS()){
-    $('sc').innerHTML = '<div class="ctop"><h3>📲 نزّل التطبيق</h3><button onclick="closeSheet()">✕</button></div><div class="cwrap"><div class="iosg">' +
-      '<div class="st"><b>1</b><span>اكبس على زر المشاركة <span class="ico">⬆️</span> تحت بالمتصفح (Safari)</span></div>' +
-      '<div class="st"><b>2</b><span>انزل واختار <b>"إضافة إلى الشاشة الرئيسية"</b> ➕</span></div>' +
-      '<div class="st"><b>3</b><span>اكبس <b>"إضافة"</b> — وبيطلع التطبيق على شاشتك 🎉</span></div></div></div>';
-    $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">تمام</button>';
-    cur = null; show();
-  }
+  if(isIOS()) iosGuide();
+}
+
+/* ============ 📲 شرح تنزيل التطبيق على الآيفون — خطوة خطوة مع رسمة ============ */
+const IOSG = {i: 0, steps: []};
+const iosFinger = (x, y) => '<g class="fing" transform="translate(' + x + ',' + y + ')"><circle r="26" fill="none" stroke="#e3242b" stroke-width="5" class="pulse"/>' +
+  '<text x="10" y="44" font-size="38">👆</text></g>';
+const iosPhone = inner => '<svg viewBox="0 0 260 300" class="iosvg" aria-hidden="true"><rect x="8" y="4" width="244" height="292" rx="30" fill="#111"/>' +
+  '<rect x="16" y="12" width="228" height="276" rx="24" fill="#f4f4f6"/><rect x="100" y="18" width="60" height="14" rx="7" fill="#111"/>' + inner + '</svg>';
+const iosPage = '<rect x="30" y="44" width="200" height="60" rx="10" fill="#1a1a1a"/><text x="130" y="80" fill="#fff" font-size="13" font-weight="800" text-anchor="middle">مكسيكاني وبيتسا</text>' +
+  '<rect x="30" y="112" width="96" height="70" rx="10" fill="#f0b64f"/><rect x="134" y="112" width="96" height="70" rx="10" fill="#e3242b" opacity=".85"/>';
+const iosIcon = (x, y, s) => '<image href="icon-192.png" x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" clip-path="inset(0 round ' + (s * .22) + 'px)"/>';
+const IOS_ART = {
+  dots: iosPhone(iosPage +
+    '<rect x="16" y="226" width="228" height="62" fill="#fff"/><text x="40" y="263" font-size="26" fill="#1f7ae0">‹</text>' +
+    '<rect x="64" y="238" width="128" height="34" rx="17" fill="#eceef1"/><text x="128" y="260" font-size="11" fill="#555" text-anchor="middle">sambosicamalfham…</text>' +
+    '<circle cx="216" cy="255" r="18" fill="#eceef1"/><text x="216" y="261" font-size="20" font-weight="900" text-anchor="middle" fill="#1f7ae0">⋯</text>' +
+    iosFinger(216, 255)),
+  share: iosPhone(iosPage +
+    '<rect x="16" y="226" width="228" height="62" fill="#fff"/><text x="40" y="263" font-size="24" fill="#1f7ae0">‹</text><text x="82" y="263" font-size="24" fill="#c9ccd1">›</text>' +
+    '<g transform="translate(130,256)"><rect x="-10" y="-8" width="20" height="18" rx="3" fill="none" stroke="#1f7ae0" stroke-width="2.6"/><path d="M0 -18 V3 M-6 -12 L0 -18 L6 -12" stroke="#1f7ae0" stroke-width="2.6" fill="none"/></g>' +
+    '<text x="176" y="264" font-size="20" fill="#1f7ae0">📖</text><text x="216" y="264" font-size="20" fill="#1f7ae0">⧉</text>' +
+    iosFinger(130, 256)),
+  menu: iosPhone(iosPage + '<rect x="16" y="12" width="228" height="276" rx="24" fill="rgba(0,0,0,.25)"/>' +
+    '<rect x="66" y="96" width="170" height="160" rx="16" fill="#fff"/>' +
+    '<text x="222" y="126" font-size="14" text-anchor="end" fill="#333">نسخ</text><line x1="76" y1="140" x2="226" y2="140" stroke="#eee"/>' +
+    '<rect x="70" y="146" width="162" height="38" rx="10" fill="#ffe9ea" stroke="#e3242b" stroke-width="2.5"/>' +
+    '<text x="200" y="171" font-size="15" font-weight="800" text-anchor="end" fill="#111">مشاركة</text>' +
+    '<g transform="translate(92,166)"><rect x="-8" y="-6" width="16" height="14" rx="3" fill="none" stroke="#111" stroke-width="2.2"/><path d="M0 -14 V2 M-5 -9 L0 -14 L5 -9" stroke="#111" stroke-width="2.2" fill="none"/></g>' +
+    '<line x1="76" y1="192" x2="226" y2="192" stroke="#eee"/><text x="222" y="222" font-size="14" text-anchor="end" fill="#333">إضافة إشارة</text>' +
+    iosFinger(92, 166)),
+  sheet: iosPhone('<rect x="16" y="60" width="228" height="228" rx="20" fill="#fff"/><rect x="110" y="68" width="40" height="5" rx="3" fill="#ccc"/>' +
+    '<text x="222" y="104" font-size="13" text-anchor="end" fill="#333">نسخ</text><text x="44" y="104" font-size="16">📋</text><line x1="30" y1="118" x2="230" y2="118" stroke="#eee"/>' +
+    '<text x="222" y="142" font-size="13" text-anchor="end" fill="#333">إضافة إلى المفضلة</text><text x="44" y="142" font-size="16">⭐</text><line x1="30" y1="156" x2="230" y2="156" stroke="#eee"/>' +
+    '<rect x="24" y="164" width="212" height="44" rx="10" fill="#ffe9ea" stroke="#e3242b" stroke-width="2.5"/>' +
+    '<text x="222" y="192" font-size="14" font-weight="900" text-anchor="end" fill="#111">إضافة إلى الشاشة الرئيسية</text>' +
+    '<g transform="translate(46,186)"><rect x="-11" y="-11" width="22" height="22" rx="5" fill="none" stroke="#111" stroke-width="2.4"/><path d="M0 -6 V6 M-6 0 H6" stroke="#111" stroke-width="2.4"/></g>' +
+    '<text x="130" y="246" font-size="22" text-anchor="middle" class="bob">⬇️</text><text x="130" y="272" font-size="11" text-anchor="middle" fill="#777">إذا مش شايفها انزل لتحت</text>' +
+    iosFinger(46, 186)),
+  add: iosPhone('<rect x="16" y="40" width="228" height="248" fill="#fff"/>' +
+    '<text x="30" y="68" font-size="14" fill="#1f7ae0">إلغاء</text>' +
+    '<rect x="172" y="48" width="64" height="30" rx="15" fill="#ffe9ea" stroke="#e3242b" stroke-width="2.5"/><text x="204" y="68" font-size="15" font-weight="900" text-anchor="middle" fill="#1f7ae0">إضافة</text>' +
+    '<line x1="16" y1="88" x2="244" y2="88" stroke="#eee"/>' + iosIcon(30, 102, 56) +
+    '<text x="226" y="126" font-size="14" font-weight="800" text-anchor="end" fill="#111">مكسيكاني وبيتسا</text><text x="226" y="146" font-size="10" text-anchor="end" fill="#888">sambosicamalfham.github.io</text>' +
+    iosFinger(204, 63)),
+  done: iosPhone('<rect x="16" y="12" width="228" height="276" rx="24" fill="#3d6fd6"/>' +
+    [0, 1, 2, 3].map(c => [0, 1].map(r => '<rect x="' + (34 + c * 52) + '" y="' + (50 + r * 66) + '" width="40" height="40" rx="10" fill="rgba(255,255,255,.45)"/>').join('')).join('') +
+    '<rect x="' + (30 + 52) + '" y="' + (178) + '" width="48" height="48" rx="12" fill="#fff" class="pulse2"/>' + iosIcon(34 + 52, 182, 40) +
+    '<text x="106" y="242" font-size="10" fill="#fff" text-anchor="middle" font-weight="800">مكسيكاني وبيتسا</text>')
+};
+function iosSteps(){
+  const ua = navigator.userAgent;
+  if(/FBAN|FBAV|Instagram|Snapchat|TikTok|musical_ly|Line\//i.test(ua)) return [
+    {art: IOS_ART.dots, t: 'افتح الموقع بسفاري', d: 'إنت هلّق جوّا تطبيق ثاني. اكبس <b>⋯</b> فوق بالزاوية، واختار <b>"فتح في المتصفح"</b> أو <b>Safari</b>.', copy: true}];
+  const chrome = /CriOS/i.test(ua);
+  const first = chrome
+    ? {art: IOS_ART.share, t: 'اكبس زر المشاركة', d: 'فوق جنب عنوان الموقع في زر <b>مربع وطالع منه سهم ⬆️</b>. اكبس عليه.'}
+    : {art: IOS_ART.dots, t: 'اكبس على التلات نقاط ⋯', d: 'تحت بالزاوية اليمين في دائرة فيها <b>⋯</b> — اكبس عليها.<br><small>إذا شايف تحت بالنص زر <b>مربع وطالع منه سهم ⬆️</b>، اكبس عليه وروح للخطوة 3.</small>'};
+  return [first].concat(chrome ? [] : [{art: IOS_ART.menu, t: 'اكبس "مشاركة"', d: 'بتطلعلك قائمة صغيرة — اكبس على <b>مشاركة</b> (اللي جنبها مربع وسهم ⬆️).'}], [
+    {art: IOS_ART.sheet, t: 'اكبس "إضافة إلى الشاشة الرئيسية"', d: 'دوّر على <b>المربع اللي فيه ➕</b> ومكتوب جنبه <b>إضافة إلى الشاشة الرئيسية</b>.<br><small>إذا مش شايفه، اسحب القائمة لتحت شوي. (بالعبري: הוספה למסך הבית · بالإنجليزي: Add to Home Screen)</small>'},
+    {art: IOS_ART.add, t: 'اكبس "إضافة"', d: 'فوق بالزاوية مكتوب <b>إضافة</b> بالأزرق — اكبس عليها.<br><small>(بالعبري: הוסף · بالإنجليزي: Add)</small>'},
+    {art: IOS_ART.done, t: 'خلص! 🎉', d: 'هلّق بتلاقي <b>أيقونة المطعم</b> على شاشة تلفونك. كل ما بدك تطلب — اكبس عليها وبتفتح على طول.'}]);
+}
+function iosGuide(){
+  IOSG.steps = iosSteps(); IOSG.i = 0; cur = null; drawIosG(); show();
+}
+function drawIosG(){
+  const n = IOSG.steps.length, i = IOSG.i, st = IOSG.steps[i];
+  $('sc').innerHTML = '<div class="ctop"><h3>📲 نزّل التطبيق على الآيفون</h3><button onclick="closeSheet()" aria-label="إغلاق">✕</button></div>' +
+    '<div class="cwrap iosw">' + (n > 1 ? '<div class="iosn">' + IOSG.steps.map((x, k) => '<i class="' + (k < i ? 'd' : k === i ? 'on' : '') + '">' + (k + 1) + '</i>').join('') + '</div>' : '') +
+    '<div class="iosart">' + st.art + '</div>' +
+    '<h2 class="iost">' + (n > 1 ? '<b>' + (i + 1) + '</b>' : '') + '<span>' + st.t + '</span></h2><p class="iosd">' + st.d + '</p>' +
+    (st.copy ? '<button class="xb" style="width:100%" onclick="try{navigator.clipboard.writeText(location.origin+location.pathname)}catch(e){};toast(\'تم نسخ الرابط ✓ — الصقه بسفاري\')"><span>🔗</span>نسخ الرابط</button>' : '') + '</div>';
+  const last = i === n - 1;
+  $('ft').innerHTML = (i > 0 ? '<button class="wzback" onclick="IOSG.i--;drawIosG()">‹ <span>رجوع</span></button>' : '') +
+    '<button class="cta" onclick="' + (last ? 'closeSheet()' : 'IOSG.i++;drawIosG()') + '"><span>' + (last ? 'تمام 👍' : 'التالي ›') + '</span></button>';
+  $('sc').scrollTop = 0;
 }
 
 /* ============ 🍟 بدك معها؟ (اقتراحات بالسلة) ============ */
