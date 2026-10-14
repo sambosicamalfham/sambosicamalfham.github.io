@@ -718,7 +718,8 @@ Object.assign(HE, {
   'اكتب الوردية هيك:':'כתבו משמרת כך:', 'أو':'או', '. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'. השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'ما في جدول للأسبوع الماضي':'אין סידור לשבוע הקודם', 'تم النسخ — لا تنسى تكبس حفظ':'הועתק — אל תשכחו לשמור', 'في تغييرات ما انحفظت. تكمّل بدون حفظ؟':'יש שינויים שלא נשמרו. להמשיך בלי לשמור?',
-  'من الـ QR':'מה־QR', 'نزّل الزبائن (Excel)':'הורדת לקוחות (Excel)', 'واتساب':'וואטסאפ', 'عدد الطلبات':'מספר הזמנות', 'المجموع ₪':'סה״כ ₪', 'معدل الطلب ₪':'ממוצע הזמנה ₪',
+  'من الـ QR':'מה־QR', 'موافق على عروض':'מאשר דיוור', 'موافقين على رسائل عروض':'מאשרים קבלת דיוור', 'رجّع الرسائل':'החזרת דיוור', 'وقّف الرسائل الإعلانية':'הפסקת דיוור',
+  'بس لهدول مسموح تبعت إعلانات (חוק הספאם). اللي بيطلب يوقف — وقّفه من كرته.':'רק להם מותר לשלוח פרסומות (חוק הספאם). מי שמבקש להפסיק — הפסיקו מהכרטיס שלו.', 'نزّل الزبائن (Excel)':'הורדת לקוחות (Excel)', 'واتساب':'וואטסאפ', 'عدد الطلبات':'מספר הזמנות', 'المجموع ₪':'סה״כ ₪', 'معدل الطلب ₪':'ממוצע הזמנה ₪',
   'أول طلب':'הזמנה ראשונה', 'المنطقة':'אזור', 'عيد الميلاد':'יום הולדת', 'اللغة':'שפה', 'محظور':'חסום', 'الزبائن':'לקוחות', 'جاري التجهيز...':'מכין...', 'مسح الـ QR (الملصقات)':'סריקות QR (מדבקות)', 'مرات فتحوا الرابط':'פעמים שנפתח הקישור', 'أجهزة جديدة (أول مرة)':'מכשירים חדשים (פעם ראשונה)',
   'طلبات من الـ QR ·':'הזמנות מה־QR ·', 'طلبات من الـ QR':'הזמנות מה־QR', 'المصدر':'מקור', 'فتحوا':'נפתח', 'جديد':'חדש', 'المبلغ':'סכום',
   'كل جهاز بينعدّ "جديد" بس أول مرة بيفتح. الطلب بيتحسب من الـ QR إذا إجا خلال أسبوع من المسح. المبلغ من الـ QR:':'כל מכשיר נספר "חדש" רק בפעם הראשונה. הזמנה נספרת מה־QR אם הגיעה תוך שבוע מהסריקה. סכום מה־QR:',
@@ -2578,7 +2579,8 @@ function custList(){
   const src = CUST_ORDERS || ORDERS, by = {};
   src.forEach(o => {
     const c = o.customer || {}, k = phKey(c.phone); if(!k) return;
-    const x = by[k] || (by[k] = {phone:k, names:{}, orders:[], spent:0, last:'', addr:'', loc:null, zone:'', lang:'', bday:''});
+    const x = by[k] || (by[k] = {phone:k, names:{}, orders:[], spent:0, last:'', addr:'', loc:null, zone:'', lang:'', bday:'', mkt:false, mktAt:''});
+    if(c.mkt !== undefined && String(o.createdAtStr || '') >= x.mktAt){ x.mkt = !!c.mkt; x.mktAt = String(o.createdAtStr || ''); }
     x.orders.push(o);
     if(c.name) x.names[c.name] = (x.names[c.name]||0) + 1;
     if(o.status !== 'cancel') x.spent += Number(o.total||0);
@@ -2614,17 +2616,19 @@ async function renderCust(){
   const q = custQ.trim().toLowerCase();
   const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
+  const mktN = all.filter(mktOk).length;
   $('vCust').innerHTML = eventsHtml() + giftsHtml() + habitHtml(all) + bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
       <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button>
       <button class="btn sm red" onclick="custXlsx()">📥 نزّل الزبائن (Excel)</button></div>
+    <div class="muted" style="margin:-4px 0 10px">📣 <span>موافقين على رسائل عروض</span>: <b>${mktN}</b> · <span>بس لهدول مسموح تبعت إعلانات (חוק הספאם). اللي بيطلب يوقف — وقّفه من كرته.</span></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
       const wa = waPhone(x.phone), open = custOpen === x.phone;
       return `<div class="card cst ${open?'on':''}">
         <div class="ch" onclick="custOpen=custOpen==='${x.phone}'?'':'${x.phone}';renderCust()">
           <div class="av" data-nt>${esc((x.name||'?').trim().charAt(0))}</div>
           <div style="flex:1;min-width:0">
-            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''} ${isBlocked(x.phone)?'<span class="pill r">🚫 محظور</span>':''}${noShows(x.phone)?` <span class="pill r">🚫 ما استلم ×${noShows(x.phone)}</span>`:''}</div>
+            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''} ${isBlocked(x.phone)?'<span class="pill r">🚫 محظور</span>':''}${noShows(x.phone)?` <span class="pill r">🚫 ما استلم ×${noShows(x.phone)}</span>`:''}${mktOk(x)?' <span class="pill g">📣 موافق على عروض</span>':''}</div>
             <div class="muted ltr" style="text-align:start">${esc(x.phone)}</div>
           </div>
           <div class="cs"><b>${x.orders.length}</b><span>طلب</span></div>
@@ -2647,6 +2651,7 @@ async function renderCust(){
           <div class="acts" style="margin:8px 0">
             <button class="btn sm ${isBlocked(x.phone)?'gh':'gh'}" onclick="toggleBlock('${x.phone}')">${isBlocked(x.phone)?'✅ فك الحظر':'🚫 حظر'}</button>
             <button class="btn sm gh" onclick="deleteCustomer('${x.phone}')">🗑️ حذف الزبون</button>
+            ${x.mkt ? `<button class="btn sm gh" onclick="mktStop('${x.phone}')">${mktOff(x.phone) ? '📣 رجّع الرسائل' : '🔕 وقّف الرسائل الإعلانية'}</button>` : ''}
           </div>
           <div class="muted" style="margin:6px 0">آخر طلب: ${esc(d(x.last))} · معدل الطلب: <span class="ltr">${(x.spent / Math.max(1, x.orders.filter(o=>o.status!=='cancel').length)).toFixed(0)} ₪</span></div>
           ${x.orders.map(o => `<div class="ch2">
@@ -2658,6 +2663,17 @@ async function renderCust(){
     }).join('')}`;
 }
 
+/* ========= 📣 موافقة على العروض ========= */
+const mktOff = ph => (SET.mktOff || []).includes(phKey(ph));
+const mktOk = x => !!x.mkt && !mktOff(x.phone);
+async function mktStop(ph){
+  const k = phKey(ph); if(!k) return; const off = mktOff(k);
+  if(!off && !confirm('توقّف الرسائل الإعلانية لـ ' + k + '؟')) return;
+  const FV = firebase.firestore.FieldValue;
+  try{ await db.collection('settings').doc('main').set({mktOff: off ? FV.arrayRemove(k) : FV.arrayUnion(k)}, {merge: true});
+    SET.mktOff = off ? (SET.mktOff || []).filter(x => x !== k) : (SET.mktOff || []).concat(k); toast('تم ✓'); render(); }catch(e){ alert(e.message); }
+}
+
 /* ========= 📥 تصدير الزبائن ========= */
 async function custXlsx(){
   try{
@@ -2665,16 +2681,16 @@ async function custXlsx(){
     await loadCustOrders(true);
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
     const X = window.XLSX, tr = s => trText(s), d = s => s ? new Date(s).toLocaleDateString('he-IL') : '';
-    const rows = [[tr('الاسم'), tr('رقم التلفون'), tr('واتساب'), tr('عدد الطلبات'), tr('المجموع ₪'), tr('معدل الطلب ₪'), tr('أول طلب'), tr('آخر طلب'), tr('المنطقة'), tr('العنوان'), tr('عيد الميلاد'), tr('اللغة'), tr('محظور'), tr('ما استلم')]];
+    const rows = [[tr('الاسم'), tr('رقم التلفون'), tr('واتساب'), tr('عدد الطلبات'), tr('المجموع ₪'), tr('معدل الطلب ₪'), tr('أول طلب'), tr('آخر طلب'), tr('المنطقة'), tr('العنوان'), tr('عيد الميلاد'), tr('اللغة'), tr('محظور'), tr('ما استلم'), tr('موافق على عروض')]];
     custList().forEach(x => {
       const ok = x.orders.filter(o => o.status !== 'cancel'), first = x.orders.map(o => String(o.createdAtStr || '')).filter(Boolean).sort()[0];
       rows.push([x.name, x.phone, waPhone(x.phone), ok.length, Math.round(x.spent * 100) / 100, ok.length ? Math.round(x.spent / ok.length) : 0,
         d(first), d(x.last), x.zone || '', x.addr || '', x.bday ? x.bday.split('-').reverse().join('/') : '', x.lang === 'he' ? 'עברית' : 'عربي',
-        isBlocked(x.phone) ? '✓' : '', noShows(x.phone) || '']);
+        isBlocked(x.phone) ? '✓' : '', noShows(x.phone) || '', mktOk(x) ? '✓' : '']);
     });
     const ws = X.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{wch: 18}, {wch: 13}, {wch: 14}, {wch: 8}, {wch: 10}, {wch: 10}, {wch: 11}, {wch: 11}, {wch: 12}, {wch: 26}, {wch: 9}, {wch: 7}, {wch: 6}, {wch: 7}];
-    ws['!autofilter'] = {ref: 'A1:N' + rows.length};
+    ws['!cols'] = [{wch: 18}, {wch: 13}, {wch: 14}, {wch: 8}, {wch: 10}, {wch: 10}, {wch: 11}, {wch: 11}, {wch: 12}, {wch: 26}, {wch: 9}, {wch: 7}, {wch: 6}, {wch: 7}, {wch: 9}];
+    ws['!autofilter'] = {ref: 'A1:O' + rows.length};
     const wb = X.utils.book_new(); wb.Workbook = {Views: [{RTL: true}]};
     X.utils.book_append_sheet(wb, ws, tr('الزبائن').slice(0, 30));
     const out = X.write(wb, {bookType: 'xlsx', type: 'array'});

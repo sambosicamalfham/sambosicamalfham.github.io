@@ -489,6 +489,7 @@ a.cta{text-decoration:none;justify-content:center}
 .btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
 
 /* الدفعة 2 */
+.usew.mkt{margin:4px 0 12px;font-weight:700;font-size:13.5px}
 .daily{display:flex;gap:12px;align-items:center;width:calc(100% - 32px);margin:12px 16px 0;background:#1a1a1a;color:#fff;border-radius:18px;padding:10px;text-align:start;font-family:inherit}
 .daily:disabled{opacity:.6}
 .daily .dph{width:84px;height:84px;border-radius:14px;overflow:hidden;flex:none;background:#333}.daily .dph img{width:100%;height:100%;object-fit:cover}
@@ -835,7 +836,7 @@ Object.assign(HE, {
   'بدفع بالمحل':'תשלום במסעדה', 'الهدية بتنبعت بعد ما تدفع':'המתנה נשלחת אחרי התשלום', 'ابعت الهدية':'שליחת המתנה', 'اكتب اسم ورقم اللي بدك تبعتله':'כתבו שם וטלפון של מקבל המתנה',
   'اكتب اسمك ورقمك':'כתבו את השם והטלפון שלכם', 'وصلنا — ادفع بالمحل وبنبعت الهدية':'קיבלנו — שלמו במסעדה ונשלח את המתנה',
   'شكراً! بتساعدنا بتقييم على جوجل؟':'תודה! תעזרו לנו עם ביקורת בגוגל?', 'بتاخد 10 ثواني وبتفرق معنا كثير':'זה לוקח 10 שניות ועוזר לנו המון', 'قيّمنا على جوجل':'דרגו אותנו בגוגל',
-  'فيه:':'מכיל:'
+  'فيه:':'מכיל:', 'بدي يوصلني عروض وخصومات بالواتساب':'אני רוצה לקבל מבצעים והנחות בוואטסאפ'
 });
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
@@ -2354,6 +2355,7 @@ function openCart(){
       '<div class="fld"><label>رقم الهاتف</label>' +
         '<input class="inp" id="ph" type="tel" inputmode="tel" placeholder="05x-xxxxxxx" value="' + esc(localStorage.getItem('pz_phone')||'') + '"></div>' +
       (myBday() ? '' : bdayFieldHtml()) +
+      '<label class="usew mkt"><input type="checkbox" id="mkt" ' + (mktOn() ? 'checked' : '') + ' onchange="mktSet(this.checked)"><span>بدي يوصلني عروض وخصومات بالواتساب</span></label>' +
       locCardHtml() +
       (otype==='delivery' ? '<div class="fld"><label>العنوان</label>' +
         '<input class="inp" id="ad" placeholder="الحي، الشارع، رقم البيت" value="' + esc(localStorage.getItem('pz_addr')||'') + '"></div>' : '') +
@@ -2462,7 +2464,7 @@ function sendOrder(){
       SCHED ? {sched: SCHED} : {}, qrRef() ? {ref: qrRef()} : {},
       refNewDisc() ? {refBy: refBy(), refDisc: refNewDisc()} : {}, refCreditUse() ? {refUsed: refCreditUse()} : {},
       happyDisc() ? {happyDisc: happyDisc(), happyPct: Number(happyNow().percent)} : {}, cart.some(l => l.daily) ? {daily: cart.filter(l => l.daily).reduce((s, l) => s + l.qty, 0)} : {},
-      myBday() ? {bday: myBday()} : {},
+      myBday() ? {bday: myBday()} : {}, {mkt: mktOn()},
       bdayOn() ? {bdayGift: bdayLabel(), bdayType: bdayCfg().type || 'gift', bdayVal: Number(bdayCfg().value || 0), bdayDisc: bdayDisc()} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
     type: otype, subtotal: snapSub, discount: snapDisc,
@@ -2598,6 +2600,10 @@ const inWin = (a, b) => { if(!a || !b) return false; const n = nowMin(), x = min
 const winEnd = b => { const d = new Date(), e = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, mins(b)); if(e <= d) e.setDate(e.getDate() + 1); return e; };
 const cdTxt = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 3600e3), m = Math.floor(ms % 3600e3 / 60e3), s = Math.floor(ms % 60e3 / 1e3);
   return (h ? h + ':' : '') + String(m).padStart(h ? 2 : 1, '0') + ':' + String(s).padStart(2, '0'); };
+
+/* ---------- 📣 موافقة على رسائل إعلانية (חוק הספאם) — الافتراضي: لا ---------- */
+const mktOn = () => { try{ return localStorage.getItem('pz_mkt') === '1'; }catch(e){ return false; } };
+function mktSet(v){ try{ localStorage.setItem('pz_mkt', v ? '1' : '0'); }catch(e){} }
 
 /* ---------- 👫 ادعُ صاحبك ---------- */
 const refCfg = () => (SET.referral && SET.referral.on) ? SET.referral : null;
