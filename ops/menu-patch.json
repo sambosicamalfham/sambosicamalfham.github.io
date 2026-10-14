@@ -1,9 +1,53 @@
 {
- "_note": "بيندمج جوّا Firebase حسب الـ id — ما بيمسح إشي. (عرض 4 بيتزا عائلية)",
- "deals": {
-  "haat_4pizza": {"title": "عرض 4 بيتزا عائلية", "title_he": "מבצע 4 פיצה משפחתית", "desc": "4 بيتزا عائلية على ذوقك", "desc_he": "4 פיצות משפחתיות לבחירתך",
-   "price": 133, "was": 140, "emoji": "🍕", "img": "", "extrasFree": false, "active": true, "order": 85,
-   "slots": [{"title": "بيتزا عائلية", "title_he": "פיצה משפחתית", "count": 4,
-     "items": ["h3THifQ2mt8TbeI7W2wq", "XvDh96k5n8wXy1hWWWHr", "jxtqXtyFutddurqQuDD9", "ZBNjLqa7hfmWef4QEZQu"]}]}
+ "_note": "ترتيب الأقسام: بيتزا، سمبوسك، حلويات، المكسيكاني (نباتي، عادي، كفول، مشولاش، مروباع)، سلطات، إضافات، صلصات، مشروبات صغيرة، كبيرة",
+ "categories": {
+  "c1": {
+   "order": 10
+  },
+  "yk8EOhRq2UI1Og7LTCLQ": {
+   "order": 20
+  },
+  "RFyr97F68enJJjDJTe5b": {
+   "order": 30
+  },
+  "CoOIuVWRW6fN23jWExIm": {
+   "order": 40
+  },
+  "c7": {
+   "order": 50
+  },
+  "cat_veg": {
+   "order": 59
+  },
+  "c2": {
+   "order": 60
+  },
+  "cat_kfol": {
+   "order": 61
+  },
+  "cat_mshl": {
+   "order": 62
+  },
+  "cat_mrb": {
+   "order": 63
+  },
+  "c5": {
+   "order": 900
+  },
+  "c4": {
+   "order": 9001
+  },
+  "cat_sauce": {
+   "order": 9002
+  },
+  "cat_d330": {
+   "order": 9003
+  },
+  "cat_d15": {
+   "order": 9004
+  },
+  "c6": {
+   "order": 9005
+  }
  }
 }

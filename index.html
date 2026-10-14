@@ -1036,7 +1036,7 @@ function catOf(id){ return CATS.find(c=>c.id===id) || {icon:'🍽️',name:''}; 
 /* صور طويلة (قناني/علب مشروبات) — بتطلع كاملة بدل ما تنقص */
 document.addEventListener('load', e => { const t = e.target;
   if(t && t.tagName === 'IMG' && t.naturalHeight > t.naturalWidth * 1.15) t.classList.add('tall'); }, true);
-const isDrink = it => !!(it && it.img && (catOf(it.catId) || {}).icon === '🥤');
+const isDrink = it => !!(it && it.img && ['🥤','🍟','🥫'].includes((catOf(it.catId) || {}).icon));   // مشروبات/إضافات/صلصات: الصورة كاملة
 function pic(it){
   if(it && it.img) return it.img;
   const ic = (it && it.icon) || catOf(it?it.catId:'').icon || '🍽️';

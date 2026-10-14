@@ -3728,7 +3728,7 @@ function editCat(id){
     const name = val('cName2'); if(!name){ alert('الاسم مطلوب'); return false; }
     const data = {name, name_he: val('cNameHe'), icon: val('cIcon') || '🍽️', img: window._pickImg || ''};
     if(id) await db.collection('categories').doc(id).update(data);
-    else await db.collection('categories').add(Object.assign(data,{order:(CATS.length+1)*10}));
+    else await db.collection('categories').add(Object.assign(data,{order: Math.min(10, ...CATS.map(c => Number(c.order) || 0)) - 10}));   // قسم جديد بيطلع أول المنيو
     return true;
   });
 }
