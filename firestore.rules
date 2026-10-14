@@ -120,6 +120,30 @@ service cloud.firestore {
       allow read, delete: if isStaff();
     }
 
+    // ---------- 🎉 طلبيات مناسبات (الزبون بيبعت، المحل بيقرأ) ----------
+    match /events/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name','phone','type','date','time','people','note','lang','status','at'])
+                    && request.resource.data.status == 'new'
+                    && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 60
+                    && request.resource.data.phone is string && request.resource.data.phone.size() <= 20
+                    && request.resource.data.note is string && request.resource.data.note.size() <= 600
+                    && request.resource.data.people is int && request.resource.data.people > 0 && request.resource.data.people <= 2000;
+      allow read, update, delete: if isStaff();
+    }
+
+    // ---------- 🎁 بطاقات هدية (بتنفعّل بس لما المحل يأكد الدفع) ----------
+    match /gifts/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['amount','to','toPhone','msg','from','fromPhone','pay','lang','status','at'])
+                    && request.resource.data.status == 'new'
+                    && request.resource.data.amount is number && request.resource.data.amount > 0 && request.resource.data.amount <= 2000
+                    && request.resource.data.to is string && request.resource.data.to.size() <= 40
+                    && request.resource.data.from is string && request.resource.data.from.size() <= 40
+                    && request.resource.data.msg is string && request.resource.data.msg.size() <= 200
+                    && request.resource.data.toPhone is string && request.resource.data.toPhone.size() <= 20
+                    && request.resource.data.fromPhone is string && request.resource.data.fromPhone.size() <= 20;
+      allow read, update, delete: if isStaff();
+    }
+
     // ---------- 🗓️ جدول الورديات ----------
     match /shifts/{week} {
       allow read, write: if isStaff();

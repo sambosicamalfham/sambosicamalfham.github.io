@@ -732,6 +732,30 @@ HE_RULES.push(
   [/^تشيل (.*) من الجدول؟$/, m => 'להסיר את ' + m[1] + ' מהסידור?'],
   [/^ما استلم ×(\d+)$/, m => 'לא אסף ×' + m[1]]
 );
+/* ===== ترجمات الدفعة 2 (اللوحة) ===== */
+Object.assign(HE, {
+  'ادعُ صاحبك':'הזמינו חבר', 'تفعيل — كل زبون إله رابط يبعته لأصحابه':'הפעלה — לכל לקוח קישור אישי לשלוח לחברים', 'خصم للصاحب الجديد (₪، أول طلب)':'הנחה לחבר החדש (₪, הזמנה ראשונה)',
+  'رصيد للي بعت الرابط (₪)':'קרדיט לשולח הקישור (₪)', 'الرصيد بينضاف للي بعت الرابط لما تكبس "🛵 تم التسليم" على أول طلب لصاحبه، وبيستعمله بطلبه الجاي.':'הקרדיט נוסף לשולח כשלוחצים "🛵 נמסר" על ההזמנה הראשונה של החבר, והוא משתמש בו בהזמנה הבאה.',
+  'عرض اليوم (كمية محدودة)':'מבצע היום (כמות מוגבלת)', 'تفعيل — بيطلع فوق بالصفحة الرئيسية مع عدّاد':'הפעלה — מופיע למעלה בדף הבית עם ספירה לאחור', 'الصنف':'פריט',
+  'سعر العرض ₪':'מחיר מבצע ₪', 'كم قطعة بس؟':'כמה יחידות בלבד?', 'أكثر إشي للزبون':'מקסימום ללקוח', 'من الساعة':'משעה', 'لحد الساعة':'עד שעה', 'انباع اليوم:':'נמכרו היום:',
+  'العدّاد بيتصفّر كل يوم لحاله. (بيتحدّث لما اللوحة مفتوحة.)':'הספירה מתאפסת כל יום. (מתעדכנת כשהלוח פתוח.)',
+  'الساعة السعيدة':'השעה השמחה', 'تفعيل — خصم أوتوماتيك بالساعات الهادية':'הפעלה — הנחה אוטומטית בשעות השקטות', 'الخصم %':'הנחה %', 'من':'מ', 'لحد':'עד',
+  'الاسم اللي بيطلع للزبون':'השם שהלקוח רואה', 'الاسم بالعبري':'השם בעברית', 'وضع رمضان':'מצב רמדאן', 'تفعيل — شريط رمضان وزر "اطلب للإفطار"':'הפעלה — באנר רמדאן וכפתור "הזמנה לאיפטאר"',
+  'دقايق بعد الغروب (الأذان)':'דקות אחרי השקיעה (אזאן)', 'قسم الإفطار':'קטגוריית איפטאר', '— بلا —':'— בלי —', 'العنوان':'כותרת', 'العنوان بالعبري':'כותרת בעברית',
+  'وقت المغرب بينحسب لحاله كل يوم لأم الفحم. الطلب بيطلع عندك كطلب مسبق ⏰ لوقت الأذان. لا تنسى تغيّر ساعات الدوام برمضان.':'שעת השקיעה מחושבת אוטומטית כל יום לאום אל-פחם. ההזמנה מופיעה כהזמנה מראש ⏰ לשעת האזאן. אל תשכחו לעדכן שעות פתיחה ברמדאן.',
+  'تقييم جوجل':'ביקורת בגוגל', 'رابط "اكتب تقييم" من Google':'קישור "כתיבת ביקורת" מגוגל',
+  'من Google Business Profile ← "اطلب تقييمات" ← انسخ الرابط. اللي بيعطي 5 نجوم بالموقع بيطلعله زر يقيّمك على جوجل.':'מ־Google Business Profile ← "בקשת ביקורות" ← העתיקו את הקישור. מי שנותן 5 כוכבים באתר יקבל כפתור לדרג אתכם בגוגל.',
+  'الحساسية والعلامات':'אלרגנים ותגיות', 'بتطلع للزبون بصفحة الوجبة.':'מוצג ללקוח בדף המנה.',
+  'جلوتين':'גלוטן', 'حليب':'חלב', 'بيض':'ביצים', 'مكسرات':'אגוזים', 'فستق عبيد':'בוטנים', 'سمسم':'שומשום', 'سمك':'דגים', 'صويا':'סויה', 'حار':'חריף', 'نباتي':'צמחוני',
+  'طلبيات مناسبات':'הזמנות לאירועים', 'جديد':'חדש', 'تم':'בוצע', 'وصل':'התקבל', 'تم التواصل':'יצרנו קשר', 'طلبات مناسبات جديدة':'בקשות אירועים חדשות', 'بطاقات هدية جديدة':'כרטיסי מתנה חדשים',
+  'بطاقات هدية':'כרטיסי מתנה', 'مستني دفع':'ממתין לתשלום', 'انبعتت':'נשלח', 'ملغية':'בוטל', 'استعملها':'מומש', 'وصل الدفع — ابعت الهدية':'התשלום התקבל — שליחת המתנה',
+  'ابعت الكود كمان مرة':'שליחת הקוד שוב', 'المرسل':'השולח', 'الكود بيشتغل مرة وحدة. إذا طلبه أقل من قيمة الهدية، الباقي بيروح.':'הקוד חד־פעמי. אם ההזמנה קטנה משווי המתנה, היתרה לא נשמרת.',
+  'وصل الدفع؟ بنعمل كود هدية':'התשלום התקבל? ניצור קוד מתנה', 'تلغي بطاقة الهدية؟':'לבטל את כרטיס המתנה?', 'صاحبه أخذ رصيد':'החבר שהזמין קיבל קרדיט',
+  'جاي من صاحب':'הגיע דרך חבר', 'رصيد أصحاب':'קרדיט חברים', 'ساعة سعيدة':'שעה שמחה', 'عرض اليوم':'מבצע היום',
+  'خصومات "ادعُ صاحبك"':'הנחות "הזמינו חבר"', 'خصومات الساعة السعيدة':'הנחות השעה השמחה',
+  'عرض اليوم: اختار صنف واكتب السعر':'מבצע היום: בחרו פריט וכתבו מחיר', 'عرض اليوم: اكتب الساعة هيك 16:00':'מבצע היום: כתבו שעה כך 16:00',
+  'الساعة السعيدة: اكتب الساعة هيك 15:00':'השעה השמחה: כתבו שעה כך 15:00', 'رابط جوجل لازم يبلّش بـ https://':'קישור גוגל חייב להתחיל ב־https://'
+});
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -925,7 +949,7 @@ function onLogin(u){
     if(view==='cpn') render();
   }, err => console.error('coupons', err));
   drvListen();
-  outsideListen();
+  outsideListen(); extraListen();
   db.collection('settings').doc('inv').onSnapshot(d => { INV_LAST = d.exists ? (d.data().last || null) : null; const e = $('ivLast'); if(e) e.value = INV_LAST == null ? '—' : INV_LAST; }, () => {});
   db.collection('orders').orderBy('createdAtStr','desc').limit(250).onSnapshot(s => {
     ORDERS = s.docs.map(d=>({id:d.id,...d.data()}));
@@ -940,6 +964,8 @@ function onLogin(u){
     try{ stockSync(); }catch(e){}
     try{ loySync(); }catch(e){}
     try{ numSync(); }catch(e){}
+    try{ dailySync(); }catch(e){}
+    try{ onceSync(); }catch(e){}
   }, err => console.error(err));
 }
 
@@ -1087,7 +1113,7 @@ const ST = {
 function renderOrders(){
   const live = ORDERS.filter(o => ['new','prep','ready'].includes(o.status));
   const list = ordFilter === 'live' ? live : ORDERS;
-  const head = outsideHtml() + setupWarnings() + stockWarn() + todaySummary() + `
+  const head = outsideHtml() + extraWarn() + setupWarnings() + stockWarn() + todaySummary() + `
     <h2 class="sec">الطلبات</h2>
     <div class="bar">
       <button class="btn sm ${ordFilter==='live'?'red':'gh'}" onclick="ordFilter='live';render()">الحالية (${live.length})</button>
@@ -1129,6 +1155,8 @@ function renderOrders(){
       <div class="meta">
         <span class="pill ${o.type==='pickup'?'b':''}">${o.type==='pickup'?'🏪 استلام':'🛵 توصيل'}</span>
         ${c.ref?'<span class="pill b">📲 من الـ QR</span>':''}
+        ${c.refBy?`<span class="pill r">👫 <span>جاي من صاحب</span> -₪${Number(c.refDisc||0)}</span>`:''}${c.refUsed?`<span class="pill r">🎁 <span>رصيد أصحاب</span> -₪${Number(c.refUsed)}</span>`:''}
+        ${c.happyDisc?`<span class="pill a">🕐 <span>ساعة سعيدة</span> -₪${Number(c.happyDisc)}</span>`:''}${c.daily?`<span class="pill a">⏳ <span>عرض اليوم</span> ×${Number(c.daily)}</span>`:''}
         ${c.src==='phone'?'<span class="pill a">📞 طلب تلفون</span>':c.src==='shop'?'<span class="pill a">🏪 طلب بالمحل</span>':''}
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
         ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
@@ -1175,6 +1203,7 @@ function setStatus(id, s){
   const o = ORDERS.find(x => x.id === id);
   db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
   if(s === 'done' && o && !o.lp) loyCount(o);
+  if(s === 'done' && o) refAward(o);
   if(s === 'cancel' && o) stockBack(o);
   if(s === 'cancel' && o && o.inv && !o.credit && confirm('طلعت فاتورة لهالطلب (' + o.inv + '). تطلّع חשבונית זיכוי هلأ؟')) invCredit(id, true);
   if(s === 'ready') notifyReady(id);
@@ -2207,6 +2236,7 @@ function editItem(id){
     </div>
     <div class="f"><label>📦 المخزون — كم قطعة ضل؟ (فاضي = بلا حدود)</label><input id="iStock" type="number" min="0" inputmode="numeric" value="${hasStock(it) ? Number(it.stock) : ''}" placeholder="بلا حدود">
       <div class="muted" style="margin-top:4px">لما يوصل 0 بيطلع للزبون "نفذت الكمية" وما بيقدر يطلبه. بينقص لحاله مع كل طلب.</div></div>
+    ${algPick(it)}
     <label class="chk"><input type="checkbox" id="iBest" ${it.best?'checked':''}><span>🔥 يظهر بالأكثر مبيعاً</span></label>
     <label class="chk"><input type="checkbox" id="iAvail" ${it.available!==false?'checked':''}><span>✅ متوفر للطلب</span></label>
     <label class="chk"><input type="checkbox" id="iDealOnly" ${it.dealOnly?'checked':''}><span>🎯 بس جوا العروض (مخفي من المنيو)</span></label>
@@ -2223,7 +2253,8 @@ function editItem(id){
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
       best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked, upsell: $('iUpsell').checked,
       stock: val('iStock') === '' ? null : Math.max(0, Math.floor(num('iStock'))),
-      cost: val('iCost') === '' ? null : Math.max(0, num('iCost'))
+      cost: val('iCost') === '' ? null : Math.max(0, num('iCost')),
+      allergens: [...document.querySelectorAll('.algchk:checked')].map(c => c.value)
     };
     if(id) await db.collection('items').doc(id).update(data);
     else await db.collection('items').add(Object.assign(data, {order:(ITEMS.length+1)*10}));
@@ -2582,7 +2613,7 @@ async function renderCust(){
   const q = custQ.trim().toLowerCase();
   const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
-  $('vCust').innerHTML = habitHtml(all) + bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
+  $('vCust').innerHTML = eventsHtml() + giftsHtml() + habitHtml(all) + bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
       <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
@@ -2839,6 +2870,182 @@ function renderShift(){
   const wasDirty = SH.dirty; shTotals(); SH.dirty = wasDirty;
 }
 
+/* =====================================================================
+   الدفعة 2 (اللوحة): صاحبك · عرض اليوم · ساعة سعيدة · رمضان · حساسية · مناسبات · بطاقة هدية · تقييم جوجل
+   ===================================================================== */
+const todayKey = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+function refCode(ph){ ph = phKey(ph); if(!ph) return ''; let h = 2166136261; for(const c of 'pz' + ph){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36).toUpperCase().padStart(6, '0').slice(-6); }
+const ALG = {gluten:['🌾','جلوتين'], dairy:['🥛','حليب'], egg:['🥚','بيض'], nuts:['🥜','مكسرات'], peanut:['🥜','فستق عبيد'], sesame:['⚪','سمسم'], fish:['🐟','سمك'], soy:['🫘','صويا'], spicy:['🌶️','حار'], veg:['🌱','نباتي']};
+function algPick(it){
+  const a = it.allergens || [];
+  return `<div class="card" style="box-shadow:none;border:1.5px solid var(--line)"><label style="font-weight:800;font-size:14px">⚠️ الحساسية والعلامات</label>
+    <div class="muted" style="margin-bottom:6px">بتطلع للزبون بصفحة الوجبة.</div><div class="dayz">${Object.entries(ALG).map(([k, v]) =>
+      `<label><input type="checkbox" class="algchk" value="${k}" ${a.includes(k) ? 'checked' : ''}> ${v[0]} ${v[1]}</label>`).join('')}</div></div>`;
+}
+
+/* ---------- 👫 مكافأة الصاحب (لما الطلب يوصل) ---------- */
+async function refAward(o){
+  const c = o.customer || {}, R = SET.referral || {};
+  if(o.refDone || (!c.refBy && !c.refUsed)) return;
+  const FV = firebase.firestore.FieldValue, me = phKey(c.phone);
+  try{
+    if(c.refUsed && /^0\d{8,9}$/.test(me)) await db.collection('loyalty').doc(me).set({refCredit: FV.increment(-Number(c.refUsed))}, {merge: true});
+    if(c.refBy && R.on && Number(R.refValue) > 0){
+      await loadCustOrders();
+      const all = custList(), mine = all.find(x => x.phone === me);
+      const first = !mine || mine.orders.filter(x => x.status !== 'cancel').length <= 1;
+      const ref = all.find(x => refCode(x.phone) === c.refBy && x.phone !== me);
+      if(first && ref){ await db.collection('loyalty').doc(ref.phone).set({refCredit: FV.increment(Number(R.refValue)), refN: FV.increment(1)}, {merge: true}); toast('👫 ' + trText('صاحبه أخذ رصيد') + ' ₪' + Number(R.refValue)); }
+    }
+    await db.collection('orders').doc(o.id).update({refDone: true});
+  }catch(e){ console.error('referral', e); }
+}
+
+/* ---------- ⏳ عرض اليوم: عدّاد المباع (من الطلبات) ---------- */
+function dailySync(){
+  const D = SET.daily; if(!D || !D.on) return;
+  const k = todayKey();
+  const sold = ORDERS.filter(o => o.status !== 'cancel' && o.createdAtStr && dayKey(o.createdAtStr) === dayKey(new Date().toISOString()))
+    .reduce((s, o) => s + (o.items || []).filter(i => i.daily).reduce((a, i) => a + (Number(i.qty) || 0), 0), 0);
+  if(D.soldDate === k && Number(D.sold || 0) === sold) return;
+  if(D.soldDate !== k && !sold) { db.collection('settings').doc('main').set({daily: {sold: 0, soldDate: k}}, {merge: true}).catch(() => {}); return; }
+  db.collection('settings').doc('main').set({daily: {sold, soldDate: k}}, {merge: true}).catch(e => console.warn('daily', e.message));
+}
+
+/* ---------- 🎟️ كوبون هدية لمرة وحدة ---------- */
+function onceSync(){
+  ORDERS.forEach(o => {
+    if(!o.coupon || o.status === 'cancel') return;
+    const c = CPNS.find(x => x.id === o.coupon);
+    if(c && c.once && c.active !== false) db.collection('coupons').doc(c.id).update({active: false, usedBy: o.id}).catch(() => {});
+  });
+}
+
+/* ---------- 🎉 مناسبات + 🎁 بطاقات هدية ---------- */
+let EVENTS = [], GIFTS = [];
+function extraListen(){
+  let evSeen = false, gfSeen = false;
+  db.collection('events').orderBy('at', 'desc').limit(60).onSnapshot(s => { const n0 = EVENTS.filter(x => x.status === 'new').length;
+    EVENTS = s.docs.map(d => ({id: d.id, ...d.data()})); if(evSeen && EVENTS.filter(x => x.status === 'new').length > n0) ding(); evSeen = true; if(view === 'orders' || view === 'cust') render(); }, e => console.warn('events', e.message));
+  db.collection('gifts').orderBy('at', 'desc').limit(60).onSnapshot(s => { const n0 = GIFTS.filter(x => x.status === 'new').length;
+    GIFTS = s.docs.map(d => ({id: d.id, ...d.data()})); if(gfSeen && GIFTS.filter(x => x.status === 'new').length > n0) ding(); gfSeen = true; if(view === 'orders' || view === 'cust') render(); }, e => console.warn('gifts', e.message));
+}
+function extraWarn(){
+  const e = EVENTS.filter(x => x.status === 'new').length, g = GIFTS.filter(x => x.status === 'new').length;
+  if(!e && !g) return '';
+  return `<div class="warnbox stw" onclick="tab('cust')">${e ? `🎉 <span>طلبات مناسبات جديدة</span>: <b>${e}</b>` : ''}${e && g ? ' · ' : ''}${g ? `🎁 <span>بطاقات هدية جديدة</span>: <b>${g}</b>` : ''}</div>`;
+}
+async function evDone(id){ try{ await db.collection('events').doc(id).update({status: 'done'}); }catch(e){ alert(e.message); } }
+function eventsHtml(){
+  if(!EVENTS.length) return '';
+  const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
+  return `<h2 class="sec">🎉 طلبيات مناسبات <span class="muted">(${EVENTS.filter(x => x.status === 'new').length} جديد)</span></h2>` + EVENTS.slice(0, 20).map(x => `<div class="card ${x.status === 'new' ? 'ord new' : ''}">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap"><b>${esc(x.name)} · ${esc(x.type || '')}</b><span class="pill ${x.status === 'new' ? 'r' : 'g'}">${x.status === 'new' ? 'جديد' : '✓ تم'}</span></div>
+    <div class="muted">📅 <span class="ltr">${esc(x.date || '')} ${esc(x.time || '')}</span> · 👥 ${Number(x.people || 0)} · <span>وصل</span> ${esc(d(x.at))}</div>
+    ${x.note ? `<div class="ch2">${esc(x.note)}</div>` : ''}
+    <div class="acts" style="margin-top:8px"><a class="btn sm gh" href="tel:${esc(x.phone)}">📞 ${esc(x.phone)}</a>
+      <a class="btn sm gh" target="_blank" href="https://wa.me/${waPhone(x.phone)}?text=${encodeURIComponent((x.lang === 'he' ? 'שלום ' : 'أهلاً ') + x.name + ' 👋\n')}">💬 واتساب</a>
+      ${x.status === 'new' ? `<button class="btn sm red" onclick="evDone('${x.id}')">✓ تم التواصل</button>` : ''}</div></div>`).join('');
+}
+const GPAY = {bit: '📱 Bit', paybox: '📲 PayBox', online: '🌐 بطاقة أونلاين', shop: '🏪 بالمحل'};
+function giftCode(){ const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s = 'GIFT'; for(let i = 0; i < 6; i++) s += A[Math.floor(Math.random() * A.length)]; return s; }
+function giftMsg(g){
+  const he = g.lang === 'he', url = location.origin + '/', shop = he ? (SET.name_he || SET.name || '') : (SET.name || '');
+  return he ? `🎁 היי ${g.to}!\n${g.from} שלח/ה לך ארוחה במתנה מ${shop} — שווי ₪${g.amount}${g.msg ? '\n💬 "' + g.msg + '"' : ''}\n\nקוד המתנה: *${g.code}*\nמזמינים באתר ומדביקים את הקוד בסל:\n${url}`
+            : `🎁 أهلاً ${g.to}!\n${g.from} بعتلك وجبة هدية من ${shop} — بقيمة ₪${g.amount}${g.msg ? '\n💬 "' + g.msg + '"' : ''}\n\nكود الهدية: *${g.code}*\nاطلب من الموقع وحط الكود بالسلة:\n${url}`;
+}
+async function giftPaid(id){
+  const g = GIFTS.find(x => x.id === id); if(!g) return;
+  if(!confirm(trText('وصل الدفع؟ بنعمل كود هدية') + ' ₪' + g.amount)) return;
+  try{
+    let code = g.code || giftCode();
+    if(!g.code){ await db.collection('coupons').doc(code).set({type: 'fixed', value: Number(g.amount), minOrder: 0, active: true, once: true, gift: id}); await db.collection('gifts').doc(id).update({status: 'sent', code, paidAt: new Date().toISOString()}); }
+    window.open('https://wa.me/' + waPhone(g.toPhone) + '?text=' + encodeURIComponent(giftMsg(Object.assign({}, g, {code}))), '_blank');
+  }catch(e){ alert(e.message); }
+}
+async function giftCancel(id){ if(!confirm('تلغي بطاقة الهدية؟')) return; try{ await db.collection('gifts').doc(id).update({status: 'cancel'}); }catch(e){ alert(e.message); } }
+function giftsHtml(){
+  if(!GIFTS.length) return '';
+  const st = {new: ['r', '⏳ مستني دفع'], sent: ['g', '✓ انبعتت'], cancel: ['', 'ملغية']};
+  return `<h2 class="sec">🎁 بطاقات هدية</h2>` + GIFTS.slice(0, 20).map(g => { const used = g.code && CPNS.find(c => c.id === g.code && c.active === false);
+    return `<div class="card ${g.status === 'new' ? 'ord new' : ''}"><div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <b>${esc(g.from)} ← ${esc(g.to)}</b><span><b class="ltr">₪${Number(g.amount)}</b> <span class="pill ${(st[g.status] || st.new)[0]}">${(st[g.status] || st.new)[1]}</span>${used ? ' <span class="pill">استعملها</span>' : ''}</span></div>
+    <div class="muted">${GPAY[g.pay] || ''} · <span class="ltr">${esc(g.fromPhone)}</span> → <span class="ltr">${esc(g.toPhone)}</span>${g.code ? ` · <b class="ltr">${esc(g.code)}</b>` : ''}</div>
+    ${g.msg ? `<div class="ch2">💬 ${esc(g.msg)}</div>` : ''}
+    <div class="acts" style="margin-top:8px">${g.status === 'new' ? `<button class="btn sm red" onclick="giftPaid('${g.id}')">💰 وصل الدفع — ابعت الهدية</button><button class="btn sm gh" onclick="giftCancel('${g.id}')">إلغاء</button>`
+      : g.status === 'sent' ? `<button class="btn sm gh" onclick="giftPaid('${g.id}')">💬 ابعت الكود كمان مرة</button>` : ''}
+      <a class="btn sm gh" href="tel:${esc(g.fromPhone)}">📞 <span>المرسل</span></a></div></div>`; }).join('') +
+    `<div class="muted" style="margin:-4px 0 12px">الكود بيشتغل مرة وحدة. إذا طلبه أقل من قيمة الهدية، الباقي بيروح.</div>`;
+}
+
+/* ---------- ⚙️ كروت الإعدادات ---------- */
+function b2SetHtml(){
+  const R = SET.referral || {}, D = SET.daily || {}, H = SET.happy || {}, M = SET.ramadan || {};
+  const hdays = H.days && H.days.length ? H.days.map(Number) : [0,1,2,3,4,5,6];
+  const opt = (v, cur) => `<option value="${esc(v[0])}" ${v[0] === cur ? 'selected' : ''}>${esc(v[1])}</option>`;
+  return `
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">👫 ادعُ صاحبك</label>
+      <label class="chk"><input type="checkbox" id="rfOn" ${R.on ? 'checked' : ''}><span>تفعيل — كل زبون إله رابط يبعته لأصحابه</span></label>
+      <div class="f2"><div class="f"><label>خصم للصاحب الجديد (₪، أول طلب)</label><input id="rfNew" type="number" min="0" value="${R.newValue == null ? 15 : R.newValue}"></div>
+        <div class="f"><label>رصيد للي بعت الرابط (₪)</label><input id="rfRef" type="number" min="0" value="${R.refValue == null ? 15 : R.refValue}"></div></div>
+      <div class="muted">الرصيد بينضاف للي بعت الرابط لما تكبس "🛵 تم التسليم" على أول طلب لصاحبه، وبيستعمله بطلبه الجاي.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">⏳ عرض اليوم (كمية محدودة)</label>
+      <label class="chk"><input type="checkbox" id="dyOn" ${D.on ? 'checked' : ''}><span>تفعيل — بيطلع فوق بالصفحة الرئيسية مع عدّاد</span></label>
+      <div class="f"><label>الصنف</label><select id="dyItem">${ITEMS.map(i => opt([i.id, LX(i, 'name') + ' — ₪' + i.price], D.itemId)).join('')}</select></div>
+      <div class="f3"><div class="f"><label>سعر العرض ₪</label><input id="dyPrice" type="number" min="1" value="${D.price || ''}"></div>
+        <div class="f"><label>كم قطعة بس؟</label><input id="dyQty" type="number" min="1" value="${D.qty || 20}"></div>
+        <div class="f"><label>أكثر إشي للزبون</label><input id="dyMax" type="number" min="1" value="${D.max || 2}"></div></div>
+      <div class="f2"><div class="f"><label>من الساعة</label><input id="dyFrom" class="ltr" value="${esc(D.from || '')}" placeholder="12:00"></div>
+        <div class="f"><label>لحد الساعة</label><input id="dyTo" class="ltr" value="${esc(D.to || '')}" placeholder="16:00"></div></div>
+      <div class="muted">انباع اليوم: <b>${D.soldDate === todayKey() ? Number(D.sold || 0) : 0}</b> / ${Number(D.qty || 0)}. العدّاد بيتصفّر كل يوم لحاله. (بيتحدّث لما اللوحة مفتوحة.)</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🕐 الساعة السعيدة</label>
+      <label class="chk"><input type="checkbox" id="hpOn" ${H.on ? 'checked' : ''}><span>تفعيل — خصم أوتوماتيك بالساعات الهادية</span></label>
+      <div class="f3"><div class="f"><label>الخصم %</label><input id="hpPct" type="number" min="1" max="50" value="${H.percent || 15}"></div>
+        <div class="f"><label>من</label><input id="hpFrom" class="ltr" value="${esc(H.from || '15:00')}"></div>
+        <div class="f"><label>لحد</label><input id="hpTo" class="ltr" value="${esc(H.to || '17:00')}"></div></div>
+      <div class="dayz" id="hpDays">${DAYS.map((n, d) => `<label><input type="checkbox" value="${d}" ${hdays.includes(d) ? 'checked' : ''}> ${n}</label>`).join('')}</div>
+      <div class="f" style="margin-top:10px"><label>الاسم اللي بيطلع للزبون</label><input id="hpLbl" value="${esc(H.label || '')}" placeholder="ساعة سعيدة"></div>
+      ${heField('hpLblHe', H.label_he, 'الاسم بالعبري')}
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🌙 وضع رمضان</label>
+      <label class="chk"><input type="checkbox" id="rmOn" ${M.on ? 'checked' : ''}><span>تفعيل — شريط رمضان وزر "اطلب للإفطار"</span></label>
+      <div class="f2"><div class="f"><label>دقايق بعد الغروب (الأذان)</label><input id="rmOff" type="number" min="-20" max="20" value="${M.offset == null ? 2 : M.offset}"></div>
+        <div class="f"><label>قسم الإفطار</label><select id="rmCat"><option value="">— بلا —</option>${CATS.map(c => opt([c.id, (c.icon || '') + ' ' + LX(c, 'name')], M.cat)).join('')}</select></div></div>
+      <div class="f"><label>العنوان</label><input id="rmTitle" value="${esc(M.title || '')}" placeholder="رمضان كريم"></div>
+      ${heField('rmTitleHe', M.title_he, 'العنوان بالعبري')}
+      <div class="muted">وقت المغرب بينحسب لحاله كل يوم لأم الفحم. الطلب بيطلع عندك كطلب مسبق ⏰ لوقت الأذان. لا تنسى تغيّر ساعات الدوام برمضان.</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">⭐ تقييم جوجل</label>
+      <div class="f"><label>رابط "اكتب تقييم" من Google</label><input id="gRev" dir="ltr" value="${esc(SET.googleReview || '')}" placeholder="https://g.page/r/.../review"></div>
+      <div class="muted">من Google Business Profile ← "اطلب تقييمات" ← انسخ الرابط. اللي بيعطي 5 نجوم بالموقع بيطلعله زر يقيّمك على جوجل.</div>
+    </div>`;
+}
+function b2SetRead(){
+  return {
+    referral: {on: $('rfOn').checked, newValue: Math.max(0, num('rfNew')), refValue: Math.max(0, num('rfRef'))},
+    daily: {on: $('dyOn').checked, itemId: val('dyItem'), price: Math.max(0, num('dyPrice')), qty: Math.max(1, Math.floor(num('dyQty')) || 1), max: Math.max(1, Math.floor(num('dyMax')) || 1), from: val('dyFrom'), to: val('dyTo')},
+    happy: {on: $('hpOn').checked, percent: Math.min(50, Math.max(0, num('hpPct'))), from: val('hpFrom'), to: val('hpTo'), label: val('hpLbl'), label_he: val('hpLblHe'),
+      days: [...document.querySelectorAll('#hpDays input:checked')].map(i => Number(i.value))},
+    ramadan: {on: $('rmOn').checked, offset: Math.max(-20, Math.min(20, Math.round(num('rmOff')))), cat: val('rmCat'), title: val('rmTitle'), title_he: val('rmTitleHe')},
+    googleReview: val('gRev')
+  };
+}
+function b2SetCheck(d){
+  const hm = /^([01]?\d|2[0-3]):[0-5]\d$/;
+  if(d.daily.on && (!d.daily.price || !d.daily.itemId)){ alert('عرض اليوم: اختار صنف واكتب السعر'); return false; }
+  if(d.daily.on && ((d.daily.from && !hm.test(d.daily.from)) || (d.daily.to && !hm.test(d.daily.to)))){ alert('عرض اليوم: اكتب الساعة هيك 16:00'); return false; }
+  if(d.happy.on && (!hm.test(d.happy.from) || !hm.test(d.happy.to))){ alert('الساعة السعيدة: اكتب الساعة هيك 15:00'); return false; }
+  if(d.googleReview && !/^https:\/\//i.test(d.googleReview)){ alert('رابط جوجل لازم يبلّش بـ https://'); return false; }
+  return true;
+}
+
 /* ============ 📲 مسح الـ QR ============ */
 function scansHtml(R){
   const S = REP.scans; if(S == null) return '';
@@ -2962,19 +3169,19 @@ function prizeParts(o){
   }
   const gift = c.wheel && c.wheelType === 'gift' ? Number(c.wheelVal || 0) : 0;
   const bdayD = c.bdayGift ? Number(c.bdayDisc || 0) : 0, bdayG = c.bdayGift && c.bdayType === 'gift' ? Number(c.bdayVal || 0) : 0;
-  const posD = Number(c.posDisc || 0);
-  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel - bdayD - posD) * 100) / 100);
-  return {reward, wheel, gift, coupon, bdayD, bdayG, posD};
+  const posD = Number(c.posDisc || 0), refD = Number(c.refDisc || 0) + Number(c.refUsed || 0), happyD = Number(c.happyDisc || 0);
+  const coupon = c.couponDisc != null ? Number(c.couponDisc) : Math.max(0, Math.round((disc - reward - wheel - bdayD - posD - refD - happyD) * 100) / 100);
+  return {reward, wheel, gift, coupon, bdayD, bdayG, posD, refD, happyD};
 }
 function calcReport(list){
   const ok = list.filter(o => o.status !== 'cancel');
   const vr = vatRate() / 100;
-  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0, posD: 0, bySrc: {},
+  const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0, posD: 0, refD: 0, happyD: 0, bySrc: {},
     byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set(), byId: {}, pts: []};
   ok.forEach(o => {
     const t = Number(o.total || 0), c = o.customer || {}, pp = prizeParts(o);
     R.gross += t; R.sub += Number(o.subtotal || 0); R.fees += Number(o.fee || 0); R.disc += Number(o.discount || 0);
-    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift; R.bdayD += pp.bdayD; R.bdayG += pp.bdayG; R.posD += pp.posD;
+    R.coupon += pp.coupon; R.reward += pp.reward; R.wheel += pp.wheel; R.gift += pp.gift; R.bdayD += pp.bdayD; R.bdayG += pp.bdayG; R.posD += pp.posD; R.refD += pp.refD; R.happyD += pp.happyD;
     const sk = c.src || 'web'; R.bySrc[sk] = R.bySrc[sk] || [0, 0]; R.bySrc[sk][0]++; R.bySrc[sk][1] += t;
     const pk = c.pay || 'cash'; R.byPay[pk] = R.byPay[pk] || [0, 0]; R.byPay[pk][0]++; R.byPay[pk][1] += t;
     const ty = o.type === 'pickup' ? 'pickup' : 'delivery'; R.byType[ty][0]++; R.byType[ty][1] += t;
@@ -3032,6 +3239,8 @@ function reportDocHtml(R, ym){
       <tr><td>🎡 خصومات العجلة</td><td class="n neg">${R.wheel ? '-' : ''}${rmoney(R.wheel)}</td></tr>
       ${R.bdayD ? `<tr><td>🎂 خصومات عيد الميلاد</td><td class="n neg">-${rmoney(R.bdayD)}</td></tr>` : ''}
       ${R.posD ? `<tr><td>🏷️ خصومات بالكاشير</td><td class="n neg">-${rmoney(R.posD)}</td></tr>` : ''}
+      ${R.refD ? `<tr><td>👫 خصومات "ادعُ صاحبك"</td><td class="n neg">-${rmoney(R.refD)}</td></tr>` : ''}
+      ${R.happyD ? `<tr><td>🕐 خصومات الساعة السعيدة</td><td class="n neg">-${rmoney(R.happyD)}</td></tr>` : ''}
       <tr class="b"><td>مجموع المدخول (شامل מע״מ)</td><td class="n">${rmoney(R.gross)}</td></tr>
       <tr><td>מע״מ ${vatRate()}%</td><td class="n">${rmoney(R.vat)}</td></tr>
       <tr class="b"><td>المدخول قبل מע״מ</td><td class="n">${rmoney(R.net)}</td></tr>
@@ -3938,6 +4147,7 @@ function renderSet(){
       <div class="f"><label>عنوان القسم</label><input id="vidTitle" value="${esc(SET.vidTitle||'')}" placeholder="🎬 من مطبخنا"></div>
       ${heField('vidTitleHe', SET.vidTitle_he, 'العنوان بالعبري')}
     </div>
+    ${b2SetHtml()}
     ${backupHtml()}
     ${blockedHtml()}
     <div class="card">
@@ -4041,6 +4251,8 @@ async function saveSet(){
   if(data.wheel.on && data.wheel.prizes.filter(p => p.chance > 0).length < 2){ alert('العجلة بدها جائزتين على الأقل'); return; }
   if(data.wheel.prizes.some(p => p.type === 'percent' && p.value > 50)){ alert('خصم العجلة لازم يكون 50% أو أقل'); return; }
   if(data.bday.type === 'percent' && data.bday.value > 50){ alert('خصم عيد الميلاد لازم يكون 50% أو أقل'); return; }
+  Object.assign(data, b2SetRead());
+  if(!b2SetCheck(data)) return;
   if(data.inv.on && !data.osek){ alert('للفاتورة لازم تكتب رقم עוסק / ח.פ'); return; }
   if(data.onlineUrl && !/^https:\/\//i.test(data.onlineUrl)){ alert('رابط الدفع لازم يبلّش بـ https://'); return; }
   if(data.payboxLink && !/^https:\/\//i.test(data.payboxLink)){ alert('رابط PayBox لازم يبلّش بـ https://'); return; }

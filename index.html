@@ -488,6 +488,30 @@ a.cta{text-decoration:none;justify-content:center}
 .stars button{font-size:34px;color:#ddd;line-height:1}.stars button.on{color:#f5b301}
 .btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
 
+/* الدفعة 2 */
+.daily{display:flex;gap:12px;align-items:center;width:calc(100% - 32px);margin:12px 16px 0;background:#1a1a1a;color:#fff;border-radius:18px;padding:10px;text-align:start;font-family:inherit}
+.daily:disabled{opacity:.6}
+.daily .dph{width:84px;height:84px;border-radius:14px;overflow:hidden;flex:none;background:#333}.daily .dph img{width:100%;height:100%;object-fit:cover}
+.daily .dtx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.daily .dt{color:#f5b301;font-weight:900;font-size:12.5px}.daily b{font-size:15px}
+.daily .dpr b{color:#ff5a61;font-size:18px}.daily .dpr s{opacity:.6;font-size:13px}
+.daily .dbar{height:6px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:3px}.daily .dbar i{display:block;height:100%;background:#f5b301}
+.daily .dleft{font-size:12px;opacity:.9}.daily .dleft b{font-size:12.5px}
+.happy{margin:12px 16px 0;background:#fff3cc;border:1.5px solid #f5b301;color:#5c4500;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.6}
+.ram{display:flex;align-items:center;gap:10px;margin:12px 16px 0;background:linear-gradient(135deg,#0f2a44,#1d4f73);color:#fff;border-radius:16px;padding:11px 12px}
+.ram .rm{font-size:28px}.ram .rt{flex:1;display:flex;flex-direction:column;font-size:12.5px;line-height:1.5}.ram .rt b{font-size:14.5px}
+.ram .ok{background:#f5b301;color:#1a1a1a;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12.5px;white-space:nowrap}
+.alg{margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.alg .ag{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700}
+.alg .ag.t{background:#e9fbef;border-color:#bfe8cc}
+.alg .aw{flex-basis:100%;font-size:12.5px;color:#7a4b00;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.refc .refrow{display:flex;align-items:center;gap:8px;margin-top:9px}.refc .refrow span{flex:1;font-weight:900;font-size:18px;letter-spacing:2px}
+.refc .ok{background:var(--red);color:#fff;border-radius:999px;padding:8px 14px;font-weight:800}
+.xbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.xb{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 8px;font-weight:800;font-size:13.5px;display:flex;flex-direction:column;align-items:center;gap:4px}.xb span{font-size:24px}
+.gamts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.gamts button{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 0;font-weight:900;font-size:15px}
+.gamts button.on{border-color:var(--red);background:var(--red-soft);color:var(--red)}
 /* أنا برا */
 .outb{margin-top:16px;background:#fff;border:2px solid #1f6feb;border-radius:16px;padding:12px;text-align:center}
 .outb .cta{background:#1f6feb;margin-top:8px}
@@ -794,6 +818,25 @@ Object.assign(HE, {
   'من مطبخنا':'מהמטבח שלנו', 'يلا اطلب':'יאללה להזמין', 'فيديو':'סרטון', 'إغلاق':'סגירה',
   'معلومات المطعم':'מידע על המסעדה', 'مشاركة':'שיתוף', 'بحث':'חיפוש', 'نافذة':'חלון', 'بيان الإتاحة':'הצהרת נגישות', 'تخطّى للمحتوى':'דלג לתוכן'
 });
+/* ===== ترجمات الدفعة 2 ===== */
+Object.assign(HE, {
+  'ادعُ صاحبك':'הזמינו חבר', 'صاحبك بياخد':'החבר מקבל', 'خصم على أول طلب، وإنت بتاخد':'הנחה על ההזמנה הראשונה, ואתם מקבלים', 'لما يوصله الطلب.':'כשההזמנה שלו מגיעה.',
+  'ابعت لصاحبك':'שליחה לחבר', 'رصيدك من الأصحاب':'הקרדיט שלך מחברים', 'سجّل رقمك فوق عشان يطلعلك رابطك':'הירשמו עם הטלפון למעלה כדי לקבל קישור אישי',
+  'هدية من صاحبك':'מתנה מחבר', 'خصم':'הנחה', 'على أول طلب':'על ההזמנה הראשונה', 'استعمله بهالطلب':'להשתמש בהזמנה הזו', 'رصيد الأصحاب':'קרדיט מחברים',
+  'عرض اليوم':'מבצע היום', 'باقي':'נשארו', 'خلص العرض':'המבצע נגמר', 'بيخلص بعد':'נגמר בעוד', 'عرض اليوم: أكثر إشي':'מבצע היום: מקסימום',
+  'ساعة سعيدة':'שעה שמחה', 'الساعة السعيدة':'השעה השמחה', 'على كل الطلب لحد':'על כל ההזמנה עד',
+  'رمضان كريم':'רמדאן כרים', 'المغرب اليوم':'שקיעה היום', 'بنوصّلك الإفطار عالأذان':'נביא את האיפטאר בזמן', 'اطلب للإفطار':'הזמנה לאיפטאר', 'طلبك بيوصل عالمغرب':'ההזמנה תגיע בשקיעה',
+  'طلبيات مناسبات':'הזמנות לאירועים', 'أعراس، أعياد ميلاد، مكاتب، مدارس… احكيلنا وبنرجعلك بعرض سعر.':'חתונות, ימי הולדת, משרדים, בתי ספר… ספרו לנו ונחזור עם הצעת מחיר.',
+  'نوع المناسبة':'סוג האירוע', 'عيد ميلاد':'יום הולדת', 'عرس / خطوبة':'חתונה / אירוסין', 'شغل / مكتب':'עבודה / משרד', 'مدرسة / روضة':'בית ספר / גן', 'غير هيك':'אחר',
+  'التاريخ':'תאריך', 'الساعة':'שעה', 'كم شخص تقريباً؟':'כמה אנשים בערך?', 'شو بدك؟ (أكل، ميزانية، توصيل…)':'מה תרצו? (אוכל, תקציב, משלוח…)', 'ابعت الطلب':'שליחת הבקשה',
+  'وصلنا طلبك — بنرجعلك قريب':'קיבלנו — נחזור אליכם בקרוב', 'ما زبط — اتصل فينا':'לא הצליח — התקשרו אלינו', 'لو سمحت اكتب الاسم ورقم التلفون':'נא לכתוב שם וטלפון',
+  'ابعت وجبة هدية':'שליחת ארוחה במתנה', 'بنبعتله رسالة واتساب فيها كود هدية، وبيطلب فيه شو ما بده من الموقع.':'נשלח לו וואטסאפ עם קוד מתנה, והוא מזמין מה שבא לו באתר.',
+  'لمين الهدية؟ (الاسم)':'למי המתנה? (שם)', 'رقم تلفونه':'הטלפון שלו', 'رسالة منك (اختياري)':'הודעה ממך (לא חובה)', 'اسمك':'השם שלך', 'رقمك':'הטלפון שלך',
+  'بدفع بالمحل':'תשלום במסעדה', 'الهدية بتنبعت بعد ما تدفع':'המתנה נשלחת אחרי התשלום', 'ابعت الهدية':'שליחת המתנה', 'اكتب اسم ورقم اللي بدك تبعتله':'כתבו שם וטלפון של מקבל המתנה',
+  'اكتب اسمك ورقمك':'כתבו את השם והטלפון שלכם', 'وصلنا — ادفع بالمحل وبنبعت الهدية':'קיבלנו — שלמו במסעדה ונשלח את המתנה',
+  'شكراً! بتساعدنا بتقييم على جوجل؟':'תודה! תעזרו לנו עם ביקורת בגוגל?', 'بتاخد 10 ثواني وبتفرق معنا كثير':'זה לוקח 10 שניות ועוזר לנו המון', 'قيّمنا على جوجل':'דרגו אותנו בגוגל',
+  'فيه:':'מכיל:'
+});
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -1017,7 +1060,7 @@ function status(){
 const avail = () => ITEMS.filter(i => i.available !== false && !i.dealOnly);   // dealOnly = بيطلع بس جوا العروض
 const byId = id => ITEMS.find(i => i.id === id);
 const grp = g => GROUPS[g] || null;
-const base = it => (it.sale && it.sale < it.price) ? Number(it.sale) : Number(it.price);
+const base = it => (typeof dailyLive === 'function' && dailyLive(it)) ? Number(SET.daily.price) : (it.sale && it.sale < it.price) ? Number(it.sale) : Number(it.price);
 
 function badges(it){
   const b = [];
@@ -1093,7 +1136,7 @@ function renderHome(){
       : '<div class="empty"><div class="e">🔎</div><div>ما لقينا إشي باسم "' + esc(searchQ) + '"</div></div>';
     return;
   }
-  let html = '';
+  let html = ramHtml() + happyHtml() + dailyHtml();
   const actD = activeDeals();
   if(actD.length){
     const feat = actD.filter(d => d.featured);
@@ -1147,7 +1190,8 @@ function renderMe(){
     '<div class="rowcard prof" onclick="openReg(false)"><div class="hd"><span class="ic">👤</span><span style="flex:1">' +
       (_ph ? '<b>' + esc(_nm) + '</b><br><span class="ltr" style="color:var(--muted);font-size:12.5px">' + esc(_ph) + '</span>' : '<b>سجّل بالموقع</b><br><span style="color:var(--muted);font-size:12.5px">عشان نقاط الولاء والطلب الأسرع</span>') +
       '</span><span class="chg">' + (_ph ? 'تعديل' : 'تسجيل') + '</span></div></div>' +
-    loyCard(false) + wheelRowHtml() + bdayRowHtml(false) +
+    loyCard(false) + refCardHtml() + wheelRowHtml() + bdayRowHtml(false) +
+    '<div class="xbtns"><button class="xb" onclick="openGift()"><span>🎁</span>ابعت وجبة هدية</button><button class="xb" onclick="openEvent()"><span>🎉</span>طلبيات مناسبات</button></div>' +
     (typeof canInstall === 'function' && canInstall() ? '<button class="alldeals" style="width:100%;margin:0 0 12px" onclick="doInstall()"><span>📲 نزّل التطبيق على التلفون</span><span class="ar">←</span></button>' : '') +
     '<div class="rowcard"><div class="hd"><span class="ic">🏪</span>' +
       '<span style="flex:1">' + esc(LX(SET,'name')) + '<br><span style="font-weight:600;color:var(--muted);font-size:12.5px">' + esc(LX(SET,'addr')) + '</span></span>' +
@@ -1450,7 +1494,7 @@ function drawP(){
       '<button class="float c" onclick="fav(this)">🤍</button></div>' +
     '<div class="pbody"><h3>' + esc(LX(it,'name')) + '</h3>' +
       '<p class="ds">' + esc(LX(it,'desc')) + '</p>' +
-      '<div class="price">' + prTxt(it) + '</div>' + rate + groups +
+      '<div class="price">' + prTxt(it) + '</div>' + rate + algHtml(it) + groups +
       '<div class="og"><div class="t"><span>ملاحظات خاصة</span></div>' +
       '<textarea class="ta" id="nt" placeholder="مثال: بدون بصل، أو صوص خفيف ..." oninput="note=this.value">' + esc(note) + '</textarea></div>' +
     '</div>';
@@ -1500,8 +1544,11 @@ function labels(he){
   return out;
 }
 function add(){
-  cart.push({key:Date.now()+'_'+Math.random().toString(36).slice(2,7), id:cur.id, n:cur.name, nh:cur.name_he||'',
-    img:cur.img||'', catId:cur.catId, unit:unit(), qty:qty, note:note.trim(), labels:labels(false), lh:labels(true)});
+  const dl = dailyLive(cur);
+  if(dl){ const have = cart.filter(l => l.daily).reduce((s, l) => s + l.qty, 0), lim = Math.min(Number(SET.daily.max || 2), dailyLeft());
+    if(have + qty > lim){ alert(trText('عرض اليوم: أكثر إشي') + ' ' + lim); return; } }
+  cart.push(Object.assign({key:Date.now()+'_'+Math.random().toString(36).slice(2,7), id:cur.id, n:cur.name, nh:cur.name_he||'',
+    img:cur.img||'', catId:cur.catId, unit:unit(), qty:qty, note:note.trim(), labels:labels(false), lh:labels(true)}, dl ? {daily: true} : {}));
   save(); paintCart(); closeSheet(); toast('أُضيف للسلة ✓');
 }
 function addDeal(){
@@ -1752,11 +1799,11 @@ let LOY = null, useReward = false;
 const loyCfg = () => (SET.loyalty && SET.loyalty.on && Number(SET.loyalty.every) > 1) ? SET.loyalty : null;
 const myPhone = () => { let p = ''; try{ p = localStorage.getItem('pz_phone') || ''; }catch(e){} return normPhone(p); };
 function loyLoad(force){
-  const c = loyCfg(), ph = myPhone();
+  const c = loyCfg() || refCfg(), ph = myPhone();
   if(!c || !ph || !live || !db){ return; }
   if(LOY && LOY.ph === ph && !force) return;
   db.collection('loyalty').doc(ph).get().then(d => {
-    LOY = {ph, count: d.exists ? Number(d.data().count || 0) : 0};
+    LOY = {ph, count: d.exists ? Number(d.data().count || 0) : 0, refCredit: d.exists ? Math.max(0, Number(d.data().refCredit || 0)) : 0};
     if(view === 'me') renderMe();
     if($('sheet').classList.contains('on') && $('loyBox')) openCart();
   }).catch(() => { LOY = {ph, count: 0}; });
@@ -1904,7 +1951,9 @@ function sendRate(){
   if(!TRK || !rateStars) return;
   const txt = ($('rateTxt') ? $('rateTxt').value : '').trim().slice(0, 500);
   let nm = ''; try{ nm = (localStorage.getItem('pz_name') || '').trim().split(/\s+/)[0].slice(0, 30); }catch(e){}
+  const five = rateStars >= 5;
   const done = () => { TRK.rated = true; TRK.hide = true; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+    if(five && googleAsk()){ trkPill(); return; }
     trkDraw(); trkPill(); toast('شكراً على التقييم 🙏'); setTimeout(() => { if($('trkBox')) closeSheet(); }, 1600); };
   if(live && db) db.collection('reviews').add({stars: rateStars, text: txt, name: nm, order: TRK.id, at: new Date().toISOString()}).then(done).catch(done);
   else done();
@@ -2101,6 +2150,7 @@ function preSlots(){
       if(t.getTime() >= min) out.push(t);
     }
   }
+  try{ const t = ramCfg() && iftarNext(); if(t && t.getTime() >= min && !out.some(x => x.getTime() === t.getTime())){ out.push(t); out.sort((a, b) => a - b); } }catch(e){}
   return out.slice(0, 500);
 }
 function schedHtml(){
@@ -2222,7 +2272,8 @@ function couponDisc(){
 /* كل الخصومات: كوبون + هدية الولاء + جائزة العجلة */
 function discount(){
   const s = sub();
-  return Math.min(s, Math.round((couponDisc() + (typeof rewardDisc === 'function' ? rewardDisc() : 0) + (typeof wheelDisc === 'function' ? wheelDisc() : 0) + (typeof bdayDisc === 'function' ? bdayDisc() : 0)) * 100) / 100);
+  return Math.min(s, Math.round((couponDisc() + (typeof rewardDisc === 'function' ? rewardDisc() : 0) + (typeof wheelDisc === 'function' ? wheelDisc() : 0) + (typeof bdayDisc === 'function' ? bdayDisc() : 0)
+    + refNewDisc() + refCreditUse() + happyDisc()) * 100) / 100);
 }
 function fee(){
   if(otype === 'pickup') return 0;
@@ -2288,7 +2339,7 @@ function openCart(){
       '<div class="rowcard"><div class="hd"><span class="ic">✏️</span><span>إضافة ملاحظة للطلب</span></div>' +
         '<textarea class="ta" style="margin-top:10px;min-height:54px" placeholder="مثال: الجرس خربان، دق تلفون" ' +
         'oninput="orderNote=this.value">' + esc(orderNote) + '</textarea></div>' +
-      upsellHtml() + schedHtml() + loyCard(true) + wheelRowHtml() + bdayRowHtml(true) +
+      upsellHtml() + happyHtml() + schedHtml() + loyCard(true) + refCartHtml() + wheelRowHtml() + bdayRowHtml(true) +
       '<div class="rowcard"><div class="hd"><span class="ic">%</span><span>لديك كوبون خصم؟</span></div>' +
         (coupon
           ? '<div class="cpn-ok"><span>✓ ' + esc(coupon.code) + ' — خصم ' +
@@ -2312,6 +2363,9 @@ function openCart(){
         (rewardDisc() ? '<div class="r disc"><span>🎁 هدية الولاء</span><span class="ltr">-₪' + rewardDisc() + '</span></div>' : '') +
         (wheelDisc() ? '<div class="r disc"><span>🎡 جائزة العجلة</span><span class="ltr">-₪' + wheelDisc() + '</span></div>' : '') +
         (bdayDisc() ? '<div class="r disc"><span>🎂 هدية عيد الميلاد</span><span class="ltr">-₪' + bdayDisc() + '</span></div>' : '') +
+        (refNewDisc() ? '<div class="r disc"><span>👫 هدية من صاحبك</span><span class="ltr">-₪' + refNewDisc() + '</span></div>' : '') +
+        (refCreditUse() ? '<div class="r disc"><span>🎁 رصيد الأصحاب</span><span class="ltr">-₪' + refCreditUse() + '</span></div>' : '') +
+        (happyDisc() ? '<div class="r disc"><span>🕐 الساعة السعيدة</span><span class="ltr">-₪' + happyDisc() + '</span></div>' : '') +
         '<div class="r"><span>رسوم التوصيل</span><span>' + (otype==='pickup' ? 'مجاني' : lb ? '—' : nis(fee())) + '</span></div>' +
         '<div class="tot"><span>المجموع الكلي</span><b>' + nis(total()) + '</b></div></div>' +
       '<div class="inf">' +
@@ -2399,13 +2453,15 @@ function sendOrder(){
       ? [Object.assign({id:l.id||'', name:l.n, qty:l.qty, unit:l.unit, labels:[], note:l.note||'', deal:true}, l.nh ? {name_he:l.nh} : {})]
           .concat(l.sub.map(p => Object.assign({id:p.id||'', name:p.n, qty:l.qty, unit:0, labels:p.labels||[], note:p.note||'', sub:true},
             p.nh ? {name_he:p.nh} : {}, p.lh ? {labels_he:p.lh} : {})))
-      : [Object.assign({id:l.id||'', name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note},
+      : [Object.assign({id:l.id||'', name:l.n, qty:l.qty, unit:l.unit, labels:l.labels, note:l.note}, l.daily ? {daily:true} : {},
           l.nh ? {name_he:l.nh} : {}, l.lh ? {labels_he:l.lh} : {})]),
     customer: Object.assign({name:name, phone:phone, addr:addr, lang:LANG, pay:curPay()},
       rewardDisc() ? {reward: rewardDisc()} : {},
       wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0), wheelDisc: wheelDisc()} : {},
       couponDisc() ? {couponDisc: couponDisc()} : {},
       SCHED ? {sched: SCHED} : {}, qrRef() ? {ref: qrRef()} : {},
+      refNewDisc() ? {refBy: refBy(), refDisc: refNewDisc()} : {}, refCreditUse() ? {refUsed: refCreditUse()} : {},
+      happyDisc() ? {happyDisc: happyDisc(), happyPct: Number(happyNow().percent)} : {}, cart.some(l => l.daily) ? {daily: cart.filter(l => l.daily).reduce((s, l) => s + l.qty, 0)} : {},
       myBday() ? {bday: myBday()} : {},
       bdayOn() ? {bdayGift: bdayLabel(), bdayType: bdayCfg().type || 'gift', bdayVal: Number(bdayCfg().value || 0), bdayDisc: bdayDisc()} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
@@ -2426,6 +2482,9 @@ function sendOrder(){
   if(wheelLive()) msg += '\n🎡 جائزة: ' + (WHEEL.label || '');
   if(rewardDisc()) msg += '\n🎁 هدية الولاء';
   if(bdayOn()) msg += '\n🎂 هدية عيد ميلاد: ' + bdayLabel();
+  if(refNewDisc()) msg += '\n👫 هدية من صاحب: -₪' + refNewDisc();
+  if(refCreditUse()) msg += '\n🎁 رصيد الأصحاب: -₪' + refCreditUse();
+  if(happyDisc()) msg += '\n🕐 الساعة السعيدة: -₪' + happyDisc();
   if(SCHED) msg += '\n⏰ طلب مسبق: ' + dayLabel(new Date(SCHED)) + ' ' + hm2(new Date(SCHED));
   msg += '\nالتوصيل: ' + (otype==='pickup' ? 'استلام من المحل' : '₪' + snapFee.toFixed(2));
   msg += '\n*الإجمالي: ₪' + snapTot.toFixed(2) + '*';
@@ -2438,7 +2497,8 @@ function sendOrder(){
     try{ hist.unshift(order); hist = hist.slice(0,20); localStorage.setItem('pz_orders', JSON.stringify(hist)); }catch(e){}
     window.open('https://wa.me/' + (SET.phone || window.WHATSAPP) + '?text=' + encodeURIComponent(msg), '_blank');
     if(wheelLive()){ WHEEL.used = true; try{ localStorage.setItem('pz_wheel', JSON.stringify(WHEEL)); }catch(e){} }
-    if(useReward){ useReward = false; LOY = null; }
+    if(useReward || refCreditUse()){ useReward = false; LOY = null; }
+    if(refNewDisc()){ try{ localStorage.removeItem('pz_refby'); }catch(e){} }
     if(bdayOn()){ try{ localStorage.setItem('pz_bday_used', String(bdayLive())); }catch(e){} }
     SCHED = '';
     cart = []; coupon = null; orderNote = '';
@@ -2501,6 +2561,7 @@ function openInfo(){
       '<div class="r"><div class="ic">🕐</div><div class="tx"><b>وقت التحضير</b><span>' + esc(LX(SET,'prepTime')) + '</span></div></div>' +
       '<div class="r" onclick="callRest()"><div class="ic">📞</div><div class="tx"><b>اتصل فينا</b><span class="ltr">' +
         esc(SET.phone ? ('0' + String(SET.phone).slice(3)) : '') + '</span></div></div></div></div>';
+  $('sc').querySelector('.cwrap').insertAdjacentHTML('beforeend', '<div class="xbtns" style="margin-top:12px"><button class="xb" onclick="openGift()"><span>🎁</span>ابعت وجبة هدية</button><button class="xb" onclick="openEvent()"><span>🎉</span>طلبيات مناسبات</button></div>');
   $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">تمام</button>';
   cur = null; show();
 }
@@ -2527,6 +2588,203 @@ function toast(m){
   const e = $('toast'); e.textContent = m; e.classList.add('on');
   clearTimeout(tT); tT = setTimeout(function(){ e.classList.remove('on'); }, 2200);
 }
+
+/* =====================================================================
+   الدفعة 2: ادعُ صاحبك · عرض اليوم · ساعة سعيدة · رمضان · حساسية · مناسبات · بطاقة هدية · تقييم جوجل
+   ===================================================================== */
+const todayKey = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+const inWin = (a, b) => { if(!a || !b) return false; const n = nowMin(), x = mins(a), y = mins(b); return y > x ? (n >= x && n < y) : (n >= x || n < y); };
+const winEnd = b => { const d = new Date(), e = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, mins(b)); if(e <= d) e.setDate(e.getDate() + 1); return e; };
+const cdTxt = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 3600e3), m = Math.floor(ms % 3600e3 / 60e3), s = Math.floor(ms % 60e3 / 1e3);
+  return (h ? h + ':' : '') + String(m).padStart(h ? 2 : 1, '0') + ':' + String(s).padStart(2, '0'); };
+
+/* ---------- 👫 ادعُ صاحبك ---------- */
+const refCfg = () => (SET.referral && SET.referral.on) ? SET.referral : null;
+function refCode(ph){ ph = normPhone(ph); if(!ph) return ''; let h = 2166136261; for(const c of 'pz' + ph){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36).toUpperCase().padStart(6, '0').slice(-6); }
+(function(){ try{ const r = (new URLSearchParams(location.search).get('r') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+  if(r){ localStorage.setItem('pz_refby', JSON.stringify({code: r, at: Date.now()})); history.replaceState(null, '', location.pathname + location.hash); } }catch(e){} })();
+const refBy = () => { try{ const r = JSON.parse(localStorage.getItem('pz_refby') || 'null'); return r && Date.now() - r.at < 30 * 864e5 ? r.code : ''; }catch(e){ return ''; } };
+let useRefCredit = true;
+function refNewDisc(){
+  const c = refCfg(), code = refBy(); if(!c || !code || hist.length) return 0;
+  const mine = refCode(($('ph') && $('ph').value) || myPhone()); if(mine && mine === code) return 0;
+  return Math.min(Number(c.newValue || 0), sub());
+}
+const refCreditHave = () => (refCfg() && LOY && Number(LOY.refCredit || 0) > 0) ? Number(LOY.refCredit) : 0;
+function refCreditUse(){ if(!useRefCredit) return 0; const h = refCreditHave(); return h ? Math.min(h, Math.max(0, sub() - refNewDisc())) : 0; }
+function refCardHtml(){
+  const c = refCfg(); if(!c) return '';
+  const ph = myPhone(), code = refCode(ph), url = location.origin + location.pathname.replace(/index\.html$/, '') + '?r=' + code;
+  const msg = (LANG === 'he' ? 'הזמנתי מ' + (LX(SET, 'name') || '') + ' — עם הקישור הזה תקבלו ₪' + Number(c.newValue || 0) + ' הנחה על ההזמנה הראשונה 🍕\n' : 'جرّب ' + (LX(SET, 'name') || '') + ' — من هالرابط بتاخد خصم ₪' + Number(c.newValue || 0) + ' على أول طلب 🍕\n') + url;
+  return '<div class="loy refc"><div class="lt"><b>👫 ادعُ صاحبك</b><br>صاحبك بياخد <b class="ltr">₪' + Number(c.newValue || 0) + '</b> خصم على أول طلب، وإنت بتاخد <b class="ltr">₪' + Number(c.refValue || 0) + '</b> لما يوصله الطلب.</div>' +
+    (ph ? '<div class="refrow"><span class="ltr">' + esc(code) + '</span><button class="ok" onclick="refShare()">📤 ابعت لصاحبك</button></div>' +
+          (refCreditHave() ? '<div class="usew">🎁 <span>رصيدك من الأصحاب</span>: <b class="ltr">₪' + refCreditHave() + '</b></div>' : '')
+        : '<div class="muted" style="margin-top:6px">سجّل رقمك فوق عشان يطلعلك رابطك</div>') + '</div>';
+}
+function refShare(){
+  const c = refCfg(); if(!c) return; const code = refCode(myPhone()); if(!code) return;
+  const url = location.origin + location.pathname.replace(/index\.html$/, '') + '?r=' + code;
+  const msg = (LANG === 'he' ? 'הזמנתי מ' + (LX(SET, 'name') || '') + ' — עם הקישור הזה תקבלו ₪' + Number(c.newValue || 0) + ' הנחה על ההזמנה הראשונה 🍕' : 'جرّب ' + (LX(SET, 'name') || '') + ' — من هالرابط بتاخد خصم ₪' + Number(c.newValue || 0) + ' على أول طلب 🍕');
+  if(navigator.share) navigator.share({text: msg, url}).catch(() => {});
+  else window.open('https://wa.me/?text=' + encodeURIComponent(msg + '\n' + url), '_blank');
+}
+function refCartHtml(){
+  let h = '';
+  if(refNewDisc()) h += '<div class="loy win"><div class="lt">👫 <b>هدية من صاحبك</b>: <span>خصم</span> <b class="ltr">₪' + refNewDisc() + '</b> <span>على أول طلب</span></div></div>';
+  if(refCreditHave()) h += '<div class="loy"><div class="lt">🎁 <span>رصيدك من الأصحاب</span>: <b class="ltr">₪' + refCreditHave() + '</b></div>' +
+    '<label class="usew"><input type="checkbox" ' + (useRefCredit ? 'checked' : '') + ' onchange="useRefCredit=this.checked;openCart()"><span>استعمله بهالطلب</span></label></div>';
+  return h;
+}
+
+/* ---------- ⏳ عرض اليوم ---------- */
+function dailyCfg(){
+  const D = SET.daily; if(!D || !D.on || !D.itemId) return null;
+  if(D.from && D.to && !inWin(D.from, D.to)) return null;
+  return D;
+}
+const dailyLeft = () => { const D = SET.daily || {}; const sold = D.soldDate === todayKey() ? Number(D.sold || 0) : 0; return Math.max(0, Number(D.qty || 0) - sold); };
+const dailyLive = it => { const D = dailyCfg(); return !!(D && it && D.itemId === it.id && Number(D.price) > 0 && dailyLeft() > 0); };
+function dailyHtml(){
+  const D = dailyCfg(); if(!D) return '';
+  const it = byId(D.itemId); if(!it || it.available === false) return '';
+  const left = dailyLeft(), qty = Math.max(1, Number(D.qty || 0));
+  return '<button class="daily" onclick="' + (left ? "openP('" + it.id + "')" : '') + '"' + (left ? '' : ' disabled') + '>' +
+    '<span class="dph"><img src="' + pic(it) + '" alt=""></span><span class="dtx"><span class="dt">⏳ عرض اليوم</span>' +
+    '<b>' + esc(LX(it, 'name')) + '</b><span class="dpr"><b class="ltr">₪' + Number(D.price) + '</b> <s class="ltr">₪' + Number(it.price) + '</s></span>' +
+    '<span class="dbar"><i style="width:' + Math.round(left / qty * 100) + '%"></i></span>' +
+    '<span class="dleft">' + (left ? '<span>باقي</span> <b>' + left + '</b>' : '<b>خلص العرض</b>') + (D.to ? ' · <span>بيخلص بعد</span> <b class="ltr" data-cd="' + winEnd(D.to).getTime() + '"></b>' : '') + '</span></span></button>';
+}
+
+/* ---------- 🕐 الساعة السعيدة ---------- */
+function happyNow(){
+  const H = SET.happy; if(!H || !H.on || !Number(H.percent)) return null;
+  const days = H.days && H.days.length ? H.days.map(Number) : [0,1,2,3,4,5,6];
+  if(!days.includes(new Date().getDay())) return null;
+  return inWin(H.from, H.to) ? H : null;
+}
+function happyDisc(){
+  const H = happyNow(); if(!H) return 0;
+  const base0 = cart.filter(l => !l.daily).reduce((s, l) => s + l.unit * l.qty, 0);
+  return Math.round(base0 * Math.min(50, Number(H.percent)) ) / 100;
+}
+function happyHtml(){
+  const H = happyNow(); if(!H) return '';
+  return '<div class="happy">🕐 <b>' + esc(LX(H, 'label') || 'ساعة سعيدة') + '</b>: <span>خصم</span> <b>' + Number(H.percent) + '%</b> <span>على كل الطلب لحد</span> <b class="ltr">' + esc(H.to) + '</b>' +
+    ' · <span>باقي</span> <b class="ltr" data-cd="' + winEnd(H.to).getTime() + '"></b></div>';
+}
+
+/* ---------- 🌙 رمضان ---------- */
+function sunsetAt(d){
+  const lat = 32.517, lng = 35.153, r = Math.PI / 180, y = d.getFullYear(), m = d.getMonth(), dd = d.getDate();
+  const N = Math.round((Date.UTC(y, m, dd) - Date.UTC(y, 0, 0)) / 864e5), lh = lng / 15, t = N + (18 - lh) / 24, M = 0.9856 * t - 3.289;
+  let L = (M + 1.916 * Math.sin(M * r) + 0.020 * Math.sin(2 * M * r) + 282.634) % 360; if(L < 0) L += 360;
+  let RA = (Math.atan(0.91764 * Math.tan(L * r)) / r + 360) % 360; RA = (RA + Math.floor(L / 90) * 90 - Math.floor(RA / 90) * 90) / 15;
+  const sd = 0.39782 * Math.sin(L * r), cd = Math.cos(Math.asin(sd)), ch = (Math.cos(90.833 * r) - sd * Math.sin(lat * r)) / (cd * Math.cos(lat * r));
+  let UT = ((Math.acos(ch) / r / 15 + RA - 0.06571 * t - 6.622 - lh) % 24 + 24) % 24;
+  return new Date(Date.UTC(y, m, dd) + UT * 3600e3);
+}
+const ramCfg = () => (SET.ramadan && SET.ramadan.on) ? SET.ramadan : null;
+function iftarAt(d){ const c = ramCfg() || {}; const t = sunsetAt(d || new Date()); t.setSeconds(0, 0); return new Date(t.getTime() + Number(c.offset == null ? 2 : c.offset) * 60e3); }
+function iftarNext(){ const t = iftarAt(new Date()); return t.getTime() > Date.now() + 20 * 60e3 ? t : null; }
+function ramHtml(){
+  const c = ramCfg(); if(!c) return '';
+  const t = iftarNext(), hm = d => hm2(d);
+  return '<div class="ram"><span class="rm">🌙</span><span class="rt"><b>' + esc(LX(c, 'title') || 'رمضان كريم') + '</b>' +
+    (t ? '<span><span>المغرب اليوم</span> <b class="ltr">' + hm(t) + '</b> · <span>بنوصّلك الإفطار عالأذان</span></span>' : '<span><span>المغرب اليوم</span> <b class="ltr">' + hm(iftarAt()) + '</b></span>') + '</span>' +
+    (t ? '<button class="ok" onclick="ramOrder()">🍽️ اطلب للإفطار</button>' : '') + '</div>';
+}
+function ramOrder(){
+  const t = iftarNext(); if(!t) return;
+  SCHED = t.toISOString(); toast('⏰ ' + trText('طلبك بيوصل عالمغرب') + ' ' + hm2(t));
+  const c = ramCfg(); if(cart.length) openCart(); else if(c && c.cat && CATS.some(x => x.id === c.cat)) openCat(c.cat); else jumpFirst();
+}
+
+/* ---------- ⚠️ الحساسية ---------- */
+const ALG = {gluten:['🌾','جلوتين','גלוטן'], dairy:['🥛','حليب','חלב'], egg:['🥚','بيض','ביצים'], nuts:['🥜','مكسرات','אגוזים'],
+  peanut:['🥜','فستق عبيد','בוטנים'], sesame:['⚪','سمسم','שומשום'], fish:['🐟','سمك','דגים'], soy:['🫘','صويا','סויה'], spicy:['🌶️','حار','חריף'], veg:['🌱','نباتي','צמחוני']};
+function algHtml(it){
+  const a = (it.allergens || []).filter(k => ALG[k]); if(!a.length) return '';
+  const he = LANG === 'he', warn = a.filter(k => k !== 'spicy' && k !== 'veg'), tags = a.filter(k => k === 'spicy' || k === 'veg');
+  return '<div class="alg" data-nt>' + tags.map(k => '<span class="ag t">' + ALG[k][0] + ' ' + ALG[k][he ? 2 : 1] + '</span>').join('') +
+    (warn.length ? '<div class="aw">⚠️ ' + (he ? 'מכיל:' : 'فيه:') + ' ' + warn.map(k => '<span class="ag">' + ALG[k][0] + ' ' + ALG[k][he ? 2 : 1] + '</span>').join('') + '</div>' : '') + '</div>';
+}
+
+/* ---------- 🎉 طلبيات مناسبات ---------- */
+function openEvent(){
+  let nm = '', ph = ''; try{ nm = localStorage.getItem('pz_name') || ''; ph = localStorage.getItem('pz_phone') || ''; }catch(e){}
+  const d0 = new Date(Date.now() + 3 * 864e5), dv = d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0') + '-' + String(d0.getDate()).padStart(2, '0');
+  $('sc').innerHTML = '<div class="ctop"><h3>🎉 طلبيات مناسبات</h3><button onclick="closeSheet()" aria-label="إغلاق">✕</button></div><div class="cwrap">' +
+    '<div class="muted" style="margin-bottom:12px">أعراس، أعياد ميلاد، مكاتب، مدارس… احكيلنا وبنرجعلك بعرض سعر.</div>' +
+    '<div class="fld"><label for="evNm">الاسم</label><input class="inp" id="evNm" value="' + esc(nm) + '"></div>' +
+    '<div class="fld"><label for="evPh">رقم التلفون</label><input class="inp" id="evPh" type="tel" inputmode="tel" value="' + esc(ph) + '"></div>' +
+    '<div class="fld"><label for="evType">نوع المناسبة</label><select class="inp" id="evType">' + ['عيد ميلاد','عرس / خطوبة','شغل / مكتب','مدرسة / روضة','غير هيك'].map(x => '<option>' + x + '</option>').join('') + '</select></div>' +
+    '<div class="fld"><label for="evDate">التاريخ</label><input class="inp" id="evDate" type="date" min="' + todayKey() + '" value="' + dv + '"></div>' +
+    '<div class="fld"><label for="evTime">الساعة</label><input class="inp" id="evTime" type="time" value="19:00"></div>' +
+    '<div class="fld"><label for="evN">كم شخص تقريباً؟</label><input class="inp" id="evN" type="number" min="5" max="2000" inputmode="numeric" value="20"></div>' +
+    '<div class="fld"><label for="evNote">شو بدك؟ (أكل، ميزانية، توصيل…)</label><textarea class="ta" id="evNote" maxlength="600"></textarea></div></div>';
+  $('ft').innerHTML = '<button class="cta" id="evBtn" onclick="sendEvent()">📩 ابعت الطلب</button>';
+  cur = null; show();
+}
+function sendEvent(){
+  const g = id => ($(id) ? $(id).value.trim() : '');
+  const name = g('evNm').slice(0, 60), phone = normPhone(g('evPh'));
+  if(!name || !phone){ alert('لو سمحت اكتب الاسم ورقم التلفون'); return; }
+  const doc = {name, phone, type: g('evType').slice(0, 40), date: g('evDate').slice(0, 10), time: g('evTime').slice(0, 5),
+    people: Math.max(1, Math.min(2000, Math.floor(Number(g('evN')) || 0))), note: g('evNote').slice(0, 600), lang: LANG, status: 'new', at: new Date().toISOString()};
+  const b = $('evBtn'); if(b){ b.disabled = true; }
+  const done = ok => { closeSheet(); toast(ok ? '✅ وصلنا طلبك — بنرجعلك قريب' : 'ما زبط — اتصل فينا'); };
+  if(live && db) db.collection('events').add(doc).then(() => done(true)).catch(e => { console.error(e); done(false); });
+  else done(false);
+}
+
+/* ---------- 🎁 بطاقة هدية ---------- */
+let GIFT = {amt: 100};
+function giftMethods(){ return payMethods().filter(k => k !== 'cash' && k !== 'card').concat(['shop']); }
+function openGift(){
+  let nm = '', ph = ''; try{ nm = localStorage.getItem('pz_name') || ''; ph = localStorage.getItem('pz_phone') || ''; }catch(e){}
+  const ms = giftMethods(); if(!ms.includes(GIFT.pay)) GIFT.pay = ms[0];
+  const PT = {shop: {ic: '🏪', t: 'بدفع بالمحل', d: 'الهدية بتنبعت بعد ما تدفع'}};
+  $('sc').innerHTML = '<div class="ctop"><h3>🎁 ابعت وجبة هدية</h3><button onclick="closeSheet()" aria-label="إغلاق">✕</button></div><div class="cwrap">' +
+    '<div class="muted" style="margin-bottom:10px">بنبعتله رسالة واتساب فيها كود هدية، وبيطلب فيه شو ما بده من الموقع.</div>' +
+    '<div class="gamts">' + [50, 100, 150, 200].map(a => '<button class="' + (GIFT.amt === a ? 'on' : '') + '" onclick="GIFT.amt=' + a + ';openGift()"><span class="ltr">₪' + a + '</span></button>').join('') + '</div>' +
+    '<div class="fld"><label for="gTo">لمين الهدية؟ (الاسم)</label><input class="inp" id="gTo" maxlength="40" value="' + esc(GIFT.to || '') + '"></div>' +
+    '<div class="fld"><label for="gToPh">رقم تلفونه</label><input class="inp" id="gToPh" type="tel" inputmode="tel" value="' + esc(GIFT.toPh || '') + '"></div>' +
+    '<div class="fld"><label for="gMsg">رسالة منك (اختياري)</label><textarea class="ta" id="gMsg" maxlength="200">' + esc(GIFT.msg || '') + '</textarea></div>' +
+    '<div class="fld"><label for="gFrom">اسمك</label><input class="inp" id="gFrom" maxlength="40" value="' + esc(GIFT.from || nm) + '"></div>' +
+    '<div class="fld"><label for="gFromPh">رقمك</label><input class="inp" id="gFromPh" type="tel" inputmode="tel" value="' + esc(GIFT.fromPh || ph) + '"></div>' +
+    '<div class="sum"><h4>طريقة الدفع</h4><div class="pays">' + ms.map(k => { const P = PAY_ALL[k] || PT[k];
+      return '<button class="pay ' + (GIFT.pay === k ? 'on' : '') + '" onclick="giftKeep();GIFT.pay=\'' + k + '\';openGift()"><span class="pi">' + P.ic + '</span><span class="pt"><b>' + P.t + '</b><small>' + P.d + '</small></span><span class="pr"></span></button>'; }).join('') + '</div></div></div>';
+  $('ft').innerHTML = '<button class="cta" id="gBtn" onclick="sendGift()"><span>🎁 ابعت الهدية</span><span class="ltr">₪' + GIFT.amt + '</span></button>';
+  cur = null; show();
+}
+function giftKeep(){ const g = id => ($(id) ? $(id).value.trim() : ''); Object.assign(GIFT, {to: g('gTo'), toPh: g('gToPh'), msg: g('gMsg'), from: g('gFrom'), fromPh: g('gFromPh')}); }
+function sendGift(){
+  giftKeep();
+  const toPh = normPhone(GIFT.toPh), fromPh = normPhone(GIFT.fromPh);
+  if(!GIFT.to || !toPh){ alert('اكتب اسم ورقم اللي بدك تبعتله'); return; }
+  if(!GIFT.from || !fromPh){ alert('اكتب اسمك ورقمك'); return; }
+  const doc = {amount: GIFT.amt, to: GIFT.to.slice(0, 40), toPhone: toPh, msg: (GIFT.msg || '').slice(0, 200), from: GIFT.from.slice(0, 40), fromPhone: fromPh,
+    pay: GIFT.pay, lang: LANG, status: 'new', at: new Date().toISOString()};
+  const b = $('gBtn'); if(b) b.disabled = true;
+  if(!live || !db){ toast('ما زبط — اتصل فينا'); return; }
+  db.collection('gifts').add(doc).then(() => {
+    const o = {customer: {pay: doc.pay}, total: doc.amount, createdAt: doc.at};
+    GIFT = {amt: 100};
+    if(['bit', 'paybox', 'online'].includes(doc.pay)) payAfter(o);
+    else{ closeSheet(); toast('✅ وصلنا — ادفع بالمحل وبنبعت الهدية'); }
+  }).catch(e => { console.error(e); if(b) b.disabled = false; toast('ما زبط — اتصل فينا'); });
+}
+
+/* ---------- ⭐ تقييم جوجل ---------- */
+function googleAsk(){
+  const url = SET.googleReview; if(!url || !/^https:\/\//.test(url)) return false;
+  const box = $('trkBox'); if(!box) return false;
+  box.innerHTML = '<div class="trk-big">🥰</div><div class="trk-t">شكراً! بتساعدنا بتقييم على جوجل؟</div><div class="muted" style="text-align:center;margin:6px 0 14px">بتاخد 10 ثواني وبتفرق معنا كثير</div>' +
+    '<a class="cta" href="' + esc(url) + '" target="_blank" rel="noopener" onclick="setTimeout(closeSheet,300)">⭐ قيّمنا على جوجل</a>';
+  trNode(box); return true;
+}
+setInterval(() => { document.querySelectorAll('[data-cd]').forEach(el => { const ms = Number(el.dataset.cd) - Date.now(); el.textContent = cdTxt(ms); if(ms <= 0 && !el.dataset.done){ el.dataset.done = 1; setTimeout(paint, 500); } }); }, 1000);
 
 /* ============ 📲 عدّاد مسح الـ QR ============
    الرابط بالملصق فيه ?src=qr. كل جهاز بيتعدّ مرة كزائر جديد (مش حسب IP — الـ IP بيتغيّر
