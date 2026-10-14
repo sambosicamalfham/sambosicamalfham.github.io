@@ -718,7 +718,8 @@ Object.assign(HE, {
   'اكتب الوردية هيك:':'כתבו משמרת כך:', 'أو':'או', '. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'. השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'ما في جدول للأسبوع الماضي':'אין סידור לשבוע הקודם', 'تم النسخ — لا تنسى تكبس حفظ':'הועתק — אל תשכחו לשמור', 'في تغييرات ما انحفظت. تكمّل بدون حفظ؟':'יש שינויים שלא נשמרו. להמשיך בלי לשמור?',
-  'من الـ QR':'מה־QR', 'مسح الـ QR (الملصقات)':'סריקות QR (מדבקות)', 'مرات فتحوا الرابط':'פעמים שנפתח הקישור', 'أجهزة جديدة (أول مرة)':'מכשירים חדשים (פעם ראשונה)',
+  'من الـ QR':'מה־QR', 'نزّل الزبائن (Excel)':'הורדת לקוחות (Excel)', 'واتساب':'וואטסאפ', 'عدد الطلبات':'מספר הזמנות', 'المجموع ₪':'סה״כ ₪', 'معدل الطلب ₪':'ממוצע הזמנה ₪',
+  'أول طلب':'הזמנה ראשונה', 'المنطقة':'אזור', 'عيد الميلاد':'יום הולדת', 'اللغة':'שפה', 'محظور':'חסום', 'الزبائن':'לקוחות', 'جاري التجهيز...':'מכין...', 'مسح الـ QR (الملصقات)':'סריקות QR (מדבקות)', 'مرات فتحوا الرابط':'פעמים שנפתח הקישור', 'أجهزة جديدة (أول مرة)':'מכשירים חדשים (פעם ראשונה)',
   'طلبات من الـ QR ·':'הזמנות מה־QR ·', 'طلبات من الـ QR':'הזמנות מה־QR', 'المصدر':'מקור', 'فتحوا':'נפתח', 'جديد':'חדש', 'المبلغ':'סכום',
   'كل جهاز بينعدّ "جديد" بس أول مرة بيفتح. الطلب بيتحسب من الـ QR إذا إجا خلال أسبوع من المسح. المبلغ من الـ QR:':'כל מכשיר נספר "חדש" רק בפעם הראשונה. הזמנה נספרת מה־QR אם הגיעה תוך שבוע מהסריקה. סכום מה־QR:',
   'بننسخ جدول الأسبوع الماضي لهالأسبوع (بيتبدّل اللي هون). تكمّل؟':'נעתיק את סידור השבוע הקודם לשבוע הזה (מה שכאן יוחלף). להמשיך?'
@@ -2615,7 +2616,8 @@ async function renderCust(){
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
   $('vCust').innerHTML = eventsHtml() + giftsHtml() + habitHtml(all) + bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
-      <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
+      <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button>
+      <button class="btn sm red" onclick="custXlsx()">📥 نزّل الزبائن (Excel)</button></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
       const wa = waPhone(x.phone), open = custOpen === x.phone;
       return `<div class="card cst ${open?'on':''}">
@@ -2654,6 +2656,31 @@ async function renderCust(){
         </div>` : ''}
       </div>`;
     }).join('')}`;
+}
+
+/* ========= 📥 تصدير الزبائن ========= */
+async function custXlsx(){
+  try{
+    toast('⏳ ' + trText('جاري التجهيز...'));
+    await loadCustOrders(true);
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const X = window.XLSX, tr = s => trText(s), d = s => s ? new Date(s).toLocaleDateString('he-IL') : '';
+    const rows = [[tr('الاسم'), tr('رقم التلفون'), tr('واتساب'), tr('عدد الطلبات'), tr('المجموع ₪'), tr('معدل الطلب ₪'), tr('أول طلب'), tr('آخر طلب'), tr('المنطقة'), tr('العنوان'), tr('عيد الميلاد'), tr('اللغة'), tr('محظور'), tr('ما استلم')]];
+    custList().forEach(x => {
+      const ok = x.orders.filter(o => o.status !== 'cancel'), first = x.orders.map(o => String(o.createdAtStr || '')).filter(Boolean).sort()[0];
+      rows.push([x.name, x.phone, waPhone(x.phone), ok.length, Math.round(x.spent * 100) / 100, ok.length ? Math.round(x.spent / ok.length) : 0,
+        d(first), d(x.last), x.zone || '', x.addr || '', x.bday ? x.bday.split('-').reverse().join('/') : '', x.lang === 'he' ? 'עברית' : 'عربي',
+        isBlocked(x.phone) ? '✓' : '', noShows(x.phone) || '']);
+    });
+    const ws = X.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch: 18}, {wch: 13}, {wch: 14}, {wch: 8}, {wch: 10}, {wch: 10}, {wch: 11}, {wch: 11}, {wch: 12}, {wch: 26}, {wch: 9}, {wch: 7}, {wch: 6}, {wch: 7}];
+    ws['!autofilter'] = {ref: 'A1:N' + rows.length};
+    const wb = X.utils.book_new(); wb.Workbook = {Views: [{RTL: true}]};
+    X.utils.book_append_sheet(wb, ws, tr('الزبائن').slice(0, 30));
+    const out = X.write(wb, {bookType: 'xlsx', type: 'array'});
+    dl(new Blob([out], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), 'customers-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    toast('📥 ' + (rows.length - 1));
+  }catch(e){ alert(e.message); }
 }
 
 /* ========= حظر وحذف الزبائن ========= */
