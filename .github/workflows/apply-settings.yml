@@ -1,0 +1,25 @@
+# بيطبّق ops/settings.json على إعدادات المطعم بـ Firebase (settings/main) كل ما يتغيّر.
+name: Apply settings
+
+on:
+  push:
+    branches: [main]
+    paths: [ops/settings.json, ops/apply-settings.js]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund firebase-admin@12
+      - name: Apply
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node ops/apply-settings.js
