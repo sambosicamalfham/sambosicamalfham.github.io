@@ -488,6 +488,22 @@ a.cta{text-decoration:none;justify-content:center}
 .stars button{font-size:34px;color:#ddd;line-height:1}.stars button.on{color:#f5b301}
 .btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
 
+/* العرض خطوة خطوة */
+.wzt{position:sticky;top:0;z-index:7;background:var(--bg)}.wzt h3{font-size:15px;flex:1;text-align:center}
+.pbody.wz{margin-top:0;border-radius:0;padding-top:10px}
+.wz .wzh h3{margin:0 0 4px}.wz .price s{font-size:14px;color:var(--muted);margin-inline-start:6px}
+.wzbar{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:16px}.wzbar span{color:var(--muted);font-weight:800}
+.wzdots{display:flex;gap:4px;margin:8px 0 4px}.wzdots i{flex:1;height:4px;border-radius:2px;background:#e4e1dd}.wzdots i.d{background:#1e8e4e}.wzdots i.on{background:var(--red)}
+.wzl{display:flex;flex-direction:column;gap:8px;padding:6px 16px 20px}
+.wzi{background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden}.wzi.on{border-color:var(--red)}
+.wzr{display:flex;align-items:center;gap:12px;width:100%;padding:9px 12px;text-align:start;font-family:inherit}
+.wzr .rd{width:22px;height:22px;border-radius:50%;border:2px solid #cfcfcf;flex:none}.wzi.on .wzr .rd{border:7px solid var(--red)}
+.wzr .nm{flex:1;font-weight:800;font-size:14.5px}.wzr .ph{width:58px;height:46px;border-radius:10px;overflow:hidden;background:#eee;flex:none}.wzr .ph img{width:100%;height:100%;object-fit:cover}
+.wzo{padding:0 12px 10px;border-top:1px dashed var(--line)}
+.wzhide{display:block;width:calc(100% - 24px);margin:6px 12px 10px;background:#f4f2f0;border-radius:10px;padding:7px;font-weight:800;font-size:13px;color:var(--ink-2)}
+.omax{font-size:12px;color:var(--muted);margin:-4px 0 6px}
+.olist.rmv .o{cursor:pointer}.olist.rmv .o .rx{margin-inline-start:auto;width:28px;height:28px;border-radius:50%;background:#f4f2f0;font-weight:900}
+.olist.rmv .o.off .l{text-decoration:line-through;color:var(--muted)}.olist.rmv .o.off .oi{opacity:.4}
 /* الدفعة 2 */
 .usew.mkt{margin:4px 0 12px;font-weight:700;font-size:13.5px}
 .daily{display:flex;gap:12px;align-items:center;width:calc(100% - 32px);margin:12px 16px 0;background:#1a1a1a;color:#fff;border-radius:18px;padding:10px;text-align:start;font-family:inherit}
@@ -836,7 +852,8 @@ Object.assign(HE, {
   'بدفع بالمحل':'תשלום במסעדה', 'الهدية بتنبعت بعد ما تدفع':'המתנה נשלחת אחרי התשלום', 'ابعت الهدية':'שליחת המתנה', 'اكتب اسم ورقم اللي بدك تبعتله':'כתבו שם וטלפון של מקבל המתנה',
   'اكتب اسمك ورقمك':'כתבו את השם והטלפון שלכם', 'وصلنا — ادفع بالمحل وبنبعت الهدية':'קיבלנו — שלמו במסעדה ונשלח את המתנה',
   'شكراً! بتساعدنا بتقييم على جوجل؟':'תודה! תעזרו לנו עם ביקורת בגוגל?', 'بتاخد 10 ثواني وبتفرق معنا كثير':'זה לוקח 10 שניות ועוזר לנו המון', 'قيّمنا على جوجل':'דרגו אותנו בגוגל',
-  'فيه:':'מכיל:', 'بدي يوصلني عروض وخصومات بالواتساب':'אני רוצה לקבל מבצעים והנחות בוואטסאפ'
+  'فيه:':'מכיל:', 'التالي ›':'הבא ›', '✓ إضافة للسلة':'✓ הוספה לסל', 'إخفاء':'הסתר', 'الإضافات':'תוספות', 'اختار لحد':'בחרו עד', 'أكثر إشي':'מקסימום',
+  'لازم تختار':'חובה לבחור', 'اختار':'בחרו', 'صنف':'פריט', 'بدون':'בלי', 'بدي يوصلني عروض وخصومات بالواتساب':'אני רוצה לקבל מבצעים והנחות בוואטסאפ'
 });
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
@@ -1288,7 +1305,7 @@ function pizzaSvg(k){
 }
 function setSide(g, o, v){
   side[g + ':' + o] = v;
-  const t = $('sc').scrollTop; drawP(); $('sc').scrollTop = t;
+  const t = $('sc').scrollTop; redrawP(); $('sc').scrollTop = t;
 }
 function unit(){
   if(!cur) return 0;
@@ -1298,7 +1315,7 @@ function unit(){
     if(G.type === 'one'){
       const o = G.items.find(x => x.id === sel[g]);
       if(o) p += Number(o.delta||0);
-    }else (sel[g]||[]).forEach(s => {
+    }else if(G.style !== 'remove') (sel[g]||[]).forEach(s => {
       const o = G.items.find(x => x.id === s);
       if(o) p += Number(o.delta||0);
     });
@@ -1451,12 +1468,23 @@ function pizzaPreview(){
 
 function drawP(){
   const it = cur;
+  const groups = optsHtml(it);
+  return drawP2(it, groups);
+}
+/* إضافات الصنف (مستعملة بصفحة الوجبة وبخطوات العرض) */
+function optsHtml(it){
   let pzDone = false;
-  const groups = (it.opts||[]).map(g => {
+  return (it.opts||[]).map(g => {
     const G = grp(g); if(!G) return '';
     const pzv = (!pzDone && halvesOn(G)) ? (pzDone = true, pizzaPreview()) : '';
     let inner;
-    if(G.type === 'one' && (G.style === 'tiles' || G.items.length <= 3)){
+    if(G.style === 'remove'){
+      inner = '<div class="olist rmv">' + G.items.map(o => {
+        const off = (sel[g]||[]).indexOf(o.id) >= 0;
+        return '<div class="o ' + (off ? 'off' : '') + '" onclick="pick(\'' + g + '\',\'' + o.id + '\')">' + (o.img ? '<img class="oi" src="' + esc(o.img) + '" alt="" loading="lazy">' : '') +
+          '<div class="l">' + esc(LX(o,'label')) + '</div><button class="rx" aria-label="' + (off ? 'رجّع' : 'شيل') + '">' + (off ? '↺' : '✕') + '</button></div>';
+      }).join('') + '</div>';
+    }else if(G.type === 'one' && (G.style === 'tiles' || G.items.length <= 3)){
       const full = G.priceMode === 'full';
       inner = '<div class="tiles">' + G.items.map(o => {
         const on = sel[g] === o.id, d = Number(o.delta||0);
@@ -1480,8 +1508,11 @@ function drawP(){
       }).join('') + '</div>';
     }
     return pzv + '<div class="og"><div class="t"><span>' + esc(LX(G,'title')) + '</span>' +
-      '<span class="' + (G.required?'rq':'op') + '">' + (G.required?'إلزامي':'اختياري') + '</span></div>' + inner + '</div>';
+      '<span class="' + (G.required?'rq':'op') + '">' + (G.required?'إلزامي':'اختياري') + '</span></div>' +
+      (Number(G.max) > 0 && G.type !== 'one' && G.style !== 'remove' ? '<div class="omax">' + trText('اختار لحد') + ' ' + Number(G.max) + '</div>' : '') + inner + '</div>';
   }).join('');
+}
+function drawP2(it, groups){
 
   const rate = it.rate
     ? '<div class="rrow"><div class="st">⭐ ' + esc(it.rate) + ' <span>(' + esc(it.rateN||'') + ')</span></div>' +
@@ -1518,11 +1549,13 @@ function pick(g, o){
   if(G.type === 'one') sel[g] = o;
   else{
     const a = sel[g] || [], i = a.indexOf(o);
-    if(i >= 0){ a.splice(i,1); delete side[g + ':' + o]; } else a.push(o);
+    if(i >= 0){ a.splice(i,1); delete side[g + ':' + o]; }
+    else{ if(G.style !== 'remove' && Number(G.max) > 0 && a.length >= Number(G.max)){ toast(trText('أكثر إشي') + ' ' + Number(G.max)); return; } a.push(o); }
     sel[g] = a;
   }
-  const t = $('sc').scrollTop; drawP(); $('sc').scrollTop = t;
+  const t = $('sc').scrollTop; redrawP(); $('sc').scrollTop = t;
 }
+const redrawP = () => (DL && DL.wiz) ? drawWiz() : drawP();
 function bump(d){ qty = Math.max(1, Math.min(50, qty+d)); drawFoot(); }
 const SIDE_HE = {r:'חצי ימין', l:'חצי שמאל', rt:'רבע ימין למעלה', lt:'רבע שמאל למעלה', rb:'רבע ימין למטה', lb:'רבע שמאל למטה'};
 /* he=true: نسخة عبري (للعرض وللطباعة بالعبري). الطلب دايماً بينحفظ بالثنتين */
@@ -1535,7 +1568,10 @@ function labels(he){
     if(G.type === 'one'){
       const o = G.items.find(x => x.id === sel[g]);
       if(o && G.items.length > 1) out.push(lb(o));
-    }else (sel[g]||[]).forEach(s => {
+    }else if(G.style === 'remove') (sel[g]||[]).forEach(s => {
+      const o = G.items.find(x => x.id === s); if(o) out.push((he ? 'בלי ' : 'بدون ') + lb(o));
+    });
+    else (sel[g]||[]).forEach(s => {
       const o = G.items.find(x => x.id === s);
       if(!o) return;
       const k = halvesOn(G) ? (side[g + ':' + s] || 'f') : 'f';
@@ -1569,8 +1605,80 @@ const dealSlots = d => (d.slots || []).filter(s => (s.items || []).length && Num
 function openDeal(id){
   const d = DEALS.find(x => x.id === id); if(!d) return;
   if(!dealSlots(d).length){ addDealSimple(d); return; }
-  DL = {d, picks: dealSlots(d).map(() => []), slot: null};
-  drawDeal(); show();
+  const fixed = s => { const its = (s.items || []).map(byId).filter(Boolean); return its.length === 1 && !(its[0].opts || []).length ? its[0] : null; };
+  DL = {d, picks: dealSlots(d).map(() => []), slot: null, wiz: true, idx: 0, open: true,
+    auto: dealSlots(d).flatMap((s, i) => fixed(s) ? Array.from({length: Number(s.count)}, () => ({slot: i, it: fixed(s)})) : []),
+    steps: dealSlots(d).flatMap((s, i) => fixed(s) ? [] : Array.from({length: Number(s.count)}, (_, k) => ({slot: i, k, n: Number(s.count)})))};
+  DL.st = DL.steps.map(() => ({id: '', sel: {}, side: {}, note: ''}));
+  if(!DL.steps.length){ wizNext(); return; }
+  drawWiz(); show();
+}
+/* الصنف جوّا خطوة العرض — بدون مجموعات الإضافات اللي العرض مخبّيها (مثلاً مشروب 330 لما العرض فيه 1.5 لتر) */
+function wizItem(i, id){
+  const it = byId(id); if(!it) return null;
+  const skip = (dealSlots(DL.d)[DL.steps[i].slot] || {}).skip || [];
+  return skip.length ? Object.assign({}, it, {opts: (it.opts || []).filter(g => !skip.includes(g))}) : it;
+}
+/* ============ 🧭 العرض خطوة خطوة ============ */
+function wizLoad(st, i){
+  cur = st.id ? wizItem(i == null ? DL.idx : i, st.id) : null; sel = st.sel; side = st.side; note = st.note || '';
+}
+function wizCalc(i){
+  const st = DL.st[i], keep = [cur, sel, side, note]; wizLoad(st, i);
+  let r = {extra: 0, labels: [], lh: []};
+  if(cur){ r = {extra: DL.d.extrasFree ? 0 : Math.max(0, Math.round((unit() - base(cur)) * 100) / 100), labels: labels(false), lh: labels(true)}; }
+  [cur, sel, side, note] = keep; return r;
+}
+const wizTotal = () => Number(DL.d.price) + DL.st.reduce((s, x, i) => s + (x.id ? wizCalc(i).extra : 0), 0);
+function wizPick(id){
+  const st = DL.st[DL.idx]; if(st.id === id){ DL.open = !DL.open; drawWiz(); return; }
+  const it = wizItem(DL.idx, id); if(!it) return;
+  st.id = id; st.sel = {}; st.side = {}; st.note = ''; DL.open = true;
+  (it.opts||[]).forEach(g => { const G = grp(g); if(G) st.sel[g] = G.type === 'one' ? (G.items[0]||{}).id : []; });
+  pzShown = {}; drawWiz();
+}
+function wizMissing(i){
+  const st = DL.st[i]; if(!st.id) return trText('اختار') + ' ' + trText(LX(dealSlots(DL.d)[DL.steps[i].slot], 'title') || 'صنف');
+  const it = wizItem(i, st.id);
+  for(const g of (it.opts || [])){ const G = grp(g); if(!G || !G.required || G.style === 'remove') continue;
+    const v = st.sel[g]; if(G.type === 'one' ? !v : !(v || []).length) return trText('لازم تختار') + ': ' + LX(G, 'title'); }
+  return '';
+}
+function wizNext(){
+  const m = wizMissing(DL.idx); if(m){ toast(m); return; }
+  if(DL.steps.length && DL.idx < DL.steps.length - 1){ DL.idx++; DL.open = true; $('sc').scrollTop = 0; drawWiz(); return; }
+  DL.picks = dealSlots(DL.d).map(() => []);
+  (DL.auto || []).forEach(a => DL.picks[a.slot].push({id: a.it.id, n: a.it.name, nh: a.it.name_he || '', labels: [], lh: [], extra: 0, note: ''}));
+  DL.steps.forEach((s, i) => { const st = DL.st[i], it = byId(st.id), c = wizCalc(i);
+    DL.picks[s.slot].push({id: st.id, n: it.name, nh: it.name_he || '', labels: c.labels, lh: c.lh, extra: c.extra, note: (st.note || '').trim()}); });
+  DL.wiz = false; dealAdd();
+}
+function wizBack(){ if(DL.idx > 0){ DL.idx--; DL.open = true; $('sc').scrollTop = 0; drawWiz(); } }
+function drawWiz(){
+  const d = DL.d, i = DL.idx, step = DL.steps[i], slot = dealSlots(d)[step.slot], st = DL.st[i];
+  wizLoad(st);
+  const items = (slot.items || []).map(id => wizItem(i, id)).filter(it => it && it.available !== false && !soldOut(it));
+  const ttl = LX(slot, 'title') || 'اختار';
+  const head = (i === 0 ? '<div class="dl-hero">' + (d.img ? '<img src="' + esc(d.img) + '" alt="">' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') + '</div>' : '') +
+    '<div class="pbody wz"><div class="wzh"><h3>' + esc(LX(d,'title')) + '</h3>' +
+    (i === 0 ? '<p class="ds">' + esc(LX(d,'desc')) + '</p><div class="price"><span class="ltr">₪' + Number(d.price) + '</span>' +
+      (d.was && Number(d.was) > Number(d.price) ? ' <s class="ltr">₪' + Number(d.was) + '</s>' : '') + '</div>' : '') + '</div>' +
+    '<div class="wzbar"><b>' + esc(ttl) + (step.n > 1 ? ' ' + (step.k + 1) : '') + '</b><span class="ltr">' + (i + 1) + '/' + DL.steps.length + '</span></div>' +
+    '<div class="wzdots">' + DL.steps.map((x, k) => '<i class="' + (k < i ? 'd' : k === i ? 'on' : '') + '"></i>').join('') + '</div>';
+  const list = '<div class="wzl">' + items.map(it => {
+    const on = st.id === it.id;
+    return '<div class="wzi ' + (on ? 'on' : '') + '"><button class="wzr" onclick="wizPick(\'' + it.id + '\')"><span class="rd"></span><span class="nm">' + esc(LX(it,'name')) + '</span>' +
+      '<span class="ph"><img src="' + pic(it) + '" alt="" loading="lazy"></span></button>' +
+      (on && (it.opts || []).length ? (DL.open ? '<div class="wzo">' + optsHtml(it) +
+          '<div class="og"><div class="t"><span>ملاحظات خاصة</span></div><textarea class="ta" placeholder="مثال: بدون بصل" oninput="DL.st[DL.idx].note=this.value">' + esc(st.note || '') + '</textarea></div>' +
+          '<button class="wzhide" onclick="DL.open=false;drawWiz()">⌃ <span>إخفاء</span></button></div>'
+        : '<button class="wzhide" onclick="DL.open=true;drawWiz()">⌄ <span>الإضافات</span>' + (wizCalc(i).labels.length ? ' (' + wizCalc(i).labels.length + ')' : '') + '</button>') : '') + '</div>';
+  }).join('') + '</div>';
+  $('sc').innerHTML = '<div class="ctop wzt"><button onclick="closeSheet()" aria-label="إغلاق">✕</button><h3>' + esc(LX(d,'title')) + '</h3><span></span></div>' + head + list + '</div>';
+  wizLoad(st);
+  const last = i === DL.steps.length - 1;
+  $('ft').innerHTML = (i > 0 ? '<button class="qc" style="width:auto;padding:0 16px;border-radius:14px" onclick="wizBack()" aria-label="رجوع">‹</button>' : '') +
+    '<button class="cta" onclick="wizNext()"><span>' + (last ? '✓ إضافة للسلة' : 'التالي ›') + '</span><span class="ltr">₪' + wizTotal() + '</span></button>';
 }
 const dealExtra = () => DL ? DL.picks.flat().reduce((s, p) => s + Number(p.extra || 0), 0) : 0;
 const dealLeft = () => DL ? dealSlots(DL.d).reduce((n, s, i) => n + Math.max(0, Number(s.count) - DL.picks[i].length), 0) : 0;
@@ -1645,7 +1753,7 @@ function dealBig(d){
     (d.img ? '<div class="pic"><img src="' + esc(d.img) + '" alt=""></div>' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
     '<div class="txt">' + (d.featured ? '<div class="fbadge">⭐ مميّز</div>' : '') + dealTimer(d) + '<div class="t">' + esc(LX(d,'title')) + '</div>' +
     '<div class="d">' + esc(LX(d,'desc')) + '</div>' +
-    '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span></div>' +
+    '<div class="p"><small>فقط</small><span class="ltr">₪' + Number(d.price) + '</span>' + (Number(d.was) > Number(d.price) ? ' <s class="ltr" style="opacity:.65;font-size:.6em">₪' + Number(d.was) + '</s>' : '') + '</div>' +
     '<div class="go">' + (dealSlots(d).length ? 'اختار وجبتك' : 'اطلب الآن') + '</div></div></div>';
 }
 function dealTile(d){

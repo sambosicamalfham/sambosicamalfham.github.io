@@ -718,7 +718,7 @@ Object.assign(HE, {
   'اكتب الوردية هيك:':'כתבו משמרת כך:', 'أو':'או', '. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'. השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'ما في جدول للأسبوع الماضي':'אין סידור לשבוע הקודם', 'تم النسخ — لا تنسى تكبس حفظ':'הועתק — אל תשכחו לשמור', 'في تغييرات ما انحفظت. تكمّل بدون حفظ؟':'יש שינויים שלא נשמרו. להמשיך בלי לשמור?',
-  'من الـ QR':'מה־QR', 'موافق على عروض':'מאשר דיוור', 'موافقين على رسائل عروض':'מאשרים קבלת דיוור', 'رجّع الرسائل':'החזרת דיוור', 'وقّف الرسائل الإعلانية':'הפסקת דיוור',
+  'من الـ QR':'מה־QR', 'السعر قبل الخصم (بيطلع مشطوب)':'מחיר לפני הנחה (מוצג מחוק)', 'اختياري':'לא חובה', 'مكونات بتنشال (✕)':'רכיבים להסרה (✕)', 'أكثر إشي بيختار (فاضي = بلا حدود)':'מקסימום בחירות (ריק = ללא הגבלה)', 'موافق على عروض':'מאשר דיוור', 'موافقين على رسائل عروض':'מאשרים קבלת דיוור', 'رجّع الرسائل':'החזרת דיוור', 'وقّف الرسائل الإعلانية':'הפסקת דיוור',
   'بس لهدول مسموح تبعت إعلانات (חוק הספאם). اللي بيطلب يوقف — وقّفه من كرته.':'רק להם מותר לשלוח פרסומות (חוק הספאם). מי שמבקש להפסיק — הפסיקו מהכרטיס שלו.', 'نزّل الزبائن (Excel)':'הורדת לקוחות (Excel)', 'واتساب':'וואטסאפ', 'عدد الطلبات':'מספר הזמנות', 'المجموع ₪':'סה״כ ₪', 'معدل الطلب ₪':'ממוצע הזמנה ₪',
   'أول طلب':'הזמנה ראשונה', 'المنطقة':'אזור', 'عيد الميلاد':'יום הולדת', 'اللغة':'שפה', 'محظور':'חסום', 'الزبائن':'לקוחות', 'جاري التجهيز...':'מכין...', 'مسح الـ QR (الملصقات)':'סריקות QR (מדבקות)', 'مرات فتحوا الرابط':'פעמים שנפתח הקישור', 'أجهزة جديدة (أول مرة)':'מכשירים חדשים (פעם ראשונה)',
   'طلبات من الـ QR ·':'הזמנות מה־QR ·', 'طلبات من الـ QR':'הזמנות מה־QR', 'المصدر':'מקור', 'فتحوا':'נפתח', 'جديد':'חדש', 'المبلغ':'סכום',
@@ -3779,8 +3779,11 @@ function editGroup(id){
         <option value="many" ${g.type!=='one'?'selected':''}>اختيار متعدد</option></select></div>
       <div class="f"><label>الشكل</label><select id="gStyle">
         <option value="" ${!g.style?'selected':''}>قائمة</option>
-        <option value="tiles" ${g.style==='tiles'?'selected':''}>مربعات</option></select></div>
+        <option value="tiles" ${g.style==='tiles'?'selected':''}>مربعات</option>
+        <option value="remove" ${g.style==='remove'?'selected':''}>مكونات بتنشال (✕)</option></select></div>
     </div>
+    <div class="f"><label>أكثر إشي بيختار (فاضي = بلا حدود)</label><input id="gMax" type="number" min="0" value="${g.max || ''}" placeholder="مثلاً 3">
+      <div class="muted" style="margin-top:5px">"مكونات بتنشال": المكونات اللي بالوجبة أصلاً — الزبون بيكبس ✕ عشان يشيلها، وبتنطبع "بدون …" (بدون سعر).</div></div>
     <div class="f"><label>طريقة عرض السعر</label><select id="gPM">
       <option value="" ${g.priceMode!=='full'?'selected':''}>زيادة على السعر (+6 ₪)</option>
       <option value="full" ${g.priceMode==='full'?'selected':''}>السعر الكامل (للأحجام)</option></select>
@@ -3804,7 +3807,7 @@ function editGroup(id){
         ps !== 1 ? {ps} : {}, pn !== 1 ? {pn} : {}) : null;
     }).filter(Boolean);
     if(!items.length){ alert('ضيف خيار واحد على الأقل'); return false; }
-    const data = {title, title_he, type: val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: $('gReq').checked, halves: $('gHalves').checked, items};
+    const data = {title, title_he, type: val('gStyle') === 'remove' ? 'many' : val('gType'), style: val('gStyle'), priceMode: val('gPM'), required: val('gStyle') === 'remove' ? false : $('gReq').checked, halves: $('gHalves').checked, max: Math.max(0, Math.floor(num('gMax'))) || null, items};
     if(id) await db.collection('optionGroups').doc(id).update(data);
     else await db.collection('optionGroups').add(Object.assign(data,{order:(GROUPS.length+1)*10}));
     return true;
@@ -3941,7 +3944,7 @@ function dealSlotRow(s, i){
       ${its.map(it => `<label class="chk"><input type="checkbox" class="si" value="${it.id}" ${sel.has(it.id)?'checked':''} onchange="dealSlotCount(this)"><span>${esc(LX(it,'name'))} <span class="muted ltr">₪${Number(it.price)||0}</span></span></label>`).join('')}
     </details>`;
   }).join('');
-  return `<div class="dslot">
+  return `<div class="dslot" data-skip="${esc((s.skip||[]).join(','))}">
     <div class="dsh"><b class="dn">خطوة</b>
       <input class="st" value="${esc(s.title||'')}" placeholder="مثلاً: اختار بيتسا">
       <input class="sth" value="${esc(s.title_he||'')}" placeholder="🇮🇱 בעברית" dir="rtl" lang="he">
@@ -3974,6 +3977,7 @@ function editDeal(id){
     ${heField('dDescHe', d.desc_he, 'التفاصيل بالعبري')}
     <div class="f2">
       <div class="f"><label>السعر *</label><input id="dPrice" type="number" inputmode="decimal" value="${d.price||''}"></div>
+      <div class="f"><label>السعر قبل الخصم (بيطلع مشطوب)</label><input id="dWas" type="number" inputmode="decimal" value="${d.was||''}" placeholder="اختياري"></div>
       <div class="f"><label>إيموجي</label><input id="dEmoji" value="${esc(d.emoji||'🍕')}" style="font-size:22px;text-align:center"></div>
     </div>
     <label class="chk"><input type="checkbox" id="dActive" ${d.active!==false?'checked':''}><span>✅ العرض ظاهر للزبائن</span></label>
@@ -4004,12 +4008,13 @@ function editDeal(id){
     const slots = [...document.querySelectorAll('#dSlots .dslot')].map(r => ({
       title: r.querySelector('.st').value.trim(), title_he: r.querySelector('.sth').value.trim(),
       count: Math.max(1, Math.min(20, Number(r.querySelector('.sc').value) || 1)),
-      items: [...r.querySelectorAll('.si:checked')].map(c => c.value)
+      items: [...r.querySelectorAll('.si:checked')].map(c => c.value),
+      ...(r.dataset.skip ? {skip: r.dataset.skip.split(',').filter(Boolean)} : {})
     })).filter(s => s.items.length);
     const bad = [...document.querySelectorAll('#dSlots .dslot')].filter(r => !r.querySelectorAll('.si:checked').length).length;
     if(bad && !confirm('في خطوة ما علّمت فيها ولا صنف — رح تنحذف. تكمّل؟')) return false;
     const exEl = document.querySelector('input[name="dEx"]:checked');
-    const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, emoji:val('dEmoji')||'🍕', img: window._pickImg || '',
+    const data = {title:t, desc:val('dDesc'), title_he: val('dTitleHe'), desc_he: val('dDescHe'), price:p, was: num('dWas') > p ? num('dWas') : null, emoji:val('dEmoji')||'🍕', img: window._pickImg || '',
       slots, extrasFree: !!(exEl && exEl.value === 'free'), active: $('dActive').checked, featured: $('dFeat').checked,
       days: [...document.querySelectorAll('.dday:checked')].map(c => Number(c.value)), from: val('dFrom'), to: val('dTo')};
     if((data.from && !data.to) || (!data.from && data.to)){ alert('حط ساعة البداية والنهاية مع بعض'); return false; }
