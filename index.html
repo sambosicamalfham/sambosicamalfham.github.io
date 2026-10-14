@@ -1054,7 +1054,7 @@ let _xInit = false;
 function paint(){
   try{ instBanner(); }catch(e){}
   try{ habitBanner(); }catch(e){}
-  if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); bdayMaybe(); }catch(e){} }, 0); }
+  if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); bdayMaybe(); }catch(e){} try{ qrTrack(); }catch(e){} }, 0); }
   if(!_trkInit && typeof trkPill === 'function'){ _trkInit = true; setTimeout(() => { trkListen(); trkPill(); }, 0); }
   try{ const n = activeDeals().length, el = $('tDealsN'); if(el){ el.style.display = n ? '' : 'none'; el.textContent = n; } if(view === 'deals') renderDeals(); }catch(e){}
   $('brandName').textContent = LX(SET,'name');
@@ -2405,7 +2405,7 @@ function sendOrder(){
       rewardDisc() ? {reward: rewardDisc()} : {},
       wheelLive() ? {wheel: WHEEL.label || '', wheelType: WHEEL.type, wheelVal: Number(WHEEL.value || 0), wheelDisc: wheelDisc()} : {},
       couponDisc() ? {couponDisc: couponDisc()} : {},
-      SCHED ? {sched: SCHED} : {},
+      SCHED ? {sched: SCHED} : {}, qrRef() ? {ref: qrRef()} : {},
       myBday() ? {bday: myBday()} : {},
       bdayOn() ? {bdayGift: bdayLabel(), bdayType: bdayCfg().type || 'gift', bdayVal: Number(bdayCfg().value || 0), bdayDisc: bdayDisc()} : {},
       otype === 'delivery' && CLOC ? {loc: CLOC} : {}, otype === 'delivery' && curZone() ? {zone: curZone().name || ''} : {}),
@@ -2526,6 +2526,30 @@ function closeSheet(){
 function toast(m){
   const e = $('toast'); e.textContent = m; e.classList.add('on');
   clearTimeout(tT); tT = setTimeout(function(){ e.classList.remove('on'); }, 2200);
+}
+
+/* ============ 📲 عدّاد مسح الـ QR ============
+   الرابط بالملصق فيه ?src=qr. كل جهاز بيتعدّ مرة كزائر جديد (مش حسب IP — الـ IP بيتغيّر
+   وبيتشارك بين ناس كثير على شبكة الموبايل، فالجهاز أدق). الطلب اللي بييجي خلال أسبوع بيتسجّل إنه من الـ QR. */
+function qrTrack(){
+  let src = '';
+  try{ src = (new URLSearchParams(location.search).get('src') || '').replace(/[^\w-]/g, '').slice(0, 20); }catch(e){}
+  if(!src || !live || !db) return;
+  let dev = '', first = false;
+  try{
+    dev = localStorage.getItem('pz_dev') || '';
+    if(!dev){ dev = Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem('pz_dev', dev); }
+    first = !localStorage.getItem('pz_seen_' + src);
+    localStorage.setItem('pz_seen_' + src, '1');
+    localStorage.setItem('pz_ref', JSON.stringify({src, at: Date.now()}));
+    if(sessionStorage.getItem('pz_scan_' + src)) return;   // تحديث الصفحة ما بينعدّ مرة ثانية
+    sessionStorage.setItem('pz_scan_' + src, '1');
+  }catch(e){}
+  db.collection('scans').add({at: new Date().toISOString(), dev: dev.slice(0, 30), src, first}).catch(() => {});
+  try{ history.replaceState(null, '', location.pathname + location.hash); }catch(e){}
+}
+function qrRef(){
+  try{ const r = JSON.parse(localStorage.getItem('pz_ref') || 'null'); return r && Date.now() - r.at < 7 * 864e5 ? String(r.src || '') : ''; }catch(e){ return ''; }
 }
 
 /* ============ 🚗 أنا برا (للاستلام من المحل) ============ */

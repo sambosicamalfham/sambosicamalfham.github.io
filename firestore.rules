@@ -110,6 +110,16 @@ service cloud.firestore {
       allow read, update, delete: if isStaff();
     }
 
+    // ---------- 📲 عدّاد مسح الـ QR (بدون معلومات شخصية) ----------
+    match /scans/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['at','dev','src','first'])
+                    && request.resource.data.at is string && request.resource.data.at.size() < 40
+                    && request.resource.data.dev is string && request.resource.data.dev.size() <= 30
+                    && request.resource.data.src is string && request.resource.data.src.size() <= 20
+                    && request.resource.data.first is bool;
+      allow read, delete: if isStaff();
+    }
+
     // ---------- 🗓️ جدول الورديات ----------
     match /shifts/{week} {
       allow read, write: if isStaff();

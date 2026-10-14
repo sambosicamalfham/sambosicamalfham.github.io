@@ -718,6 +718,9 @@ Object.assign(HE, {
   'اكتب الوردية هيك:':'כתבו משמרת כך:', 'أو':'או', '. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'. השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
   'ما في جدول للأسبوع الماضي':'אין סידור לשבוע הקודם', 'تم النسخ — لا تنسى تكبس حفظ':'הועתק — אל תשכחו לשמור', 'في تغييرات ما انحفظت. تكمّل بدون حفظ؟':'יש שינויים שלא נשמרו. להמשיך בלי לשמור?',
+  'من الـ QR':'מה־QR', 'مسح الـ QR (الملصقات)':'סריקות QR (מדבקות)', 'مرات فتحوا الرابط':'פעמים שנפתח הקישור', 'أجهزة جديدة (أول مرة)':'מכשירים חדשים (פעם ראשונה)',
+  'طلبات من الـ QR ·':'הזמנות מה־QR ·', 'طلبات من الـ QR':'הזמנות מה־QR', 'المصدر':'מקור', 'فتحوا':'נפתח', 'جديد':'חדש', 'المبلغ':'סכום',
+  'كل جهاز بينعدّ "جديد" بس أول مرة بيفتح. الطلب بيتحسب من الـ QR إذا إجا خلال أسبوع من المسح. المبلغ من الـ QR:':'כל מכשיר נספר "חדש" רק בפעם הראשונה. הזמנה נספרת מה־QR אם הגיעה תוך שבוע מהסריקה. סכום מה־QR:',
   'بننسخ جدول الأسبوع الماضي لهالأسبوع (بيتبدّل اللي هون). تكمّل؟':'נעתיק את סידור השבוע הקודם לשבוע הזה (מה שכאן יוחלף). להמשיך?'
 });
 HE_RULES.push(
@@ -1125,6 +1128,7 @@ function renderOrders(){
       <div class="lines">${lines}${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}</div>
       <div class="meta">
         <span class="pill ${o.type==='pickup'?'b':''}">${o.type==='pickup'?'🏪 استلام':'🛵 توصيل'}</span>
+        ${c.ref?'<span class="pill b">📲 من الـ QR</span>':''}
         ${c.src==='phone'?'<span class="pill a">📞 طلب تلفون</span>':c.src==='shop'?'<span class="pill a">🏪 طلب بالمحل</span>':''}
         ${c.phone?`<a href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
         ${wa?`<a href="https://wa.me/${wa}" target="_blank">💬 واتساب</a>`:''}
@@ -2835,6 +2839,22 @@ function renderShift(){
   const wasDirty = SH.dirty; shTotals(); SH.dirty = wasDirty;
 }
 
+/* ============ 📲 مسح الـ QR ============ */
+function scansHtml(R){
+  const S = REP.scans; if(S == null) return '';
+  const ok = REP.orders.filter(o => o.status !== 'cancel' && (o.customer || {}).ref);
+  const by = {};
+  S.forEach(x => { const k = x.src || 'qr'; const B = by[k] = by[k] || {scans: 0, fresh: 0, orders: 0, money: 0}; B.scans++; if(x.first) B.fresh++; });
+  ok.forEach(o => { const k = o.customer.ref; const B = by[k] = by[k] || {scans: 0, fresh: 0, orders: 0, money: 0}; B.orders++; B.money += Number(o.total || 0); });
+  const T = Object.values(by).reduce((t, b) => ({scans: t.scans + b.scans, fresh: t.fresh + b.fresh, orders: t.orders + b.orders, money: t.money + b.money}), {scans: 0, fresh: 0, orders: 0, money: 0});
+  return `<h3>📲 مسح الـ QR (الملصقات)</h3>
+    <div class="kp"><div><b>${T.scans}</b><span>مرات فتحوا الرابط</span></div><div><b>${T.fresh}</b><span>أجهزة جديدة (أول مرة)</span></div>
+      <div><b>${T.orders}</b><span>طلبات من الـ QR · ${T.fresh ? Math.round(T.orders / T.fresh * 100) : 0}%</span></div></div>
+    ${Object.keys(by).length > 1 ? `<table class="rtb"><tr class="hd"><td>المصدر</td><td class="n">فتحوا</td><td class="n">جديد</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
+      ${Object.entries(by).map(([k, b]) => `<tr><td class="ltr">${esc(k)}</td><td class="n">${b.scans}</td><td class="n">${b.fresh}</td><td class="n">${b.orders}</td><td class="n">${rmoney(b.money)}</td></tr>`).join('')}</table>` : ''}
+    <div class="muted" style="margin-top:4px">كل جهاز بينعدّ "جديد" بس أول مرة بيفتح. الطلب بيتحسب من الـ QR إذا إجا خلال أسبوع من المسح. المبلغ من الـ QR: <span class="ltr">${rmoney(T.money)}</span></div>`;
+}
+
 /* ============ 💰 ربح كل وجبة ============ */
 function profitRows(R){
   const vr = 1 + vatRate() / 100;
@@ -2921,6 +2941,8 @@ async function loadReport(ym){
   try{
     const s = await db.collection('orders').where('createdAtStr', '>=', a.toISOString()).where('createdAtStr', '<', b.toISOString()).get();
     REP.orders = s.docs.map(d => ({id: d.id, ...d.data()}));
+    try{ const q = await db.collection('scans').where('at', '>=', a.toISOString()).where('at', '<', b.toISOString()).get(); REP.scans = q.docs.map(d => d.data()); }
+    catch(e){ REP.scans = null; console.warn('scans', e.message); }
   }catch(e){
     console.error(e);
     REP.orders = (CUST_ORDERS || ORDERS).filter(o => o.createdAtStr && o.createdAtStr >= a.toISOString() && o.createdAtStr < b.toISOString());
@@ -3035,6 +3057,7 @@ function reportDocHtml(R, ym){
     <h3>🏆 الأصناف الأكثر مبيعاً</h3>
     <table class="rtb"><tr class="hd"><td>الصنف</td><td class="n">كمية</td><td class="n">المبلغ</td></tr>
       ${tops.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
+    ${scansHtml(R)}
     ${profitHtml(R)}
     ${Object.keys(R.byZone).length ? `<h3>🗺️ حسب المنطقة</h3><table class="rtb"><tr class="hd"><td>المنطقة</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
       ${Object.entries(R.byZone).sort((a, b) => b[1][1] - a[1][1]).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('')}</table>` : ''}
