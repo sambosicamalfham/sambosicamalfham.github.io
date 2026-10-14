@@ -1,0 +1,31 @@
+# بيعمل نسخة من المنيو لـ ops/menu.json (لما يتغيّر ops/snapshot-request.txt)
+name: Menu snapshot
+
+on:
+  push:
+    branches: [main]
+    paths: [ops/snapshot-request.txt, ops/snapshot.js]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund firebase-admin@12
+      - name: Snapshot
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node ops/snapshot.js
+      - name: Commit
+        run: |
+          git config user.name "menu-snapshot"
+          git config user.email "actions@users.noreply.github.com"
+          git add ops/menu.json
+          git diff --cached --quiet || (git commit -m "Menu snapshot" && git push)
