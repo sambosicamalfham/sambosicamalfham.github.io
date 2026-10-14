@@ -173,7 +173,7 @@ img.tall{object-fit:contain!important;background:#fff;padding:6px 0}
 .sc{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
 .float{position:absolute;top:14px;z-index:5;direction:ltr;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.95);
   display:grid;place-items:center;font-size:17px;box-shadow:0 3px 10px rgba(0,0,0,.22)}
-.float.a{inset-inline-end:14px} .float.b{inset-inline-start:14px} .float.c{inset-inline-start:62px}
+.float.a{inset-inline-end:14px;width:48px;height:48px;background:#141414;color:#fff;font-size:22px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.35)} .float.b{inset-inline-start:14px} .float.c{inset-inline-start:62px}
 
 /* صفحة المنتج */
 .phero{height:242px;position:relative;overflow:hidden;background:#ddd}
@@ -225,7 +225,7 @@ img.tall{object-fit:contain!important;background:#fff;padding:6px 0}
 /* السلة */
 .ctop{display:flex;align-items:center;justify-content:space-between;padding:16px;background:#fff;border-bottom:1px solid var(--line)}
 .ctop h3{margin:0;font-size:18px;font-weight:900}
-.ctop button{font-size:19px;color:var(--muted)}
+.ctop button{width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:#141414;color:#fff;font-size:20px;font-weight:900;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.18)}
 .cwrap{padding:16px}
 .ci{background:#fff;border-radius:var(--r);padding:12px;box-shadow:var(--sh);margin-bottom:10px;display:flex;gap:12px}
 .ci .ph{width:68px;height:68px;border-radius:14px;overflow:hidden;flex:none;background:#eee}
@@ -505,6 +505,7 @@ a.cta{text-decoration:none;justify-content:center}
 .btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
 
 /* العرض خطوة خطوة */
+.wzback{flex:0 0 auto;height:54px;padding:0 18px;border-radius:14px;background:#fff;border:2px solid #141414;color:#141414;font-size:17px;font-weight:900;display:flex;align-items:center;gap:4px}
 .wzt{position:sticky;top:0;z-index:7;background:var(--bg)}.wzt h3{font-size:15px;flex:1;text-align:center}
 .pbody.wz{margin-top:0;border-radius:0;padding-top:10px}
 .wz .wzh h3{margin:0 0 4px}.wz .price s{font-size:14px;color:var(--muted);margin-inline-start:6px}
@@ -1260,6 +1261,7 @@ function callRest(){ if(SET.phone) location.href = 'tel:+' + SET.phone; }
 /* ============ التنقل ============ */
 function go(v){
   if(v === 'cart'){ openCart(); return; }
+  if(v !== 'home' && view === 'home') hPush('v');
   view = v;
   $('vHome').style.display = v==='home' ? '' : 'none';
   $('vCats').style.display = v==='cats' ? '' : 'none';
@@ -1541,7 +1543,7 @@ function drawP2(it, groups){
 
   $('sc').innerHTML =
     '<div class="phero"><img' + (isDrink(it) ? ' class="tall"' : '') + ' src="' + pic(it) + '" alt="">' +
-      '<button class="float a" onclick="closeSheet()">‹</button>' +
+      '<button class="float a" onclick="closeSheet()" aria-label="إغلاق">✕</button>' +
       '<button class="float b" onclick="shareRest()">↗</button>' +
       '<button class="float c" onclick="fav(this)">🤍</button></div>' +
     '<div class="pbody"><h3>' + esc(LX(it,'name')) + '</h3>' +
@@ -1697,7 +1699,7 @@ function drawWiz(){
   $('sc').innerHTML = '<div class="ctop wzt"><button onclick="closeSheet()" aria-label="إغلاق">✕</button><h3>' + esc(LX(d,'title')) + '</h3><span></span></div>' + head + list + '</div>';
   wizLoad(st);
   const last = i === DL.steps.length - 1;
-  $('ft').innerHTML = (i > 0 ? '<button class="qc" style="width:auto;padding:0 16px;border-radius:14px" onclick="wizBack()" aria-label="رجوع">‹</button>' : '') +
+  $('ft').innerHTML = (i > 0 ? '<button class="wzback" onclick="wizBack()" aria-label="رجوع">‹ <span>رجوع</span></button>' : '') +
     '<button class="cta" onclick="wizNext()"><span>' + (last ? '✓ إضافة للسلة' : 'التالي ›') + '</span><span class="ltr">₪' + wizTotal() + '</span></button>';
 }
 const dealExtra = () => DL ? DL.picks.flat().reduce((s, p) => s + Number(p.extra || 0), 0) : 0;
@@ -1706,7 +1708,7 @@ function drawDeal(){
   const d = DL.d, slots = dealSlots(d);
   const head = '<div class="dl-hero">' +
       (d.img ? '<img src="' + esc(d.img) + '" alt="">' : '<div class="em">' + esc(d.emoji || '🍕') + '</div>') +
-      '<button class="float a" onclick="closeSheet()">‹</button></div>' +
+      '<button class="float a" onclick="closeSheet()" aria-label="إغلاق">✕</button></div>' +
     '<div class="pbody"><h3>' + esc(LX(d,'title')) + '</h3><p class="ds">' + esc(LX(d,'desc')) + '</p>' +
     '<div class="price"><span class="ltr">₪' + Number(d.price) + '</span>' +
       (dealExtra() ? ' <small class="ltr">+ ₪' + dealExtra() + ' إضافات</small>' : '') + '</div>';
@@ -2702,13 +2704,25 @@ function shareRest(){
 }
 
 /* ============ أدوات واجهة ============ */
+/* زر الرجوع بالتلفون: بيسكّر النافذة (أو بيرجع خطوة بالعرض) بدل ما يطلع من الموقع */
+function hPush(k){ try{ history.pushState({[k]: 1}, ''); }catch(e){} }
+window.addEventListener('popstate', () => {
+  if($('sheet').classList.contains('on')){
+    if(DL && DL.wiz && DL.idx > 0){ wizBack(); hPush('sh'); return; }
+    if(DL && DL.slot != null){ dealBack(); hPush('sh'); return; }
+    closeSheet(true); return;
+  }
+  if(view !== 'home') go('home');
+});
 function show(){
+  if(!(history.state && history.state.sh)) hPush('sh');
   $('bg').classList.add('on'); $('sheet').classList.add('on');
   document.body.style.overflow = 'hidden';
   $('cartbar').classList.remove('on');
 }
-function closeSheet(){
+function closeSheet(fromBack){
   if(DL && DL.slot != null){ dealBack(); return; }
+  if(!fromBack && history.state && history.state.sh){ try{ history.replaceState(null, ''); }catch(e){} }
   DL = null;
   $('bg').classList.remove('on'); $('sheet').classList.remove('on');
   document.body.style.overflow = ''; $('sc').scrollTop = 0;
