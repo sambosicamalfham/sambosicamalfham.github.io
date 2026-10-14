@@ -149,6 +149,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .pc.off{opacity:.5}
 .pc .ph{height:118px;position:relative;overflow:hidden;background:#eee}
 .pc .ph img{width:100%;height:100%;object-fit:cover}
+img.tall{object-fit:contain!important;background:#fff;padding:6px 0}
 .pc .bd{padding:11px 12px 12px;display:flex;flex-direction:column;flex:1}
 .pc .nm{font-size:14px;font-weight:800;line-height:1.35}
 .pc .ds{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.5;height:34px;overflow:hidden}
@@ -1032,6 +1033,10 @@ const D_DEALS = [{id:'d1',title:'العرض العائلي',desc:'2 بيتسا �
 
 /* ============ صور ============ */
 function catOf(id){ return CATS.find(c=>c.id===id) || {icon:'🍽️',name:''}; }
+/* صور طويلة (قناني/علب مشروبات) — بتطلع كاملة بدل ما تنقص */
+document.addEventListener('load', e => { const t = e.target;
+  if(t && t.tagName === 'IMG' && t.naturalHeight > t.naturalWidth * 1.15) t.classList.add('tall'); }, true);
+const isDrink = it => !!(it && it.img && (catOf(it.catId) || {}).icon === '🥤');
 function pic(it){
   if(it && it.img) return it.img;
   const ic = (it && it.icon) || catOf(it?it.catId:'').icon || '🍽️';
@@ -1110,7 +1115,7 @@ function prTxt(it){
 function card(it){
   const off = it.available === false || soldOut(it);
   return '<div class="pc' + (off?' off':'') + '" onclick="' + (off?'':"openP('"+it.id+"')") + '">' +
-    '<div class="ph">' + badges(it) + '<img src="' + pic(it) + '" alt="' + esc(LX(it,'name')) + '" loading="lazy"></div>' +
+    '<div class="ph">' + badges(it) + '<img' + (isDrink(it) ? ' class="tall"' : '') + ' src="' + pic(it) + '" alt="' + esc(LX(it,'name')) + '" loading="lazy"></div>' +
     '<div class="bd"><div class="nm">' + esc(LX(it,'name')) + '</div><div class="ds">' + esc(LX(it,'desc')) + '</div>' +
     '<div class="ft"><div class="pr">' + prTxt(it) + '</div>' + (off?'':'<div class="plus">+</div>') + '</div></div></div>';
 }
@@ -1535,7 +1540,7 @@ function drawP2(it, groups){
     : (it.tag ? '<div class="rrow"><span class="hot">' + esc(LX(it,'tag')) + '</span></div>' : '');
 
   $('sc').innerHTML =
-    '<div class="phero"><img src="' + pic(it) + '" alt="">' +
+    '<div class="phero"><img' + (isDrink(it) ? ' class="tall"' : '') + ' src="' + pic(it) + '" alt="">' +
       '<button class="float a" onclick="closeSheet()">‹</button>' +
       '<button class="float b" onclick="shareRest()">↗</button>' +
       '<button class="float c" onclick="fav(this)">🤍</button></div>' +
