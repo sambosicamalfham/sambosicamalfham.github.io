@@ -17,7 +17,7 @@
 <style>
 :root{
   --red:#e3242b; --red-2:#c3161d; --red-soft:#ffeaeb;
-  --ink:#1a1a1a; --ink-2:#555; --muted:#9a9a9a;
+  --ink:#1a1a1a; --ink-2:#555; --muted:#6b6b6b;
   --bg:#f7f6f5; --card:#fff; --line:#eee;
   --gold:#f5b228; --green:#1a9c53;
   --r:18px; --r-lg:22px;
@@ -285,7 +285,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;max-width:var(--w);margin:0 auto;background:#fff;
   border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);
   padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -3px 18px rgba(0,0,0,.05)}
-.tab{padding:10px 0 9px;text-align:center;color:#b2b2b2;font-size:11px;font-weight:700;position:relative}
+.tab{padding:10px 0 9px;text-align:center;color:#767676;font-size:11px;font-weight:700;position:relative}
 .tab .i{font-size:20px;display:block;margin-bottom:2px;line-height:1.1}
 .tab.on{color:var(--red)}
 .tab .dot{position:absolute;top:5px;right:calc(50% - 21px);background:var(--red);color:#fff;font-size:10px;
@@ -487,10 +487,53 @@ a.cta{text-decoration:none;justify-content:center}
 .stars{display:flex;justify-content:center;gap:6px;margin:8px 0}
 .stars button{font-size:34px;color:#ddd;line-height:1}.stars button.on{color:#f5b301}
 .btn-rate{margin-top:8px;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-family:inherit;width:100%}
+
+/* أنا برا */
+.outb{margin-top:16px;background:#fff;border:2px solid #1f6feb;border-radius:16px;padding:12px;text-align:center}
+.outb .cta{background:#1f6feb;margin-top:8px}
+.outb.ok{border-color:#1e8e4e;background:#e9fbef;font-weight:800}
+/* فيديوهات */
+.vrow{display:flex;gap:10px;overflow-x:auto;padding:2px 16px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.vrow::-webkit-scrollbar{display:none}
+.vcard{flex:none;width:132px;aspect-ratio:9/16;border-radius:16px;overflow:hidden;position:relative;background:#1a1a1a;scroll-snap-align:start;box-shadow:var(--sh)}
+.vcard video,.vcard img{width:100%;height:100%;object-fit:cover;display:block}
+.vcard .vt{position:absolute;inset:auto 0 0 0;padding:20px 8px 8px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12px;font-weight:800;text-align:start}
+.vcard .vp{position:absolute;top:8px;inset-inline-start:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:11px}
+.vfull{width:100%;max-height:72vh;border-radius:16px;background:#000;display:block}
+.vfull.yt{aspect-ratio:9/16;max-height:72vh;border:0}
+/* تذكير العادة */
+.habit{display:flex;align-items:center;gap:10px;margin:12px 16px 0;background:linear-gradient(135deg,#fff7e6,#fff);border:1.5px solid #f5d27a;border-radius:16px;padding:11px 12px}
+.habit .tx{flex:1;font-size:14px;line-height:1.5}.habit .tx b{display:block;font-size:15px}
+.habit .ok{background:var(--red);color:#fff;border-radius:999px;padding:8px 14px;font-weight:800;white-space:nowrap}
+.habit .x{opacity:.5;font-size:15px;padding:4px}
+
+/* ============ ♿ נגישות ============ */
+.skip{position:absolute;top:-60px;inset-inline-start:10px;z-index:1000;background:#1a1a1a;color:#fff;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none}
+.skip:focus{top:10px}
+:focus-visible{outline:3px solid #1f6feb!important;outline-offset:2px}
+#a11yBtn{position:fixed;z-index:41;inset-inline-end:0;top:42%;width:42px;height:46px;border-radius:12px 0 0 12px;background:#1f4fbf;color:#fff;font-size:24px;
+  display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+html[dir=rtl] #a11yBtn{border-radius:0 12px 12px 0}
+.a11y-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.a11y-g button{background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 8px;font-weight:800;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.a11y-g button span{font-size:24px}
+.a11y-g button.on{border-color:#1f4fbf;background:#eef3ff;color:#1f4fbf}
+.a11y-st{line-height:1.85;font-size:14.5px}.a11y-st h4{margin:16px 0 4px;font-size:15.5px}.a11y-st ul{margin:4px 0;padding-inline-start:20px}
+html.a11y-z1 body{zoom:1.12} html.a11y-z2 body{zoom:1.25} html.a11y-z3 body{zoom:1.4}
+html.a11y-links a,html.a11y-links button{text-decoration:underline!important;text-underline-offset:3px}
+html.a11y-links a{outline:2px dashed #1f4fbf;outline-offset:1px}
+html.a11y-font body,html.a11y-font button,html.a11y-font input,html.a11y-font textarea{font-family:Arial,'Heebo',sans-serif!important;letter-spacing:.02em}
+html.a11y-still *,html.a11y-still *::before,html.a11y-still *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.a11y-hc{--muted:#333;--ink-2:#111;--line:#555}
+html.a11y-hc body{background:#fff}
+html.a11y-hc .tab{color:#333}
+html.a11y-hc .hero .shade{background:rgba(0,0,0,.82)}
 </style>
 </head>
 <body>
 
+<a class="skip" href="#home" onclick="go('home')">تخطّى للمحتوى</a>
+<button id="a11yBtn" onclick="openA11y()" aria-label="נגישות">♿</button>
 <div id="splash"><div class="in">
   <div class="lg" id="spLogo"><div class="t">مكسيكاني<b>وبيتسا</b>أم الفحم</div></div>
   <h2>مكسيكاني وبيتسا أم الفحم</h2>
@@ -507,7 +550,7 @@ a.cta{text-decoration:none;justify-content:center}
       <div class="shade"></div>
       <div class="hero-in">
         <div class="hero-top">
-          <button class="icn-btn" onclick="openInfo()">☰</button>
+          <button class="icn-btn" onclick="openInfo()" aria-label="معلومات المطعم">☰</button>
           <div class="brand">
             <div class="mark" id="brandMark"><span class="e">🍕</span></div>
             <div class="nm" id="brandName">...</div>
@@ -515,7 +558,7 @@ a.cta{text-decoration:none;justify-content:center}
           </div>
           <div class="hr">
             <button class="icn-btn langsw" onclick="toggleLang()" aria-label="Language">עברית</button>
-            <button class="icn-btn" onclick="shareRest()">↗</button>
+            <button class="icn-btn" onclick="shareRest()" aria-label="مشاركة">↗</button>
           </div>
         </div>
       </div>
@@ -524,14 +567,14 @@ a.cta{text-decoration:none;justify-content:center}
 
     <div class="searchwrap"><div class="searchbar">
       <span class="si">🔍</span>
-      <input id="q" type="search" placeholder="ابحث عن وجبتك المفضلة ..." oninput="onSearch()">
+      <input id="q" type="search" aria-label="بحث" placeholder="ابحث عن وجبتك المفضلة ..." oninput="onSearch()">
     </div></div>
 
     <div id="demoFlag"></div>
     <div class="cats" id="cats"></div>
     <div id="home"></div>
 
-    <div class="fn"><span id="fnName"></span><br>للطلب: <span class="ltr" id="fnPhone"></span></div>
+    <div class="fn"><span id="fnName"></span><br>للطلب: <span class="ltr" id="fnPhone"></span><br><a href="#" onclick="openA11y();openA11yStatement();return false" style="color:inherit">♿ بيان الإتاحة</a></div>
   </div>
 
   <!-- ===== العروض ===== -->
@@ -557,16 +600,16 @@ a.cta{text-decoration:none;justify-content:center}
   <span class="c" id="cCount">0</span><span class="l">عرض السلة</span><span class="t" id="cTotal">₪0</span>
 </div></div>
 
-<div class="tabs">
+<nav class="tabs" aria-label="תפריט ראשי">
   <button class="tab on" id="tHome" onclick="go('home')"><span class="i">🏠</span>الرئيسية</button>
   <button class="tab"    id="tDeals" onclick="go('deals')"><span class="i">🎯</span>العروض<span class="dot" id="tDealsN" style="display:none;background:var(--gold,#f5b301);color:#1a1a1a">0</span></button>
   <button class="tab"    id="tCats" onclick="go('cats')"><span class="i">🗂️</span>الأقسام</button>
   <button class="tab"    id="tCart" onclick="go('cart')"><span class="i">🛒</span>السلة<span class="dot" id="tDot" style="display:none">0</span></button>
   <button class="tab"    id="tMe"   onclick="go('me')"><span class="i">👤</span>حسابي</button>
-</div>
+</nav>
 
 <div class="bg" id="bg" onclick="closeSheet()"></div>
-<div class="sheet" id="sheet">
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="نافذة">
   <div class="sc" id="sc"></div>
   <div class="foot" id="ft"></div>
 </div>
@@ -575,6 +618,7 @@ a.cta{text-decoration:none;justify-content:center}
 <script src="firebase-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
 const HE = {
   // أيام
@@ -737,6 +781,19 @@ HE_RULES.push(
   [/^ما انبعت الطلب: (.+)$/, m => 'ההזמנה לא נשלחה: ' + m[1]],
   [/^(.+) \((\d+)\)$/, m => { const t = trCore(m[1]); return t == null ? null : t + ' (' + m[2] + ')'; }]
 );
+/* ===== ترجمات: SMS، أنا برا، فيديو، إتاحة ===== */
+Object.assign(HE, {
+  'تأكيد رقم التلفون':'אימות מספר טלפון', 'هاد أول طلب من رقم':'זו ההזמנה הראשונה מהמספר', 'بنبعتلك كود بـ SMS عشان نتأكد إنه الرقم إلك. بس مرة وحدة.':'נשלח לכם קוד ב־SMS כדי לוודא שהמספר שלכם. רק פעם אחת.',
+  'ابعتلي الكود':'שלחו לי קוד', 'بعتنالك كود من 6 أرقام على':'שלחנו קוד בן 6 ספרות ל־', 'ما وصلني — ابعت كمان مرة':'לא הגיע — לשלוח שוב', 'تأكيد':'אישור',
+  'جاري الإرسال...':'שולח...', 'جاري التأكيد...':'מאמת...', 'الرقم تأكّد':'המספר אומת', 'الكود':'קוד',
+  'الكود غلط — تأكد وجرّب كمان مرة':'הקוד שגוי — בדקו ונסו שוב', 'الكود انتهى — اطلب كود جديد':'פג תוקף הקוד — בקשו קוד חדש',
+  'ما زبط الإرسال، جرّب كمان مرة':'השליחה נכשלה, נסו שוב', 'ما زبط التأكيد، جرّب كمان مرة':'האימות נכשל, נסו שוב',
+  'محاولات كثيرة — استنى شوي وجرّب كمان مرة':'יותר מדי ניסיונות — חכו קצת ונסו שוב', 'رقم التلفون مش صحيح':'מספר הטלפון לא תקין', 'رجوع':'חזרה',
+  'وصلت عالمحل؟':'הגעתם למסעדה?', 'اكبس وبنطلعلك الطلب للسيارة':'לחצו ונוציא לכם את ההזמנה לרכב', 'لون ونوع السيارة (اختياري)':'צבע וסוג הרכב (לא חובה)',
+  'أنا برا':'אני בחוץ', 'بلّغنا المحل':'עדכנו את המסעדה', 'بلّغنا المحل إنك برا — بيطلعولك الطلب':'עדכנו את המסעדה שאתם בחוץ — מוציאים לכם את ההזמנה', 'ما زبط — اتصل بالمحل':'לא הצליח — התקשרו למסעדה',
+  'من مطبخنا':'מהמטבח שלנו', 'يلا اطلب':'יאללה להזמין', 'فيديو':'סרטון', 'إغلاق':'סגירה',
+  'معلومات المطعم':'מידע על המסעדה', 'مشاركة':'שיתוף', 'بحث':'חיפוש', 'نافذة':'חלון', 'بيان الإتاحة':'הצהרת נגישות', 'تخطّى للمحتوى':'דלג לתוכן'
+});
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -996,6 +1053,7 @@ let _trkInit = false;
 let _xInit = false;
 function paint(){
   try{ instBanner(); }catch(e){}
+  try{ habitBanner(); }catch(e){}
   if(!_xInit){ _xInit = true; setTimeout(() => { try{ loyLoad(); wheelMaybe(); bdayMaybe(); }catch(e){} }, 0); }
   if(!_trkInit && typeof trkPill === 'function'){ _trkInit = true; setTimeout(() => { trkListen(); trkPill(); }, 0); }
   try{ const n = activeDeals().length, el = $('tDealsN'); if(el){ el.style.display = n ? '' : 'none'; el.textContent = n; } if(view === 'deals') renderDeals(); }catch(e){}
@@ -1044,6 +1102,7 @@ function renderHome(){
     if(actD.length > show.length)
       html += '<button class="alldeals" onclick="go(\'deals\')"><span>🎯 كل العروض</span><b>' + actD.length + '</b><span class="ar">←</span></button>';
   }
+  html += videosHtml();
   const best = avail().filter(i => i.best);
   if(best.length){
     html += '<div class="sh"><h2>🔥 الأكثر مبيعاً</h2>' +
@@ -1577,7 +1636,7 @@ function trkListen(){
   trkUnsub = db.collection('track').doc(TRK.id).onSnapshot(d => {
     if(!d.exists) return;
     const x = d.data(), was = TRK.status;
-    TRK.status = x.status || TRK.status; TRK.no = x.no || TRK.no;
+    TRK.status = x.status || TRK.status; TRK.no = x.no || TRK.no; if(x.outside) TRK.outside = x.outside;
     try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
     if(['done','cancel'].includes(TRK.status) && !TRK.end){ TRK.end = Date.now(); try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){} }
     if(was && was !== TRK.status){
@@ -1634,6 +1693,7 @@ function trkDraw(){
       (idx < steps.length - 1 ? (TRK.sched ? '<div class="trk-eta">⏰ <span>طلب مسبق</span>: <span>' + esc(dayLabel(eta)) + '</span> <b class="ltr">' + hm2(eta) + '</b></div>' : '<div class="trk-eta">' + (TRK.type === 'delivery' ? 'بيوصلك تقريباً الساعة' : 'بيكون جاهز تقريباً الساعة') + ' <b class="ltr">' + hm(eta) + '</b></div>') : '') +
       '<div class="trk-steps">' + steps.map((s, i) =>
         '<div class="ts ' + (i < idx ? 'done' : i === idx ? 'now' : '') + '"><span class="dot">' + (i < idx ? '✓' : s[1]) + '</span><span class="lb">' + esc(s[2]) + '</span></div>').join('') + '</div>' +
+      outsideBtnHtml() +
       (TRK.status === 'done' ? rateHtml() : '<div class="muted" style="text-align:center;margin-top:10px">الصفحة بتتحدّث لحالها — مش لازم تعمل إشي</div>');
   }
   trNode(box);
@@ -2330,6 +2390,7 @@ function sendOrder(){
     localStorage.setItem('pz_phone', phone);
     localStorage.setItem('pz_addr', addr);
   }catch(e){}
+  if(smsNeed(phone)){ smsOpen(phone, () => { openCart(); setTimeout(sendOrder, 50); }); return; }
   const b = $('send'); if(b){ b.disabled = true; b.innerHTML = '<span>جاري الإرسال...</span>'; }
 
   const snapSub = sub(), snapDisc = discount(), snapFee = fee(), snapTot = total();
@@ -2466,6 +2527,212 @@ function toast(m){
   const e = $('toast'); e.textContent = m; e.classList.add('on');
   clearTimeout(tT); tT = setTimeout(function(){ e.classList.remove('on'); }, 2200);
 }
+
+/* ============ 🚗 أنا برا (للاستلام من المحل) ============ */
+function outsideBtnHtml(){
+  if(!TRK || TRK.type !== 'pickup' || !live || ['done','cancel'].includes(TRK.status)) return '';
+  if(TRK.outside) return '<div class="outb ok">✅ بلّغنا المحل إنك برا — بيطلعولك الطلب</div>';
+  return '<div class="outb"><b>🚗 وصلت عالمحل؟</b><div class="muted">اكبس وبنطلعلك الطلب للسيارة</div>' +
+    '<input class="inp" id="carTxt" style="margin-top:8px" maxlength="40" placeholder="لون ونوع السيارة (اختياري)" value="' + esc((() => { try{ return localStorage.getItem('pz_car') || ''; }catch(e){ return ''; } })()) + '">' +
+    '<button class="cta" onclick="imOutside()">🚗 أنا برا</button></div>';
+}
+function imOutside(){
+  if(!TRK || !db) return;
+  const car = (($('carTxt') || {}).value || '').trim().slice(0, 40);
+  try{ localStorage.setItem('pz_car', car); }catch(e){}
+  const at = new Date().toISOString();
+  db.collection('track').doc(TRK.id).update({outside: at, car}).then(() => {
+    TRK.outside = at; try{ localStorage.setItem('pz_track', JSON.stringify(TRK)); }catch(e){}
+    toast('✅ بلّغنا المحل'); trkDraw();
+  }).catch(e => { console.error(e); alert('ما زبط — اتصل بالمحل'); });
+}
+
+/* ============ 🔁 تذكير: "اليوم يومك" ============ */
+function habitBanner(){
+  let el = $('habitBar');
+  const ok = (() => {
+    if(hist.length < 3 || searchQ) return false;
+    const today = new Date().getDay(), by = [0,0,0,0,0,0,0];
+    hist.forEach(o => { const d = new Date(o.createdAt); if(!isNaN(d)) by[d.getDay()]++; });
+    if(by[today] < 2 || by[today] / hist.length < 0.4) return false;
+    const last = new Date(hist[0].createdAt);
+    if(Date.now() - last.getTime() < 20 * 3600e3) return false;
+    try{ if(localStorage.getItem('pz_habit_x') === new Date().toDateString()) return false; }catch(e){}
+    return !cart.length;
+  })();
+  if(!ok){ if(el) el.remove(); return; }
+  if(!el){ el = document.createElement('div'); el.id = 'habitBar'; el.className = 'habit'; const h = $('home'); if(h) h.parentNode.insertBefore(el, h); else return; }
+  const nm = (() => { try{ return (localStorage.getItem('pz_name') || '').trim().split(/\s+/)[0]; }catch(e){ return ''; } })();
+  el.innerHTML = '<span style="font-size:28px">🍕</span><span class="tx"><b>' + (LANG === 'he' ? 'היום יום ' + HE_DAY(DAYS[new Date().getDay()]) + '!' : 'اليوم ' + DAYS[new Date().getDay()] + '!') + '</b>' +
+    (LANG === 'he' ? (nm ? nm + ', ' : '') + 'להזמין כמו בפעם הקודמת?' : (nm ? nm + '، ' : '') + 'بتطلب زي آخر مرة؟') + '</span>' +
+    '<button class="ok" onclick="reorder(0);openCart()" data-nt>' + (LANG === 'he' ? '🔁 להזמין' : '🔁 اطلب') + '</button>' +
+    '<button class="x" aria-label="סגירה" onclick="try{localStorage.setItem(\'pz_habit_x\',new Date().toDateString())}catch(e){};habitBanner()">✕</button>';
+}
+
+/* ============ 🎬 فيديوهات من المطبخ ============ */
+const ytId = u => { const m = String(u || '').match(/(?:youtu\.be\/|youtube\.com\/(?:shorts\/|watch\?v=|embed\/))([\w-]{11})/); return m ? m[1] : ''; };
+const stillMode = () => !!(A11Y && A11Y.still) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+function videosHtml(){
+  const V = (SET.videos || []).filter(v => v && v.url);
+  if(!V.length) return '';
+  return '<div class="sh"><h2>' + esc(LX(SET, 'vidTitle') || '🎬 من مطبخنا') + '</h2></div><div class="vrow">' + V.map((v, i) => {
+    const y = ytId(v.url), t = LX(v, 'title');
+    const media = y ? '<img src="https://i.ytimg.com/vi/' + y + '/hqdefault.jpg" alt="' + esc(t || 'فيديو') + '" loading="lazy">'
+      : '<video src="' + esc(v.url) + '"' + (v.poster ? ' poster="' + esc(v.poster) + '"' : '') + ' muted playsinline loop preload="metadata"' + (stillMode() ? '' : ' autoplay') + ' aria-label="' + esc(t || 'فيديو') + '"></video>';
+    return '<button class="vcard" onclick="openVid(' + i + ')" aria-label="' + esc(t || 'فيديو') + '">' + media + '<span class="vp">▶</span>' + (t ? '<span class="vt">' + esc(t) + '</span>' : '') + '</button>';
+  }).join('') + '</div>';
+}
+function openVid(i){
+  const v = (SET.videos || []).filter(x => x && x.url)[i]; if(!v) return;
+  const y = ytId(v.url), t = LX(v, 'title');
+  $('sc').innerHTML = '<div class="ctop"><h3>' + esc(t || '🎬') + '</h3><button onclick="closeSheet()" aria-label="إغلاق">✕</button></div><div class="cwrap">' +
+    (y ? '<iframe class="vfull yt" src="https://www.youtube-nocookie.com/embed/' + y + '?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="' + esc(t || 'video') + '"></iframe>'
+       : '<video class="vfull" src="' + esc(v.url) + '"' + (v.poster ? ' poster="' + esc(v.poster) + '"' : '') + ' controls autoplay playsinline></video>') + '</div>';
+  $('ft').innerHTML = '<button class="cta" onclick="closeSheet()">🍕 يلا اطلب</button>';
+  cur = null; show();
+}
+
+/* ============ 📲 تأكيد الرقم بكود SMS (أول طلب بس) ============
+   ضد الطلبات الوهمية والمقالب. بيستعمل Firebase Phone Auth بتطبيق منفصل ('cust')
+   عشان ما يلخبط دخول اللوحة إذا انفتحت على نفس المتصفح. */
+let _custApp = null, _rcv = null, _smsConf = null, _smsNext = null, _smsPh = '';
+const smsOn = () => !!(SET.sms && SET.sms.on) && live && typeof firebase !== 'undefined' && !!firebase.auth;
+function custAuth(){ if(!_custApp) _custApp = firebase.initializeApp(window.FB_CONFIG, 'cust'); const a = _custApp.auth(); a.languageCode = LANG === 'he' ? 'he' : 'ar'; return a; }
+function smsVerified(ph){
+  let l = []; try{ l = JSON.parse(localStorage.getItem('pz_vph') || '[]'); }catch(e){}
+  if(l.includes(ph)) return true;
+  return hist.some(o => normPhone((o.customer || {}).phone) === ph);
+}
+function smsMark(ph){
+  let l = []; try{ l = JSON.parse(localStorage.getItem('pz_vph') || '[]'); }catch(e){}
+  if(!l.includes(ph)) l.push(ph);
+  try{ localStorage.setItem('pz_vph', JSON.stringify(l.slice(-5))); }catch(e){}
+}
+const smsNeed = ph => smsOn() && !smsVerified(ph);
+function smsOpen(ph, next){
+  _smsNext = next; _smsPh = ph; _smsConf = null;
+  smsDraw('');
+  cur = null; show();
+}
+function smsDraw(err){
+  const sent = !!_smsConf;
+  $('sc').innerHTML = '<div class="ctop"><h3>📲 تأكيد رقم التلفون</h3><button onclick="openCart()" aria-label="رجوع">✕</button></div><div class="cwrap" style="text-align:center">' +
+    '<div style="font-size:54px;margin:8px 0">📲</div>' +
+    (sent ? '<div class="paystep">بعتنالك كود من 6 أرقام على <b class="ltr">' + esc(_smsPh) + '</b></div>' +
+            '<input class="inp" id="smsCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="------" aria-label="الكود" style="text-align:center;font-size:26px;letter-spacing:8px;direction:ltr" oninput="if(this.value.replace(/\D/g,\'\').length===6)smsCheck()">' +
+            '<div style="margin-top:10px"><button class="cta gh2" style="width:auto;padding:8px 16px" onclick="_smsConf=null;smsDraw(\'\')">ما وصلني — ابعت كمان مرة</button></div>'
+          : '<div class="paystep">هاد أول طلب من رقم <b class="ltr">' + esc(_smsPh) + '</b></div><div class="muted">بنبعتلك كود بـ SMS عشان نتأكد إنه الرقم إلك. بس مرة وحدة.</div>') +
+    (err ? '<div class="cpn-no" style="margin-top:10px">' + esc(err) + '</div>' : '') + '</div>';
+  $('ft').innerHTML = sent ? '<button class="cta" id="smsBtn" onclick="smsCheck()">✅ تأكيد</button>'
+                           : '<button class="cta" id="smsBtn" onclick="smsSend()">📩 ابعتلي الكود</button>';
+  if(sent) setTimeout(() => { const e = $('smsCode'); if(e) e.focus(); }, 80);
+}
+function smsFailOpen(e){
+  // إذا الخدمة مش مفعّلة بـ Firebase — ما بنوقّف الطلبات
+  console.warn('sms', e && e.code, e && e.message);
+  smsMark(_smsPh); const n = _smsNext; _smsNext = null; if(n) n();
+}
+async function smsSend(){
+  const b = $('smsBtn'); if(b){ b.disabled = true; b.innerHTML = '<span>جاري الإرسال...</span>'; }
+  try{
+    const auth = custAuth();
+    let box = $('rcap'); if(!box){ box = document.createElement('div'); box.id = 'rcap'; document.body.appendChild(box); }
+    if(!_rcv) _rcv = new firebase.auth.RecaptchaVerifier('rcap', {size: 'invisible'}, _custApp);
+    _smsConf = await auth.signInWithPhoneNumber('+972' + _smsPh.slice(1), _rcv);
+    smsDraw('');
+  }catch(e){
+    try{ if(_rcv){ _rcv.clear(); } }catch(x){} _rcv = null; const bx = $('rcap'); if(bx) bx.remove();
+    const c = (e && e.code) || '';
+    if(['auth/operation-not-allowed','auth/billing-not-enabled','auth/internal-error','auth/unauthorized-domain','auth/admin-restricted-operation','auth/quota-exceeded'].includes(c)) return smsFailOpen(e);
+    smsDraw(c === 'auth/too-many-requests' ? 'محاولات كثيرة — استنى شوي وجرّب كمان مرة' : c === 'auth/invalid-phone-number' ? 'رقم التلفون مش صحيح' : 'ما زبط الإرسال، جرّب كمان مرة');
+  }
+}
+async function smsCheck(){
+  const code = (($('smsCode') || {}).value || '').replace(/\D/g, '');
+  if(code.length !== 6 || !_smsConf) return;
+  const b = $('smsBtn'); if(b){ b.disabled = true; b.innerHTML = '<span>جاري التأكيد...</span>'; }
+  try{
+    await _smsConf.confirm(code);
+    smsMark(_smsPh); toast('✅ الرقم تأكّد');
+    try{ custAuth().signOut(); }catch(e){}
+    const n = _smsNext; _smsNext = null; if(n) n();
+  }catch(e){
+    const c = (e && e.code) || '';
+    smsDraw(c === 'auth/invalid-verification-code' ? 'الكود غلط — تأكد وجرّب كمان مرة' : c === 'auth/code-expired' ? 'الكود انتهى — اطلب كود جديد' : 'ما زبط التأكيد، جرّب كمان مرة');
+  }
+}
+
+/* ============ ♿ נגישות (תקן 5568 / WCAG 2.0 AA) ============ */
+let A11Y = {z: 0, hc: false, links: false, font: false, still: false};
+try{ Object.assign(A11Y, JSON.parse(localStorage.getItem('pz_a11y') || '{}')); }catch(e){}
+function a11yApply(){
+  const h = document.documentElement;
+  ['a11y-z1','a11y-z2','a11y-z3'].forEach((c, i) => h.classList.toggle(c, A11Y.z === i + 1));
+  h.classList.toggle('a11y-hc', !!A11Y.hc); h.classList.toggle('a11y-links', !!A11Y.links);
+  h.classList.toggle('a11y-font', !!A11Y.font); h.classList.toggle('a11y-still', !!A11Y.still);
+  try{ localStorage.setItem('pz_a11y', JSON.stringify(A11Y)); }catch(e){}
+}
+a11yApply();
+function a11ySet(k){
+  if(k === 'reset') A11Y = {z: 0, hc: false, links: false, font: false, still: false};
+  else if(k === 'z+') A11Y.z = Math.min(3, A11Y.z + 1);
+  else if(k === 'z-') A11Y.z = Math.max(0, A11Y.z - 1);
+  else A11Y[k] = !A11Y[k];
+  a11yApply(); openA11y(true);
+}
+function openA11y(keep){
+  const he = LANG === 'he';
+  const b = (k, ic, ar, hb, on) => '<button class="' + (on ? 'on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" onclick="a11ySet(\'' + k + '\')" data-nt><span>' + ic + '</span>' + (he ? hb : ar) + '</button>';
+  $('sc').innerHTML = '<div class="ctop"><h3 data-nt>♿ ' + (he ? 'נגישות' : 'إمكانية الوصول') + '</h3><button onclick="closeSheet()" aria-label="סגירה">✕</button></div><div class="cwrap"><div class="a11y-g">' +
+    b('z+', '🔍➕', 'تكبير الخط', 'הגדלת טקסט', false) +
+    b('z-', '🔍➖', 'تصغير الخط', 'הקטנת טקסט', false) +
+    b('hc', '◐', 'تباين عالي', 'ניגודיות גבוהה', A11Y.hc) +
+    b('links', '🔗', 'تمييز الروابط', 'הדגשת קישורים', A11Y.links) +
+    b('font', 'Aa', 'خط واضح', 'גופן קריא', A11Y.font) +
+    b('still', '⏸️', 'إيقاف الحركة', 'עצירת אנימציות', A11Y.still) +
+    b('reset', '↺', 'رجوع للأصل', 'איפוס', false) +
+    '<button onclick="openA11yStatement()" data-nt><span>📄</span>' + (he ? 'הצהרת נגישות' : 'بيان إمكانية الوصول') + '</button>' +
+    '</div>' + (A11Y.z ? '<div class="muted" style="text-align:center;margin-top:10px" data-nt>' + (he ? 'גודל טקסט: ' : 'حجم الخط: ') + (100 + [0, 12, 25, 40][A11Y.z]) + '%</div>' : '') + '</div>';
+  $('ft').innerHTML = '<button class="cta" onclick="closeSheet()" data-nt>' + (he ? 'סגירה' : 'تمام') + '</button>';
+  cur = null; if(!keep) show();
+}
+function openA11yStatement(){
+  const he = LANG === 'he', A = SET.a11y || {}, nm = esc(LX(SET, 'name'));
+  const who = [A.name, A.phone ? '<span class="ltr">' + esc(A.phone) + '</span>' : '', A.email ? '<span class="ltr">' + esc(A.email) + '</span>' : ''].filter(Boolean).join(' · ');
+  const body = he
+    ? '<p>' + nm + ' רואה חשיבות רבה במתן שירות שוויוני לכלל הלקוחות, ובכלל זה לאנשים עם מוגבלות, ופועלת להנגיש את האתר בהתאם לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013, ולתקן הישראלי 5568 ברמה AA.</p>' +
+      '<h4>מה הונגש באתר</h4><ul><li>תפריט נגישות: הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא ועצירת אנימציות.</li><li>ניווט מלא במקלדת (Tab, Enter, Esc) וסימון פוקוס ברור.</li><li>קישור "דלג לתוכן", תיאורים לתמונות ולכפתורים, ותמיכה בקוראי מסך.</li><li>האתר מותאם לנייד ולהגדלה עד 500%.</li></ul>' +
+      '<h4>מגבלות ידועות</h4><p>חלק מהתמונות של המנות ומפת המשלוחים עשויים לא להיות נגישים במלואם. אפשר תמיד להזמין בטלפון.</p>' +
+      '<h4>נתקלתם בבעיה?</h4><p>נשמח לשמוע ולתקן. רכז/ת הנגישות: ' + (who || '<span class="ltr">0' + esc(String(SET.phone || '').slice(3)) + '</span>') + '</p>' +
+      '<p class="muted">עודכן לאחרונה: ' + esc(A.date || '10/2026') + '</p>'
+    : '<p>' + nm + ' بيهمّه يعطي خدمة متساوية لكل الزباين، ومنهم الأشخاص مع إعاقة. عشان هيك منعمل على إتاحة الموقع حسب أنظمة المساواة بالحقوق للأشخاص مع إعاقة (התאמות נגישות לשירות) 2013، والمعيار الإسرائيلي 5568 بمستوى AA.</p>' +
+      '<h4>شو عملنا بالموقع</h4><ul><li>قائمة إتاحة: تكبير الخط، تباين عالي، تمييز الروابط، خط واضح، وإيقاف الحركة.</li><li>تنقّل كامل بلوحة المفاتيح (Tab، Enter، Esc) مع تحديد واضح للعنصر.</li><li>رابط "تخطّى للمحتوى"، وأوصاف للصور والأزرار، ودعم قارئات الشاشة.</li><li>الموقع مناسب للتلفون وللتكبير حتى 500%.</li></ul>' +
+      '<h4>قيود معروفة</h4><p>ممكن بعض صور الأكل وخريطة التوصيل ما تكون متاحة بشكل كامل. بتقدر دايماً تطلب بالتلفون.</p>' +
+      '<h4>واجهتك مشكلة؟</h4><p>بنحب نسمع ونصلّح. مسؤول الإتاحة: ' + (who || '<span class="ltr">0' + esc(String(SET.phone || '').slice(3)) + '</span>') + '</p>' +
+      '<p class="muted">آخر تحديث: ' + esc(A.date || '10/2026') + '</p>';
+  $('sc').innerHTML = '<div class="ctop"><h3 data-nt>📄 ' + (he ? 'הצהרת נגישות' : 'بيان إمكانية الوصول') + '</h3><button onclick="openA11y(true)" aria-label="חזרה">→</button></div><div class="cwrap a11y-st" data-nt>' + body + '</div>';
+  $('ft').innerHTML = '<button class="cta" onclick="closeSheet()" data-nt>' + (he ? 'סגירה' : 'تمام') + '</button>';
+  $('sc').scrollTop = 0;
+}
+/* لوحة المفاتيح: كل إشي بينكبس بالماوس بينكبس كمان بـ Enter/مسافة، و Esc بيسكّر النافذة */
+function a11yMark(root){
+  (root && root.querySelectorAll ? root : document).querySelectorAll('[onclick]:not(button):not(a):not(input):not(label):not(select):not(textarea):not(#bg)').forEach(el => {
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if(!el.hasAttribute('role')) el.setAttribute('role', 'button');
+  });
+}
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if(n.nodeType === 1){ a11yMark(n); if(n.matches && n.matches('[onclick]')) a11yMark(n.parentNode); } })))
+  .observe(document.body, {childList: true, subtree: true});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('sheet').classList.contains('on')){ closeSheet(); return; }
+  const t = e.target;
+  if((e.key === 'Enter' || e.key === ' ') && t && t.getAttribute && t.getAttribute('role') === 'button' && t.tagName !== 'BUTTON'){ e.preventDefault(); t.click(); }
+});
+/* لما تنفتح نافذة بنحط التركيز جواتها، ولما تتسكّر بنرجعه */
+let _a11yFocus = null;
+const _show0 = show, _close0 = closeSheet;
+show = function(){ if(!$('sheet').classList.contains('on')) _a11yFocus = document.activeElement; _show0(); setTimeout(() => { const f = $('sheet').querySelector('button,[href],input,select,textarea,[tabindex="0"]'); if(f) try{ f.focus({preventScroll: true}); }catch(e){} }, 60); };
+closeSheet = function(){ try{ $('sc').querySelectorAll('video').forEach(v => v.pause()); $('sc').querySelectorAll('iframe').forEach(f => f.remove()); }catch(e){} _close0(); if(!$('sheet').classList.contains('on') && _a11yFocus && _a11yFocus.focus) try{ _a11yFocus.focus({preventScroll: true}); }catch(e){} };
 
 /* ============ البداية ============ */
 function hideSoon(){

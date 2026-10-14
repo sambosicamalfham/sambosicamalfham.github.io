@@ -82,8 +82,15 @@ service cloud.firestore {
                     && request.resource.data.keys().hasOnly(['status','type','at','eta']);
       allow update: if isStaff()
                     || (isDriver() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
-                        && request.resource.data.status == 'done');
-      allow list, delete: if false;
+                        && request.resource.data.status == 'done')
+                    // 🚗 الزبون بيكبس "أنا برا" (بس للاستلام، وبس هالخانتين)
+                    || (resource.data.type == 'pickup'
+                        && !(resource.data.status in ['done', 'cancel'])
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['outside', 'car'])
+                        && request.resource.data.outside is string && request.resource.data.outside.size() < 40
+                        && request.resource.data.get('car', '') is string && request.resource.data.get('car', '').size() <= 40);
+      allow list: if isStaff();
+      allow delete: if false;
     }
 
     // ---------- نقاط الولاء (رقم التلفون = اسم الوثيقة، فيها العدد بس) ----------
@@ -101,6 +108,11 @@ service cloud.firestore {
                     && request.resource.data.text is string && request.resource.data.text.size() <= 500
                     && request.resource.data.name is string && request.resource.data.name.size() <= 40;
       allow read, update, delete: if isStaff();
+    }
+
+    // ---------- 🗓️ جدول الورديات ----------
+    match /shifts/{week} {
+      allow read, write: if isStaff();
     }
 
     // ---------- قائمة الموظفين ----------

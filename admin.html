@@ -363,6 +363,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
     <button class="tb"    data-v="cust"    onclick="tab('cust')">👥 الزبائن</button>
     <button class="tb"    data-v="rep"     onclick="tab('rep')">📊 التقارير</button>
     <button class="tb"    data-v="drv"     onclick="tab('drv')">🛵 السائقين</button>
+    <button class="tb"    data-v="shift"   onclick="tab('shift')">🗓️ الورديات</button>
     <button class="tb"    data-v="set"     onclick="tab('set')">🏪 الإعدادات</button>
   </div>
 </header>
@@ -380,6 +381,7 @@ body.lang-he{font-family:'Heebo','Cairo',system-ui,sans-serif}
   <div id="vCust"   style="display:none"></div>
   <div id="vRep"    style="display:none"></div>
   <div id="vDrv"    style="display:none"></div>
+  <div id="vShift"  style="display:none"></div>
 </div>
 
 <div class="mbg" id="mbg" onclick="closeModal()"></div>
@@ -663,6 +665,70 @@ HE_RULES.push(
   [/^(كاش|بطاقة عند الاستلام|بطاقة أونلاين) · \S+ (مدفوع|مش مدفوع|لسا مش مدفوع)$/, m => HE[m[1]] + ' · ' + HE[m[2]]],
   [/^(.+) \((\d+)\)$/, m => { const t = trCore(m[1]); return t == null ? null : t + ' (' + m[2] + ')'; }]
 );
+/* ===== ترجمات: فاتورة، نسخة احتياطية، إتاحة، SMS، ما استلم، ربح، خريطة، أنا برا، عادات، فيديو، ورديات ===== */
+Object.assign(HE, {
+  '🧾 ورقة وحدة (طلب + فاتورة)':'🧾 דף אחד (הזמנה + חשבונית)', 'الطلب والفاتورة على نفس الورقة':'ההזמנה והחשבונית על אותו דף', 'ورقة مطبخ':'דף מטבח',
+  '🧾 الطلب انلغى بعد ما طلعت فاتورة — لازم تطلّع חשבונית זיכוי':'🧾 ההזמנה בוטלה אחרי שהופקה חשבונית — צריך להפיק חשבונית זיכוי',
+  'مع كل طلب':'עם כל הזמנה', 'تفعيل الفاتورة (بتنطبع مع الطلب برقم تسلسلي)':'הפעלת חשבונית (מודפסת עם ההזמנה במספור רץ)',
+  'نوع العوسيك':'סוג העוסק', 'بلّش الترقيم من رقم':'להתחיל מספור ממספר', 'آخر رقم انطبع':'מספר אחרון שהודפס',
+  'اسم المصلحة الرسمي (مثل ما مسجّل بمصلحة الضرائب)':'שם העסק הרשמי (כפי שרשום ברשות המסים)', 'سطر تحت الفاتورة':'שורה בתחתית החשבונית',
+  '⚠️ لازم تكتب رقم עוסק / ח.פ بكرت':'⚠️ צריך לכתוב מספר עוסק / ח.פ בכרטיס', 'التقارير والمحاسبة':'דוחות והנהלת חשבונות', 'فوق':'למעלה',
+  'الفاتورة بتطلع بالعبري، فيها رقم תסלסלי، מע״מ، و':'החשבונית מודפסת בעברית, עם מספר רץ, מע״מ, ו', 'بأول طباعة و':'בהדפסה הראשונה ו',
+  'بعدها. إذا انلغى طلب بعد الفاتورة بتطلّع חשבונית זיכוי من كرت الطلب.':'אחריה. אם הזמנה בוטלה אחרי החשבונית מפיקים חשבונית זיכוי מכרטיס ההזמנה.',
+  'اسأل المحاسب تبعك':'שאלו את רואה החשבון שלכם', 'إذا بيكفيه هيك، أو بدّه نربط ببرنامج فواتير معتمد (Morning / iCount).':'אם זה מספיק לו, או שצריך לחבר תוכנת חשבוניות מאושרת (Morning / iCount).',
+  'للفاتورة لازم تكتب رقم עוסק / ח.פ':'לחשבונית צריך לכתוב מספר עוסק / ח.פ', 'ما قدرت أعطي رقم فاتورة:':'לא הצלחנו להקצות מספר חשבונית:',
+  // نسخة احتياطية
+  'نسخة احتياطية':'גיבוי', 'نزّل نسخة احتياطية هلأ':'הורדת גיבוי עכשיו', 'استرجاع من ملف':'שחזור מקובץ', 'جاري التجهيز...':'מכין...',
+  'كل المنيو، الإعدادات، الطلبات، الزبائن والتقييمات بملف واحد. احتفظ فيه بالكمبيوتر أو بالـ Drive.':'כל התפריט, ההגדרות, ההזמנות, הלקוחות והדירוגים בקובץ אחד. שמרו אותו במחשב או ב־Drive.',
+  'آخر نسخة نزّلتها من هالجهاز:':'הגיבוי האחרון שהורד מהמכשיר הזה:', 'النسخة التلقائية اليومية (Firebase):':'גיבוי יומי אוטומטי (Firebase):', 'لسا ما اشتغلت':'עדיין לא רץ',
+  'الملف مش نسخة احتياطية صحيحة':'הקובץ אינו גיבוי תקין', 'تم الاسترجاع':'השחזור הושלם', 'سجل':'רשומות',
+  // إتاحة
+  'إتاحة':'נגישות', 'الموقع فيه زر ♿ وبيان إتاحة (הצהרת נגישות) زي ما بيطلب القانون. لازم يكون مكتوب فيه مين المسؤول عن الإتاحة وكيف يتواصلوا معه.':'באתר יש כפתור ♿ והצהרת נגישות כנדרש בחוק. צריך לציין בה מי רכז/ת הנגישות ואיך יוצרים קשר.',
+  'اسم مسؤول الإتاحة':'שם רכז/ת הנגישות', 'إيميل':'אימייל', 'تاريخ آخر تحديث للبيان':'תאריך עדכון אחרון של ההצהרה',
+  // SMS + ما استلم
+  'حظر تلقائي بعد كم مرة ما استلم الطلب؟ (0 = بلا)':'חסימה אוטומטית אחרי כמה פעמים שלא אסף/קיבל? (0 = ללא)',
+  'تأكيد الرقم بكود SMS بأول طلب (ضد الطلبات الوهمية)':'אימות מספר בקוד SMS בהזמנה הראשונה (נגד הזמנות פיקטיביות)',
+  'لازم مرة وحدة تفعّل بـ Firebase: Authentication ← Sign-in method ←':'צריך להפעיל פעם אחת ב־Firebase: Authentication ← Sign-in method ←',
+  '← Enable، وبـ Settings ← SMS region policy تسمح لـ':'← Enable, וב־Settings ← SMS region policy לאפשר את',
+  '. كل SMS بيكلف تقريباً 4-5 أغورة. إذا مش مفعّل، الطلبات بتضل تمشي عادي.':'. כל SMS עולה בערך 4-5 אגורות. אם זה לא מופעל, ההזמנות ממשיכות כרגיל.',
+  'كل SMS بيكلف تقريباً 4-5 أغورة. إذا مش مفعّل، الطلبات بتضل تمشي عادي.':'כל SMS עולה בערך 4-5 אגורות. אם זה לא מופעל, ההזמנות ממשיכות כרגיל.',
+  'ما استلم':'לא אסף', 'هالزبون ما استلم طلبات قبل':'הלקוח הזה לא אסף הזמנות בעבר', 'هاد منهم':'זו אחת מהן',
+  // ربح
+  'تكلفة المكونات للوحدة (₪ بدون מע״מ)':'עלות חומרי גלם ליחידה (₪ לפני מע״מ)', 'مثلاً 14.5':'למשל 14.5',
+  'عجين + جبنة + صلصة + علبة... بس إنت بتشوفها. منها بنحسب ربح كل وجبة بالتقارير.':'בצק + גבינה + רוטב + קופסה... רק אתם רואים את זה. ממנה מחושב הרווח של כל מנה בדוחות.',
+  'ربح كل وجبة':'רווח לכל מנה', 'قبل מע״מ':'לפני מע״מ', 'مبيعات (اللي إلها تكلفة)':'מכירות (עם עלות מוגדרת)', 'تكلفة المكونات':'עלות חומרי גלם',
+  'ربح إجمالي ·':'רווח גולמי ·', 'ربح إجمالي':'רווח גולמי', 'الصنف':'פריט', 'كمية':'כמות', 'مبيعات':'מכירות', 'تكلفة':'עלות', 'ربح':'רווח',
+  'في أصناف بدون تكلفة':'יש פריטים בלי עלות', 'حطها من ✏️ تعديل الصنف ← 💰 تكلفة المكونات':'הוסיפו אותה ב־✏️ עריכת פריט ← 💰 עלות חומרי גלם',
+  'الإضافات والعروض مش محسوبة بالتكلفة — بس سعر الصنف الأساسي.':'תוספות ומבצעים לא נכללים בעלות — רק המחיר הבסיסי של הפריט.',
+  // خريطة
+  'خريطة الطلبات':'מפת הזמנות', 'من وين بتيجي الطلبات':'מאיפה מגיעות ההזמנות', 'طلبات إلها موقع على الخريطة':'הזמנות עם מיקום במפה', 'كل ما اللون أحمر أكثر = طلبات أكثر':'ככל שהצבע אדום יותר = יותר הזמנות',
+  // أنا برا
+  'الزبون برا':'הלקוח בחוץ', 'برا ومستني':'בחוץ ומחכה', 'طلّعتله الطلب':'מסרתי לו את ההזמנה', 'زبون برا ومستني طلبه!':'לקוח בחוץ ומחכה להזמנה!', 'الطلب':'ההזמנה',
+  // عادات
+  'بيطلبوا عادةً يوم':'מזמינים בדרך כלל ביום', 'آخر طلب':'הזמנה אחרונה', 'ذكّره':'תזכורת', 'انبعت':'נשלח',
+  'زباين أكثر من 40% من طلباتهم بهاليوم وما طلبوا من 3 أيام. الموقع كمان بيذكّرهم لحاله لما يفتحوه.':'לקוחות שיותר מ־40% מההזמנות שלהם ביום הזה ולא הזמינו 3 ימים. האתר גם מזכיר להם לבד כשהם נכנסים.',
+  // فيديو
+  'فيديوهات بالصفحة الرئيسية':'סרטונים בדף הבית', 'الفيديوهات القصيرة (اللي بتعملها بـ Gemini أو بالتلفون) بتطلع للزبون بالصفحة الرئيسية. ارفع ملف فيديو، أو الصق رابط mp4 أو YouTube.':'סרטונים קצרים (שיוצרים ב־Gemini או בטלפון) מופיעים ללקוח בדף הבית. העלו קובץ וידאו או הדביקו קישור mp4 או YouTube.',
+  '+ رابط فيديو':'+ קישור לסרטון', 'رابط فيديو':'קישור לסרטון', 'ارفع فيديو':'העלאת סרטון', 'عنوان القسم':'כותרת המדור', 'من مطبخنا':'מהמטבח שלנו', 'عنوان (اختياري)':'כותרת (לא חובה)',
+  'جاري رفع الفيديو...':'מעלה סרטון...', 'الفيديو جاهز — لا تنسى تكبس 💾 حفظ الإعدادات':'הסרטון מוכן — אל תשכחו ללחוץ 💾 שמירת הגדרות', 'الفيديو كبير — لازم يكون أقل من 95MB':'הסרטון גדול מדי — עד 95MB',
+  'ما زبط الرفع:':'ההעלאה נכשלה:',
+  // ورديات
+  'الورديات':'משמרות', 'جدول الورديات':'סידור משמרות', 'هالأسبوع':'השבוע', 'الموظف':'עובד', 'ساعات':'שעות', 'الدور (شيف، سائق...)':'תפקיד (שף, שליח...)', 'الاسم':'שם',
+  '+ موظف':'+ עובד', 'موظف':'עובד', 'انسخ الأسبوع الماضي':'העתקת השבוע הקודם', 'طباعة':'הדפסה', 'حفظ':'שמירה', 'ابعتله ورديّاته':'שליחת המשמרות שלו',
+  'اكتب الوردية هيك:':'כתבו משמרת כך:', 'أو':'או', '. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'. השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
+  'الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.':'השעות מחושבות לבד. 💬 שולח לעובד את המשמרות שלו בוואטסאפ.',
+  'ما في جدول للأسبوع الماضي':'אין סידור לשבוע הקודם', 'تم النسخ — لا تنسى تكبس حفظ':'הועתק — אל תשכחו לשמור', 'في تغييرات ما انحفظت. تكمّل بدون حفظ؟':'יש שינויים שלא נשמרו. להמשיך בלי לשמור?',
+  'بننسخ جدول الأسبوع الماضي لهالأسبوع (بيتبدّل اللي هون). تكمّل؟':'נעתיק את סידור השבוע הקודם לשבוע הזה (מה שכאן יוחלף). להמשיך?'
+});
+HE_RULES.push(
+  [/^بنطلع חשבונית זיכוי على فاتورة رقم (\d+) \(بتلغيها بالحسابات\)\. تكمّل؟$/, m => 'נפיק חשבונית זיכוי לחשבונית מס׳ ' + m[1] + ' (מבטלת אותה בהנהלת החשבונות). להמשיך?'],
+  [/^الزبون (.*) ما استلم الطلب؟ بنلغي الطلب وبنسجّلها عليه\.$/, m => 'הלקוח ' + m[1] + ' לא אסף את ההזמנה? נבטל את ההזמנה ונרשום לו.'],
+  [/^الرقم انحظر — (\d+) مرات ما استلم$/, m => 'המספר נחסם — ' + m[1] + ' פעמים לא אסף'],
+  [/^تم — (\d+) سجل$/, m => 'בוצע — ' + m[1] + ' רשומות'],
+  [/^طلعت فاتورة لهالطلب \((\d+)\)\. تطلّع חשבונית זיכוי هلأ؟$/, m => 'הופקה חשבונית להזמנה (' + m[1] + '). להפיק חשבונית זיכוי עכשיו?'],
+  [/^تشيل (.*) من الجدول؟$/, m => 'להסיר את ' + m[1] + ' מהסידור?'],
+  [/^ما استلم ×(\d+)$/, m => 'לא אסף ×' + m[1]]
+);
 const AR_RE = /[؀-ۿ]/;
 /* مفاتيح القاموس اللي فيها نقط أو إيموجي بالأطراف: بنخزنها كمان بدون الأطراف */
 Object.keys(HE).forEach(k => {
@@ -762,6 +828,7 @@ let CATS = [], ITEMS = [], GROUPS = [], DEALS = [], ORDERS = [], CPNS = [];
 let view = 'orders';
 let qItems = '', qCat = '';
 let ordFilter = 'live';
+let INV_LAST = null;
 let armed = null;            // الصنف المحدد للتحريك
 let lastNewCount = 0;
 let firstOrdersLoad = true;
@@ -855,6 +922,8 @@ function onLogin(u){
     if(view==='cpn') render();
   }, err => console.error('coupons', err));
   drvListen();
+  outsideListen();
+  db.collection('settings').doc('inv').onSnapshot(d => { INV_LAST = d.exists ? (d.data().last || null) : null; const e = $('ivLast'); if(e) e.value = INV_LAST == null ? '—' : INV_LAST; }, () => {});
   db.collection('orders').orderBy('createdAtStr','desc').limit(250).onSnapshot(s => {
     ORDERS = s.docs.map(d=>({id:d.id,...d.data()}));
     computeNums();
@@ -894,7 +963,7 @@ function tab(v){
   view = v; armed = null;
   document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   if(v === 'zones') zBuilt = false; else { zCancel && zCancel(); }
-  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust','Rep','Drv'].forEach(k=>{
+  ['Orders','Items','Cats','Groups','Deals','Cpn','Set','Zones','Cust','Rep','Drv','Shift'].forEach(k=>{
     $('v'+k).style.display = (v === k.toLowerCase()) ? '' : 'none';
   });
   render(); window.scrollTo({top:0});
@@ -911,6 +980,7 @@ function render(){
   if(view==='cust')   renderCust();
   if(view==='rep')    renderRep();
   if(view==='drv')    renderDrv();
+  if(view==='shift')  renderShift();
 }
 
 /* ========= تجهيز أول مرة ========= */
@@ -1014,7 +1084,7 @@ const ST = {
 function renderOrders(){
   const live = ORDERS.filter(o => ['new','prep','ready'].includes(o.status));
   const list = ordFilter === 'live' ? live : ORDERS;
-  const head = setupWarnings() + stockWarn() + todaySummary() + `
+  const head = outsideHtml() + setupWarnings() + stockWarn() + todaySummary() + `
     <h2 class="sec">الطلبات</h2>
     <div class="bar">
       <button class="btn sm ${ordFilter==='live'?'red':'gh'}" onclick="ordFilter='live';render()">الحالية (${live.length})</button>
@@ -1025,8 +1095,9 @@ function renderOrders(){
     <div class="bar prn">
       <span class="muted">🖨️ الطباعة:</span>
       <button class="tg ${PRN.auto?'on':''}" onclick="setPrn('auto')">تلقائية</button>
-      <button class="tg ${PRN.kitchen?'on':''}" onclick="setPrn('kitchen')">ورقة مطبخ</button>
-      <button class="tg ${PRN.receipt?'on':''}" onclick="setPrn('receipt')">فاتورة</button>
+      ${invOn() ? `<button class="tg ${PRN.one?'on':''}" onclick="setPrn('one')" title="الطلب والفاتورة على نفس الورقة">🧾 ورقة وحدة (طلب + فاتورة)</button>` : ''}
+      ${invOn() && PRN.one ? '' : `<button class="tg ${PRN.kitchen?'on':''}" onclick="setPrn('kitchen')">ورقة مطبخ</button>
+      <button class="tg ${PRN.receipt?'on':''}" onclick="setPrn('receipt')">${invOn() ? 'חשבונית' : 'فاتورة'}</button>`}
       <button class="tg on" onclick="PRN.w = PRN.w === 58 ? 80 : 58; setPrn('_')" title="عرض ورق الطابعة">📏 ${PRN.w === 58 ? '58' : '80'} ملم</button>
     </div>`;
   if(!list.length){
@@ -1050,6 +1121,7 @@ function renderOrders(){
           <div class="when">${esc(when)} ${ageHtml(o)}</div>${c.sched ? `<div class="schb">⏰ <span>طلب مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}</div>
         <div class="tot">${money(o.total)}</div>
       </div>
+      ${(() => { const n = noShows(c.phone); return n ? `<div class="warnbox">🚫 <span>هالزبون ما استلم طلبات قبل</span>: <b>${n}</b>${o.noShow ? ' <span>(هاد منهم)</span>' : ''}</div>` : ''; })()}
       <div class="lines">${lines}${o.note?`<div class="onote">📝 ${esc(o.note)}</div>`:''}</div>
       <div class="meta">
         <span class="pill ${o.type==='pickup'?'b':''}">${o.type==='pickup'?'🏪 استلام':'🛵 توصيل'}</span>
@@ -1062,16 +1134,21 @@ function renderOrders(){
         <span class="muted">توصيل: <span class="ltr">${Number(o.fee||0)} ₪</span></span>
         <span class="pill ${o.paid?'g':'a'}">${PAY_T[payOf(o)] || ''} · ${o.paid?'✅ مدفوع':'⏳ مش مدفوع'}</span>
         ${c.reward ? `<span class="pill r">🎁 هدية ولاء -₪${Number(c.reward)}</span>` : ''}
+        ${OUTSIDE[o.id] && !['done','cancel'].includes(o.status) ? `<span class="pill r">🚗 الزبون برا${OUTSIDE[o.id].car ? ' · ' + esc(OUTSIDE[o.id].car) : ''}</span>` : ''}
         ${c.wheel ? `<span class="pill r">🎡 جائزة: ${esc(c.wheel)}</span>` : ''}
         ${c.bdayGift ? `<span class="pill r">🎂 <span>هدية عيد ميلاد</span>: <span>${esc(c.bdayGift)}</span></span>` : ''}
         ${drvSelHtml(o)}
+        ${o.inv ? `<span class="pill">🧾 <span>חשבונית</span> <span class="ltr">${esc(o.inv)}</span></span>` : ''}${o.credit ? `<span class="pill r">🧾 <span>זיכוי</span> <span class="ltr">${esc(o.credit)}</span></span>` : ''}
       </div>
+      ${o.status === 'cancel' && o.inv && !o.credit ? '<div class="warnbox">🧾 الطلب انلغى بعد ما طلعت فاتورة — لازم تطلّع חשבונית זיכוי</div>' : ''}
       <div class="acts">
         ${st.next?`<button class="btn sm red" onclick="setStatus('${o.id}','${st.next}')">${st.nextT}</button>`:''}
         <button class="btn sm gh" onclick="printOrder('${o.id}')">🖨️ طباعة${PRINTED.indexOf(o.id)>=0?' ✓':''}</button>
         ${o.status==='ready'&&c.phone?`<button class="btn sm gh" onclick="notifyReady('${o.id}')">💬 بلّغ الزبون</button>`:''}
         <button class="btn sm ${o.paid?'gh':'gh'}" onclick="togglePaid('${o.id}')">${o.paid?'↩️ إلغاء "مدفوع"':'💰 علّم مدفوع'}</button>
         ${o.status!=='cancel'&&o.status!=='done'?`<button class="btn sm gh" onclick="setStatus('${o.id}','cancel')">إلغاء</button>`:''}
+        ${['new','prep','ready','cancel'].includes(o.status) && !o.noShow && c.phone ? `<button class="btn sm gh" onclick="markNoShow('${o.id}')">🚫 ما استلم</button>` : ''}
+        ${o.inv && (o.status === 'cancel' || o.credit) ? `<button class="btn sm gh" onclick="invCredit('${o.id}')">🧾 חשבונית זיכוי</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1095,6 +1172,7 @@ function setStatus(id, s){
   db.collection('track').doc(id).set({status:s, no: o ? String(ordNo(o)) : ''}, {merge:true}).catch(() => {});
   if(s === 'done' && o && !o.lp) loyCount(o);
   if(s === 'cancel' && o) stockBack(o);
+  if(s === 'cancel' && o && o.inv && !o.credit && confirm('طلعت فاتورة لهالطلب (' + o.inv + '). تطلّع חשבונית זיכוי هلأ؟')) invCredit(id, true);
   if(s === 'ready') notifyReady(id);
 }
 /* رسمة البيتسا للطباعة: بتطلع بس إذا في إضافة على نص */
@@ -1139,7 +1217,7 @@ async function togglePaid(id){
   const o = ORDERS.find(x => x.id === id); if(!o) return;
   try{ await db.collection('orders').doc(id).update({paid: !o.paid}); }catch(e){ alert(e.message); }
 }
-let PRN = {auto:false, kitchen:true, receipt:true, w:80};
+let PRN = {auto:false, kitchen:true, receipt:true, one:true, w:80};
 try{ Object.assign(PRN, JSON.parse(localStorage.getItem('pz_prn')||'{}')); }catch(e){}
 function setPrn(k){ if(k !== '_') PRN[k] = !PRN[k]; try{ localStorage.setItem('pz_prn', JSON.stringify(PRN)); }catch(e){} render(); }
 let PRINTED = [];
@@ -1190,6 +1268,25 @@ function ticketHtml(o){
   const del = o.type !== 'pickup';
   const parts = [];
 
+  /* 🧾 ورقة وحدة: الطلب للمطبخ + الفاتورة الضريبية تحته، بدون قص */
+  if(invOn() && PRN.one){
+    const lines = (o.items||[]).map(i => {
+      const pz = pizzaPrint({labels: iLabels(i)});
+      return `<div class="k ${i.sub?'ks':''}"><div class="n">${i.sub ? '↳ ' : (Number(i.qty)||0) + ' × '}${i.deal?'🎯 ':''}${esc(iName(i))}</div>` +
+        (pz ? `<div class="lb">${pz}</div>` : (iLabels(i).length ? `<div class="lb">${esc(iLabels(i).map(clean).join(' · '))}</div>` : '')) +
+        (i.note ? `<div class="nt">📝 ${esc(i.note)}</div>` : '') + `</div>`;
+    }).join('');
+    parts.push(`<div class="tk"><div class="c">${esc(time)}</div><div class="no">${no}</div>
+      <div class="ty ${del?'inv':''}">${del?'🛵 توصيل':'🏪 استلام'}</div>${c.sched ? `<div class="ty inv">⏰ <span>مسبق</span>: <span>${esc(schedTxt(c.sched))}</span></div>` : ''}${c.src==='phone' ? '<div class="c">📞 طلب تلفون</div>' : c.src==='shop' ? '<div class="c">🏪 طلب بالمحل</div>' : ''}${lines}
+      ${c.wheel && c.wheelType === 'gift' ? `<div class="nt">🎁 هدية مع الطلب: ${esc(c.wheel)}</div>` : ''}
+      ${c.bdayGift && c.bdayType === 'gift' ? `<div class="nt">🎂 <span>هدية عيد ميلاد مع الطلب</span>: <span>${esc(c.bdayGift)}</span></div>` : ''}
+      ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}
+      <div class="inf">👤 ${esc(c.name||'')} · <span dir="ltr">${esc(c.phone||'')}</span>
+        ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}</div>
+      ${invoiceHtml(o)}</div>`);
+    return ticketDoc(parts, no);
+  }
+
   if(PRN.kitchen){
     const lines = (o.items||[]).map(i => {
       const pz = pizzaPrint({labels: iLabels(i)});
@@ -1205,7 +1302,9 @@ function ticketHtml(o){
       ${o.note ? `<div class="nt">📝 ملاحظة الطلب: ${esc(o.note)}</div>` : ''}</div>`);
   }
 
-  if(PRN.receipt || !PRN.kitchen){
+  if((PRN.receipt || !PRN.kitchen) && invOn()){
+    parts.push(`<div class="tk">${invoiceHtml(o)}</div>`);
+  }else if(PRN.receipt || !PRN.kitchen){
     const rows = (o.items||[]).map(i =>
       `<tr><td>${Number(i.qty)||0}×</td><td><b>${esc(iName(i))}</b>${iLabels(i).length?'<br><small>'+esc(iLabels(i).map(clean).join(' · '))+'</small>':''}</td>
        <td style="text-align:left">${i.sub ? '' : (Number(i.unit)*Number(i.qty)||0).toFixed(2)}</td></tr>`).join('');
@@ -1225,15 +1324,23 @@ function ticketHtml(o){
         ${del && c.addr ? '<br>📍 <b>'+esc(c.addr)+'</b>' : ''}${del && c.zone ? '<br>🗺️ منطقة: <b>'+esc(c.zone)+'</b>' : ''}<br>${del?'🛵 توصيل':'🏪 استلام من المحل'}
         ${o.note ? '<br>📝 '+esc(o.note) : ''}</div></div>`);
   }
+  return ticketDoc(parts, no);
+}
+function ticketDoc(parts, no){
   const css = PRN.w === 58
     ? PRINT_CSS.replace('width:290px', 'width:200px').replace(/font-size:13px/, 'font-size:12px') + ' .no{font-size:30px} .pz,.pz4{width:160px!important;height:160px!important} .k .n{font-size:15px}'
     : PRINT_CSS;
-  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${css}</style></head><body>${parts.join('')}</body></html>`;
+  return `<!DOCTYPE html><html dir="rtl" lang="${LANG}"><head><meta charset="utf-8"><title>طلب ${no}</title><style>${css}${INV_CSS}</style></head><body>${parts.join('')}</body></html>`;
 }
 
 /* بتطبع عن طريق إطار مخفي، فما في نافذة بتنفتح وما بينحجب من المتصفح */
-function printOrder(id){
-  const o = ORDERS.find(x => x.id === id); if(!o) return;
+async function printOrder(id){
+  let o = ORDERS.find(x => x.id === id); if(!o) return;
+  /* الفاتورة: رقم تسلسلي بيتعطى مرة وحدة. أول طباعة "מקור"، بعدها "העתק" */
+  if(invOn() && o.status !== 'cancel' && (PRN.one || PRN.receipt || !PRN.kitchen)){
+    try{ o = Object.assign({}, o, await invAssign(o)); }
+    catch(e){ console.error('invoice', e); alert('ما قدرت أعطي رقم فاتورة: ' + e.message); return; }
+  }
   markPrinted(o.id);
   let f = $('prnFrame');
   if(f) f.remove();
@@ -1262,6 +1369,156 @@ function runQ(){
   qBusy = true;
   printOrder(printQ.shift());
   setTimeout(() => { qBusy = false; runQ(); }, 4000);
+}
+
+/* ============ 🧾 חשבונית מס / קבלה ============
+   الرقم تسلسلي من settings/inv (transaction — ما بيتكرر حتى لو اللوحة مفتوحة على كذا جهاز).
+   الفاتورة دايماً بالعبري (مستند ضريبي). */
+const invCfg = () => SET.inv || {};
+const invOn = () => !!invCfg().on;
+const invPatur = () => invCfg().kind === 'patur';
+const INV_PAY = {cash:'מזומן', card:'כרטיס אשראי', bit:'Bit', paybox:'PayBox', online:'כרטיס אשראי (אונליין)'};
+async function invAssign(o){
+  const oref = db.collection('orders').doc(o.id), cref = db.collection('settings').doc('inv');
+  return db.runTransaction(async tx => {
+    const od = await tx.get(oref), cd = await tx.get(cref);
+    const x = od.exists ? od.data() : {};
+    if(x.inv) { tx.update(oref, {invPrinted: true}); return {inv: x.inv, invAt: x.invAt, invCopy: !!x.invPrinted}; }
+    const start = Math.max(1, Math.floor(Number(invCfg().start) || 1));
+    const n = Math.max(Number((cd.exists && cd.data().last) || 0) + 1, start);
+    const at = new Date().toISOString();
+    tx.set(cref, {last: n}, {merge: true});
+    tx.update(oref, {inv: n, invAt: at, invPrinted: true});
+    return {inv: n, invAt: at, invCopy: false};
+  });
+}
+async function invCredit(id, asked){
+  const o = ORDERS.find(x => x.id === id); if(!o || !o.inv) return;
+  if(!o.credit && !asked && !confirm('بنطلع חשבונית זיכוי على فاتورة رقم ' + o.inv + ' (بتلغيها بالحسابات). تكمّل؟')) return;
+  const oref = db.collection('orders').doc(o.id), cref = db.collection('settings').doc('inv');
+  try{
+    const r = await db.runTransaction(async tx => {
+      const od = await tx.get(oref), cd = await tx.get(cref), x = od.data() || {};
+      if(x.credit) return {credit: x.credit, creditAt: x.creditAt, creditCopy: true};
+      const n = Number((cd.exists && cd.data().lastCredit) || 0) + 1, at = new Date().toISOString();
+      tx.set(cref, {lastCredit: n}, {merge: true});
+      tx.update(oref, {credit: n, creditAt: at});
+      return {credit: n, creditAt: at, creditCopy: false};
+    });
+    printHtml(ticketDoc([`<div class="tk">${invoiceHtml(Object.assign({}, o, r), true)}</div>`], '#' + ordNo(o)));
+  }catch(e){ alert(e.message); }
+}
+function invoiceHtml(o, credit){
+  const c = o.customer || {}, cf = invCfg(), patur = invPatur();
+  const vr = vatRate() / 100, tot = Number(o.total || 0), net = patur ? tot : tot / (1 + vr), vat = tot - net;
+  const sign = credit ? '-' : '';
+  const f2 = n => sign + Number(n || 0).toFixed(2);
+  const dt = new Date(credit ? o.creditAt : (o.invAt || o.createdAtStr || Date.now()));
+  const when = dt.toLocaleDateString('he-IL') + ' ' + dt.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+  const title = credit ? 'חשבונית זיכוי' : (patur ? 'קבלה' : (cf.title || 'חשבונית מס / קבלה'));
+  const num = credit ? o.credit : o.inv;
+  const copy = credit ? o.creditCopy : o.invCopy;
+  const rows = (o.items || []).filter(i => !i.sub).map(i =>
+    `<tr><td>${Number(i.qty)||0}×</td><td>${esc(i.name_he || i.name)}${(i.deal && (o.items||[]).some(s => s.sub)) ? '' : ''}</td><td class="nm">${f2((Number(i.unit)||0)*(Number(i.qty)||0))}</td></tr>`).join('');
+  const disc = Number(o.discount || 0), fee = Number(o.fee || 0);
+  return `<div class="iv">
+    <div class="ivh"><b>${esc(cf.legal || SET.name_he || SET.name || '')}</b>
+      <div>${patur ? 'עוסק פטור' : (cf.kind === 'company' ? 'ח.פ' : 'עוסק מורשה')} <span dir="ltr">${esc(SET.osek || '—')}</span></div>
+      ${(SET.addr_he || SET.addr) ? `<div>${esc(SET.addr_he || SET.addr)}</div>` : ''}
+      ${SET.phone ? `<div dir="ltr">0${esc(String(SET.phone).slice(3))}</div>` : ''}</div>
+    <div class="ivt">${title} <span dir="ltr">${esc(num)}</span></div>
+    <div class="ivc">${copy ? 'העתק נאמן למקור' : 'מקור'}</div>
+    <div class="sm"><span>תאריך</span><span dir="ltr">${esc(when)}</span></div>
+    <div class="sm"><span>הזמנה</span><span dir="ltr">#${esc(ordNo(o))}</span></div>
+    ${credit ? `<div class="sm"><span>זיכוי לחשבונית</span><span dir="ltr">${esc(o.inv)}</span></div>` : ''}
+    ${c.name ? `<div class="sm"><span>לקוח</span><span>${esc(c.name)}</span></div>` : ''}
+    <table>${rows}
+      ${fee ? `<tr><td></td><td>דמי משלוח</td><td class="nm">${f2(fee)}</td></tr>` : ''}
+      ${disc ? `<tr><td></td><td>הנחה${o.coupon ? ' (' + esc(o.coupon) + ')' : ''}</td><td class="nm">${credit ? '' : '-'}${Number(disc).toFixed(2)}</td></tr>` : ''}</table>
+    ${patur ? '' : `<div class="sm"><span>סה״כ לפני מע״מ</span><span dir="ltr">${f2(net)}</span></div>
+    <div class="sm"><span>מע״מ ${vatRate()}%</span><span dir="ltr">${f2(vat)}</span></div>`}
+    <div class="tot"><span>סה״כ לתשלום</span><span dir="ltr">${f2(tot)} ₪</span></div>
+    ${credit ? '' : `<div class="sm"><span>אמצעי תשלום</span><span>${esc(INV_PAY[payOf(o)] || '')}${o.paid ? ' · שולם' : ' · טרם שולם'}</span></div>`}
+    <div class="ivf">${esc(cf.foot || 'תודה ובתיאבון!')}</div></div>`;
+}
+const INV_CSS = `
+  .iv{margin-top:10px;border-top:3px double #000;padding-top:8px;direction:rtl;font-family:system-ui,'Heebo',sans-serif}
+  .ivh{text-align:center;line-height:1.5;font-size:12px}.ivh b{font-size:15px}
+  .ivt{text-align:center;font-weight:900;font-size:16px;border:2px solid #000;border-radius:6px;padding:3px;margin:7px 0 2px}
+  .ivc{text-align:center;font-size:11px;font-weight:700;margin-bottom:5px}
+  .iv td.nm{text-align:left;direction:ltr;white-space:nowrap}
+  .ivf{text-align:center;font-size:11px;margin-top:8px;border-top:1px dashed #999;padding-top:6px}`;
+/* طباعة HTML جاهز (للزيكوي وغيره) */
+function printHtml(html){
+  let f = $('prnFrame'); if(f) f.remove();
+  f = document.createElement('iframe'); f.id = 'prnFrame';
+  f.style.cssText = 'position:fixed;width:0;height:0;border:0;left:-9999px;top:0';
+  document.body.appendChild(f);
+  const doc = f.contentWindow.document; doc.open(); doc.write(html); doc.close();
+  trNode(doc.documentElement);
+  setTimeout(() => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} }, 400);
+}
+
+/* ============ 💾 نسخة احتياطية ============ */
+const BK_COLS = ['settings','categories','items','optionGroups','deals','coupons','orders','loyalty','reviews','drivers','shifts'];
+const BK_MENU = ['settings','categories','items','optionGroups','deals','coupons'];   // اللي بنرجّعه بالاسترجاع
+const ts2 = v => (v && typeof v.toDate === 'function') ? {__ts: v.toDate().toISOString()} : v;
+function bkClean(o){
+  if(Array.isArray(o)) return o.map(bkClean);
+  if(o && typeof o === 'object'){ if(typeof o.toDate === 'function') return ts2(o); const r = {}; Object.keys(o).forEach(k => r[k] = bkClean(o[k])); return r; }
+  return o;
+}
+function bkRestore(o){
+  if(Array.isArray(o)) return o.map(bkRestore);
+  if(o && typeof o === 'object'){ if(o.__ts) return firebase.firestore.Timestamp.fromDate(new Date(o.__ts)); const r = {}; Object.keys(o).forEach(k => r[k] = bkRestore(o[k])); return r; }
+  return o;
+}
+async function backupNow(){
+  const b = $('bkBtn'); if(b){ b.disabled = true; b.textContent = '⏳ جاري التجهيز...'; }
+  try{
+    const out = {app: 'pizza-um-elfahem', at: new Date().toISOString(), data: {}};
+    for(const c of BK_COLS){
+      try{ const s = await db.collection(c).get(); out.data[c] = {}; s.docs.forEach(d => out.data[c][d.id] = bkClean(d.data())); }
+      catch(e){ console.warn('backup', c, e.message); }
+    }
+    const n = Object.values(out.data).reduce((s, x) => s + Object.keys(x).length, 0);
+    dl(new Blob([JSON.stringify(out)], {type: 'application/json'}), 'backup-' + new Date().toISOString().slice(0, 10) + '.json');
+    try{ localStorage.setItem('pz_bk_at', out.at); }catch(e){}
+    toast('💾 تم — ' + n + ' سجل');
+  }catch(e){ alert(e.message); }
+  if(b){ b.disabled = false; b.textContent = '💾 نزّل نسخة احتياطية هلأ'; }
+}
+async function restoreFile(f){
+  if(!f) return;
+  let j; try{ j = JSON.parse(await f.text()); }catch(e){ alert('الملف مش نسخة احتياطية صحيحة'); return; }
+  if(!j || !j.data){ alert('الملف مش نسخة احتياطية صحيحة'); return; }
+  const cnt = BK_MENU.map(c => Object.keys(j.data[c] || {}).length).reduce((a, b) => a + b, 0);
+  if(!confirm('بنرجّع المنيو والإعدادات والعروض والكوبونات (' + cnt + ' سجل) من نسخة ' + String(j.at || '').slice(0, 10) + '.\nالطلبات ما بتتغيّر. اللي إله نفس الاسم بيتبدّل. تكمّل؟')) return;
+  try{
+    const all = [];
+    BK_MENU.forEach(c => Object.entries(j.data[c] || {}).forEach(([id, v]) => { if(!(c === 'settings' && id === 'inv')) all.push([c, id, v]); }));
+    for(let i = 0; i < all.length; i += 400){
+      const b = db.batch();
+      all.slice(i, i + 400).forEach(([c, id, v]) => b.set(db.collection(c).doc(id), bkRestore(v)));
+      await b.commit();
+    }
+    toast('✅ تم الاسترجاع');
+  }catch(e){ alert(e.message); }
+}
+function backupHtml(){
+  let at = ''; try{ at = localStorage.getItem('pz_bk_at') || ''; }catch(e){}
+  const auto = SET.backup || {};
+  const d = s => s ? new Date(s).toLocaleString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '—';
+  return `<div class="card">
+    <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">💾 نسخة احتياطية</label>
+    <div class="muted" style="margin-bottom:8px">كل المنيو، الإعدادات، الطلبات، الزبائن والتقييمات بملف واحد. احتفظ فيه بالكمبيوتر أو بالـ Drive.</div>
+    <div class="bar">
+      <button class="btn sm red" id="bkBtn" onclick="backupNow()">💾 نزّل نسخة احتياطية هلأ</button>
+      <label class="btn sm gh" style="cursor:pointer">♻️ استرجاع من ملف<input type="file" accept=".json,application/json" style="display:none" onchange="restoreFile(this.files[0]);this.value=''"></label>
+    </div>
+    <div class="muted">آخر نسخة نزّلتها من هالجهاز: <b>${esc(d(at))}</b><br>
+      النسخة التلقائية اليومية (Firebase): <b>${auto.last ? esc(d(auto.last)) + ' · ' + Number(auto.docs || 0) + ' سجل' : 'لسا ما اشتغلت'}</b></div>
+  </div>`;
 }
 
 /* ========= رقم الطلب اليومي ========= */
@@ -1923,6 +2180,8 @@ function editItem(id){
       <div class="f"><label>السعر *</label><input id="iPrice" type="number" inputmode="decimal" value="${it.price||''}"></div>
       <div class="f"><label>سعر بعد الخصم</label><input id="iSale" type="number" inputmode="decimal" value="${it.sale||''}" placeholder="اتركه فاضي"></div>
     </div>
+    <div class="f"><label>💰 تكلفة المكونات للوحدة (₪ بدون מע״מ)</label><input id="iCost" type="number" inputmode="decimal" step="0.1" min="0" value="${it.cost==null?'':it.cost}" placeholder="مثلاً 14.5">
+      <div class="muted" style="margin-top:4px">عجين + جبنة + صلصة + علبة... بس إنت بتشوفها. منها بنحسب ربح كل وجبة بالتقارير.</div></div>
     <div class="f"><label>القسم *</label><select id="iCat">
       ${CATS.map(c=>`<option value="${c.id}" ${it.catId===c.id?'selected':''}>${esc(c.icon||'')} ${esc(LX(c,'name'))}</option>`).join('')}
     </select></div>
@@ -1959,7 +2218,8 @@ function editItem(id){
       tag: val('iTag'), rate: val('iRate'), rateN: val('iRateN'),
       opts: Array.from(document.querySelectorAll('.ogchk')).filter(c=>c.checked).map(c=>c.value),
       best: $('iBest').checked, available: $('iAvail').checked, dealOnly: $('iDealOnly').checked, upsell: $('iUpsell').checked,
-      stock: val('iStock') === '' ? null : Math.max(0, Math.floor(num('iStock')))
+      stock: val('iStock') === '' ? null : Math.max(0, Math.floor(num('iStock'))),
+      cost: val('iCost') === '' ? null : Math.max(0, num('iCost'))
     };
     if(id) await db.collection('items').doc(id).update(data);
     else await db.collection('items').add(Object.assign(data, {order:(ITEMS.length+1)*10}));
@@ -2318,7 +2578,7 @@ async function renderCust(){
   const q = custQ.trim().toLowerCase();
   const list = q ? all.filter(x => (x.name + ' ' + x.phone + ' ' + x.addr).toLowerCase().includes(q)) : all;
   const d = s => s ? new Date(s).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG') : '';
-  $('vCust').innerHTML = bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
+  $('vCust').innerHTML = habitHtml(all) + bdayListHtml(all) + reviewsHtml() + `<h2 class="sec">👥 الزبائن <span class="muted">(${all.length})</span></h2>
     <div class="bar"><input type="search" placeholder="ابحث بالاسم أو الرقم أو العنوان" value="${esc(custQ)}" oninput="custQ=this.value;renderCust()">
       <button class="btn sm gh" onclick="loadCustOrders(true).then(renderCust)">🔄 تحديث</button></div>
     ${!list.length ? '<div class="empty"><div class="e">👥</div><div>ما في زبائن</div></div>' : list.map(x => {
@@ -2327,7 +2587,7 @@ async function renderCust(){
         <div class="ch" onclick="custOpen=custOpen==='${x.phone}'?'':'${x.phone}';renderCust()">
           <div class="av" data-nt>${esc((x.name||'?').trim().charAt(0))}</div>
           <div style="flex:1;min-width:0">
-            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''} ${isBlocked(x.phone)?'<span class="pill r">🚫 محظور</span>':''}</div>
+            <div class="nm">${esc(x.name)} ${x.orders.length >= 3 ? '<span class="pill a">⭐ زبون دائم</span>' : ''} ${x.lang==='he'?'<span class="pill b">עב</span>':''} ${isBlocked(x.phone)?'<span class="pill r">🚫 محظور</span>':''}${noShows(x.phone)?` <span class="pill r">🚫 ما استلم ×${noShows(x.phone)}</span>`:''}</div>
             <div class="muted ltr" style="text-align:start">${esc(x.phone)}</div>
           </div>
           <div class="cs"><b>${x.orders.length}</b><span>طلب</span></div>
@@ -2395,8 +2655,257 @@ function blockedHtml(){
     <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🚫 أرقام محظورة</label>
     <div class="muted" style="margin-bottom:8px">الرقم المحظور ما بيقدر يبعت طلب من الموقع. بتقدر تحظر كمان من تاب 👥 الزبائن.</div>
     ${bl.length ? bl.map(p => `<div class="blk"><span class="ltr">${esc(p)}</span><button class="btn sm gh" onclick="toggleBlock('${esc(p)}')">فك الحظر</button></div>`).join('') : '<div class="muted">ما في أرقام محظورة</div>'}
+    <div class="f" style="margin-top:10px"><label>حظر تلقائي بعد كم مرة ما استلم الطلب؟ (0 = بلا)</label><input id="nsMax" type="number" min="0" max="10" value="${SET.noShowMax == null ? 2 : SET.noShowMax}"></div>
+    <label class="chk"><input type="checkbox" id="smsOn" ${(SET.sms||{}).on?'checked':''}><span>📲 تأكيد الرقم بكود SMS بأول طلب (ضد الطلبات الوهمية)</span></label>
+    <div class="muted" style="margin-bottom:8px">لازم مرة وحدة تفعّل بـ Firebase: Authentication ← Sign-in method ← <b>Phone</b> ← Enable، وبـ Settings ← SMS region policy تسمح لـ <b>Israel</b>. كل SMS بيكلف تقريباً 4-5 أغورة. إذا مش مفعّل، الطلبات بتضل تمشي عادي.</div>
     <div class="blk add"><input id="blkNew" inputmode="tel" placeholder="05xxxxxxxx"><button class="btn sm red" onclick="const v=$('blkNew').value; if(phKey(v).length>=9) toggleBlock(v); else alert('رقم مش صحيح')">🚫 حظر</button></div>
   </div>`;
+}
+
+/* ============ 🚗 الزبون برا (استلام) ============ */
+let OUTSIDE = {}, _outFirst = true;
+function outsideListen(){
+  const since = new Date(Date.now() - 8 * 3600e3).toISOString();
+  db.collection('track').where('outside', '>', since).onSnapshot(s => {
+    let fresh = false;
+    s.docChanges().forEach(ch => {
+      const x = ch.doc.data();
+      if(ch.type === 'removed' || !x.outside){ delete OUTSIDE[ch.doc.id]; return; }
+      if(!OUTSIDE[ch.doc.id] && !_outFirst) fresh = true;
+      OUTSIDE[ch.doc.id] = {at: x.outside, car: x.car || ''};
+    });
+    _outFirst = false;
+    if(fresh){ ding(); setTimeout(ding, 900); toast('🚗 زبون برا ومستني طلبه!'); }
+    if(view === 'orders') render();
+  }, e => console.warn('outside', e.message));
+}
+function outsideHtml(){
+  const list = ORDERS.filter(o => OUTSIDE[o.id] && !['done','cancel'].includes(o.status));
+  return list.map(o => { const c = o.customer || {}, X = OUTSIDE[o.id];
+    return `<div class="warnbox" style="background:#ffe9eb;border-color:var(--red);color:var(--red-dark);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:26px">🚗</span><span style="flex:1"><b>#${ordNo(o)} ${esc(c.name || '')}</b> — <span>برا ومستني</span>${X.car ? ' · ' + esc(X.car) : ''}<br><span class="muted">${esc(new Date(X.at).toLocaleTimeString(LANG === 'he' ? 'he-IL' : 'ar-EG', {hour:'2-digit', minute:'2-digit'}))} · <span>الطلب</span>: ${esc((ST[o.status] || ST.done).t)}</span></span>
+      <button class="btn sm red" onclick="setStatus('${o.id}','done')">✅ طلّعتله الطلب</button></div>`; }).join('');
+}
+
+/* ============ 🔁 زباين بيطلبوا عادةً بهاليوم ============ */
+let HABIT_SENT = {};
+try{ HABIT_SENT = JSON.parse(localStorage.getItem('pz_habit') || '{}'); }catch(e){}
+function habitOf(x){
+  const ok = x.orders.filter(o => o.status !== 'cancel' && o.createdAtStr);
+  if(ok.length < 3) return null;
+  const by = [0,0,0,0,0,0,0]; ok.forEach(o => by[new Date(o.createdAtStr).getDay()]++);
+  const d = by.indexOf(Math.max(...by));
+  return by[d] >= 3 && by[d] / ok.length >= 0.4 ? {day: d, n: by[d], of: ok.length} : null;
+}
+function habitMsg(x){
+  const he = x.lang === 'he', first = String(x.name || '').trim().split(/\s+/)[0] || '', url = location.origin + '/';
+  const shop = he ? (SET.name_he || SET.name || '') : (SET.name || '');
+  return he ? `היי ${first} 👋\nיום ${['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'][new Date().getDay()]} — רעבים? 🍕\nאפשר להזמין כמו בפעם הקודמת בלחיצה אחת:\n${url}\n${shop}`
+            : `أهلاً ${first} 👋\nاليوم ${DAYS[new Date().getDay()]} — جوعان؟ 🍕\nبتقدر تطلب زي آخر مرة بكبسة وحدة:\n${url}\n${shop}`;
+}
+function habitSent(ph){
+  HABIT_SENT[ph] = new Date().toISOString().slice(0, 10);
+  try{ localStorage.setItem('pz_habit', JSON.stringify(HABIT_SENT)); }catch(e){}
+  setTimeout(renderCust, 300);
+}
+function habitHtml(all){
+  const today = new Date().getDay(), tk = new Date().toISOString().slice(0, 10), now = Date.now();
+  const list = all.map(x => Object.assign(x, {hb: habitOf(x)}))
+    .filter(x => x.hb && x.hb.day === today && !isBlocked(x.phone) && now - new Date(x.last).getTime() > 3 * 864e5);
+  if(!list.length) return '';
+  return `<h2 class="sec">🔁 بيطلبوا عادةً يوم ${DAYS[today]} <span class="muted">(${list.length})</span></h2><div class="card">
+    ${list.map(x => { const sent = HABIT_SENT[x.phone] === tk, wa = waPhone(x.phone);
+      return `<div class="bdl"><span class="b">${x.hb.n}/${x.hb.of}</span>
+      <span style="flex:1"><b>${esc(x.name)}</b> <span class="muted">· <span>آخر طلب</span> ${esc(new Date(x.last).toLocaleDateString(LANG === 'he' ? 'he-IL' : 'ar-EG'))}</span></span>
+      ${sent ? '<span class="pill g">✓ انبعت</span>' : wa ? `<a class="btn sm gh" target="_blank" href="https://wa.me/${wa}?text=${encodeURIComponent(habitMsg(x))}" onclick="habitSent('${x.phone}')">💬 ذكّره</a>` : ''}</div>`; }).join('')}
+    <div class="muted" style="margin-top:6px">زباين أكثر من 40% من طلباتهم بهاليوم وما طلبوا من 3 أيام. الموقع كمان بيذكّرهم لحاله لما يفتحوه.</div></div>`;
+}
+
+/* ============ 🎬 فيديوهات ============ */
+function vidRow(v){
+  v = v || {};
+  return `<div class="whr" data-poster="${esc(v.poster||'')}">
+    <input class="vu" style="flex:2;min-width:160px" dir="ltr" value="${esc(v.url||'')}" placeholder="https://...mp4 / YouTube">
+    <input class="wl" value="${esc(v.title||'')}" placeholder="عنوان (اختياري)">
+    <input class="wlh" value="${esc(v.title_he||'')}" placeholder="🇮🇱 בעברית" dir="rtl" lang="he">
+    <button type="button" class="x" onclick="this.parentNode.remove()">✕</button></div>`;
+}
+async function vidUpload(f){
+  if(!f) return;
+  if(f.size > 95 * 1024 * 1024){ alert('الفيديو كبير — لازم يكون أقل من 95MB'); return; }
+  toast('⏳ جاري رفع الفيديو...');
+  try{
+    const fd = new FormData(); fd.append('file', f); fd.append('upload_preset', window.CLOUDINARY.preset);
+    const r = await fetch('https://api.cloudinary.com/v1_1/' + window.CLOUDINARY.cloudName + '/video/upload', {method: 'POST', body: fd});
+    const j = await r.json();
+    if(!j.secure_url) throw new Error((j.error && j.error.message) || 'upload');
+    // نسخة خفيفة للموبايل + صورة غلاف
+    const url = j.secure_url.replace('/video/upload/', '/video/upload/q_auto,vc_auto,w_720/');
+    const poster = j.secure_url.replace('/video/upload/', '/video/upload/so_1,w_480/').replace(/\.[a-z0-9]+$/i, '.jpg');
+    $('vidRows').insertAdjacentHTML('beforeend', vidRow({url, poster}));
+    toast('✅ الفيديو جاهز — لا تنسى تكبس 💾 حفظ الإعدادات');
+  }catch(e){ alert('ما زبط الرفع: ' + e.message + '\n\nإذا الخطأ عن الـ preset: بـ Cloudinary ← Upload presets تأكد إنه مسموح فيديو.'); }
+}
+
+/* ============ 🗓️ جدول الورديات ============ */
+let SH = {week: '', doc: null, loading: false, dirty: false};
+function weekStart(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - x.getDay()); return x; }
+const wkId = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function shHours(t){
+  const m = String(t || '').replace(/\s/g, '').match(/^(\d{1,2})(?::(\d{2}))?-(\d{1,2})(?::(\d{2}))?$/);
+  if(!m) return 0;
+  let a = Number(m[1]) * 60 + Number(m[2] || 0), b = Number(m[3]) * 60 + Number(m[4] || 0);
+  if(b <= a) b += 1440;
+  return (b - a) / 60;
+}
+async function shLoad(id){
+  if(SH.dirty && !confirm('في تغييرات ما انحفظت. تكمّل بدون حفظ؟')) return;
+  SH.week = id; SH.doc = null; SH.loading = true; SH.dirty = false; render();
+  try{ const d = await db.collection('shifts').doc(id).get(); SH.doc = d.exists ? d.data() : {rows: [], cells: {}}; }
+  catch(e){ SH.doc = {rows: [], cells: {}}; toast('⚠️ ' + e.message); }
+  SH.loading = false; if(view === 'shift') render();
+}
+function shMove(k){ const d = new Date(SH.week); d.setDate(d.getDate() + 7 * k); shLoad(wkId(d)); }
+function shRead(){
+  const rows = [...document.querySelectorAll('#shT tbody tr')].map(tr => ({name: tr.querySelector('.sn').value.trim(), role: tr.querySelector('.sr').value.trim(), phone: tr.querySelector('.sp').value.trim()}));
+  const cells = {};
+  document.querySelectorAll('#shT tbody tr').forEach((tr, r) => tr.querySelectorAll('.sc').forEach((inp, d) => { const v = inp.value.trim(); if(v) cells[r + '_' + d] = v; }));
+  return {rows, cells};
+}
+function shTotals(){
+  document.querySelectorAll('#shT tbody tr').forEach(tr => {
+    const h = [...tr.querySelectorAll('.sc')].reduce((s, i) => s + shHours(i.value), 0);
+    tr.querySelector('.sh').textContent = h ? (Math.round(h * 10) / 10) : '';
+    tr.querySelectorAll('.sc').forEach(i => i.classList.toggle('bad', !!i.value.trim() && !shHours(i.value)));
+  });
+  SH.dirty = true;
+}
+function shAddRow(){ const d = shRead(); d.rows.push({name: '', role: '', phone: ''}); SH.doc = d; SH.dirty = true; render(); }
+function shDelRow(r){ const d = shRead(); if(!confirm('تشيل ' + (d.rows[r].name || '') + ' من الجدول؟')) return;
+  d.rows.splice(r, 1); const c = {}; Object.entries(d.cells).forEach(([k, v]) => { const [a, b] = k.split('_').map(Number); if(a < r) c[k] = v; else if(a > r) c[(a - 1) + '_' + b] = v; }); d.cells = c; SH.doc = d; SH.dirty = true; render(); }
+async function shCopyPrev(){
+  const d = new Date(SH.week); d.setDate(d.getDate() - 7);
+  try{ const p = await db.collection('shifts').doc(wkId(d)).get(); if(!p.exists){ alert('ما في جدول للأسبوع الماضي'); return; }
+    if(!confirm('بننسخ جدول الأسبوع الماضي لهالأسبوع (بيتبدّل اللي هون). تكمّل؟')) return;
+    SH.doc = p.data(); SH.dirty = true; render(); toast('تم النسخ — لا تنسى تكبس حفظ'); }catch(e){ alert(e.message); }
+}
+async function shSave(){
+  const d = shRead(); d.rows = d.rows.filter((r, i) => r.name || Object.keys(d.cells).some(k => k.startsWith(i + '_')));
+  try{ await db.collection('shifts').doc(SH.week).set(Object.assign(d, {at: new Date().toISOString()})); SH.doc = d; SH.dirty = false; toast('تم الحفظ ✓'); render(); }
+  catch(e){ alert(e.message + '\n\nإذا الخطأ "permission": لازم تحدّث قواعد Firestore (فيها shifts).'); }
+}
+function shDayDate(i){ const d = new Date(SH.week); d.setDate(d.getDate() + i); return d; }
+function shMsg(r){
+  const d = shRead(), row = d.rows[r]; if(!row) return '';
+  const L = [];
+  for(let i = 0; i < 7; i++){ const v = d.cells[r + '_' + i]; if(v) L.push('• ' + DAYS[i] + ' ' + shDayDate(i).getDate() + '/' + (shDayDate(i).getMonth() + 1) + ': ' + v); }
+  return `أهلاً ${row.name} 👋\nورديّاتك هالأسبوع:\n${L.join('\n') || '—'}\n${SET.name || ''}`;
+}
+function shWa(r){ const d = shRead(), ph = waPhone((d.rows[r] || {}).phone); window.open('https://wa.me/' + (ph || '') + '?text=' + encodeURIComponent(shMsg(r)), '_blank'); }
+function shPrint(){
+  const d = shRead();
+  const head = '<tr><th></th>' + DAYS.map((n, i) => `<th>${trText(n)}<br><small>${shDayDate(i).getDate()}/${shDayDate(i).getMonth() + 1}</small></th>`).join('') + `<th>${trText('ساعات')}</th></tr>`;
+  const body = d.rows.map((row, r) => `<tr><td><b>${esc(row.name)}</b><br><small>${esc(row.role)}</small></td>` + DAYS.map((_, i) => `<td>${esc(d.cells[r + '_' + i] || '')}</td>`).join('') +
+    `<td>${Math.round(DAYS.reduce((s, _, i) => s + shHours(d.cells[r + '_' + i]), 0) * 10) / 10}</td></tr>`).join('');
+  printHtml(`<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><title>shifts</title><style>@page{size:A4 landscape;margin:10mm}body{font-family:system-ui,sans-serif}table{width:100%;border-collapse:collapse}th,td{border:1px solid #333;padding:8px;text-align:center;font-size:14px}th{background:#eee}h2{margin:0 0 10px}</style></head><body><h2>🗓️ ${esc(LX(SET,'name') || '')} — ${esc(SH.week)}</h2><table>${head}${body}</table></body></html>`);
+}
+function renderShift(){
+  if(!SH.week){ shLoad(wkId(weekStart(new Date()))); return; }
+  const ws = new Date(SH.week), we = shDayDate(6);
+  const bar = `<h2 class="sec">🗓️ جدول الورديات</h2>
+    <div class="bar"><button class="btn sm gh" onclick="shMove(-1)">→</button>
+      <b style="flex:1;text-align:center"><span class="ltr">${ws.getDate()}/${ws.getMonth() + 1} – ${we.getDate()}/${we.getMonth() + 1}</span>${SH.week === wkId(weekStart(new Date())) ? ' <span class="pill g">هالأسبوع</span>' : ''}</b>
+      <button class="btn sm gh" onclick="shMove(1)">←</button></div>`;
+  if(SH.loading || !SH.doc){ $('vShift').innerHTML = bar + '<div class="empty"><div class="e">⏳</div></div>'; return; }
+  const d = SH.doc, rows = d.rows && d.rows.length ? d.rows : [{name: '', role: '', phone: ''}];
+  const t0 = wkId(new Date());
+  $('vShift').innerHTML = bar + `<style>
+    #shT{border-collapse:collapse;min-width:960px;width:100%;background:#fff}#shT td:has(.sc){min-width:98px}#shT .sc{font-size:12.5px!important;padding:7px 2px!important}#shT th,#shT td{border:1px solid var(--line);padding:4px;text-align:center}
+    #shT th{background:#f5f3f1;font-size:12.5px}#shT th.td{background:#ffe9eb}#shT input{width:100%;border:1.5px solid transparent;border-radius:8px;padding:7px 4px;font-size:13.5px;text-align:center;font-family:inherit;outline:none;background:transparent}
+    #shT input:focus{border-color:var(--ink);background:#fff}#shT .sc{direction:ltr}#shT .sc:not(:placeholder-shown){background:#e6f6ec;font-weight:800}#shT .sc.bad{background:#fff3e0}
+    #shT .sn{font-weight:800;text-align:start}#shT .sr,#shT .sp{font-size:11.5px;color:var(--muted);text-align:start}#shT .sh{font-weight:900}
+    .shw{overflow-x:auto;border-radius:14px;box-shadow:var(--shadow);margin-bottom:12px}</style>
+    <div class="shw"><table id="shT"><thead><tr><th style="min-width:130px">الموظف</th>${DAYS.map((n, i) => `<th class="${wkId(shDayDate(i)) === t0 ? 'td' : ''}">${n}<br><span class="muted ltr">${shDayDate(i).getDate()}/${shDayDate(i).getMonth() + 1}</span></th>`).join('')}<th>ساعات</th><th></th></tr></thead>
+    <tbody>${rows.map((r, ri) => `<tr><td><input class="sn" value="${esc(r.name)}" placeholder="الاسم" oninput="SH.dirty=true"><input class="sr" value="${esc(r.role)}" placeholder="الدور (شيف، سائق...)" oninput="SH.dirty=true"><input class="sp ltr" value="${esc(r.phone || '')}" placeholder="05x" inputmode="tel" oninput="SH.dirty=true"></td>
+      ${DAYS.map((_, i) => `<td><input class="sc" value="${esc((d.cells || {})[ri + '_' + i] || '')}" placeholder=" " oninput="shTotals()"></td>`).join('')}
+      <td class="sh"></td><td><button class="btn sm gh" title="ابعتله ورديّاته" onclick="shWa(${ri})">💬</button><button class="btn sm gh" onclick="shDelRow(${ri})">✕</button></td></tr>`).join('')}</tbody></table></div>
+    <div class="bar"><button class="btn sm gh" onclick="shAddRow()">+ موظف</button><button class="btn sm gh" onclick="shCopyPrev()">📋 انسخ الأسبوع الماضي</button><button class="btn sm gh" onclick="shPrint()">🖨️ طباعة</button>
+      <button class="btn sm red" style="margin-inline-start:auto" onclick="shSave()">💾 حفظ</button></div>
+    <div class="muted">اكتب الوردية هيك: <b class="ltr">11-17</b> أو <b class="ltr">17:30-00:30</b>. الساعات بتنحسب لحالها. 💬 بيبعت للموظف ورديّاته بالواتساب.</div>`;
+  const wasDirty = SH.dirty; shTotals(); SH.dirty = wasDirty;
+}
+
+/* ============ 💰 ربح كل وجبة ============ */
+function profitRows(R){
+  const vr = 1 + vatRate() / 100;
+  return Object.entries(R.byId).map(([id, P]) => {
+    const it = ITEMS.find(x => x.id === id), cost = it && it.cost != null && it.cost !== '' ? Number(it.cost) : null;
+    const net = P.rev / vr;
+    return {name: it ? LX(it, 'name') : P.name, qty: P.qty, net, cost: cost == null ? null : cost * P.qty, unitCost: cost,
+            profit: cost == null ? null : net - cost * P.qty, margin: cost == null || !net ? null : (net - cost * P.qty) / net * 100};
+  }).sort((a, b) => (b.profit == null ? -1e12 : b.profit) - (a.profit == null ? -1e12 : a.profit));
+}
+function profitHtml(R){
+  const rows = profitRows(R); if(!rows.length) return '';
+  const known = rows.filter(r => r.profit != null), miss = rows.length - known.length;
+  const tNet = known.reduce((s, r) => s + r.net, 0), tCost = known.reduce((s, r) => s + r.cost, 0);
+  const mcol = m => m == null ? '' : m >= 60 ? 'color:#1a9c53' : m >= 40 ? '' : 'color:#c0392b';
+  return `<h3>💰 ربح كل وجبة <span class="muted">(قبل מע״מ)</span></h3>
+    ${known.length ? `<div class="kp"><div><b>${money0(tNet)}</b><span>مبيعات (اللي إلها تكلفة)</span></div><div class="neg"><b>${money0(tCost)}</b><span>تكلفة المكونات</span></div><div><b>${money0(tNet - tCost)}</b><span>ربح إجمالي · ${tNet ? Math.round((tNet - tCost) / tNet * 100) : 0}%</span></div></div>` : ''}
+    <table class="rtb"><tr class="hd"><td>الصنف</td><td class="n">كمية</td><td class="n">مبيعات</td><td class="n">تكلفة</td><td class="n">ربح</td><td class="n">%</td></tr>
+    ${rows.map(r => `<tr><td>${esc(r.name)}</td><td class="n">${r.qty}</td><td class="n">${rmoney(r.net)}</td><td class="n">${r.cost == null ? '—' : rmoney(r.cost)}</td><td class="n"><b>${r.profit == null ? '—' : rmoney(r.profit)}</b></td><td class="n" style="${mcol(r.margin)}">${r.margin == null ? '—' : Math.round(r.margin) + '%'}</td></tr>`).join('')}</table>
+    ${miss ? `<div class="muted" style="margin-top:6px">⚠️ <span>في أصناف بدون تكلفة</span> (${miss}) — <span>حطها من ✏️ تعديل الصنف ← 💰 تكلفة المكونات</span>.</div>` : ''}
+    <div class="muted" style="margin-top:4px">الإضافات والعروض مش محسوبة بالتكلفة — بس سعر الصنف الأساسي.</div>`;
+}
+
+/* ============ 🔥 خريطة حرارية للطلبات ============ */
+let HMAP = null;
+async function openHeat(){
+  const R = REP.R; if(!R) return;
+  let ov = $('htOv');
+  if(!ov){ ov = document.createElement('div'); ov.id = 'htOv';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:300;background:#fff;display:flex;flex-direction:column';
+    ov.innerHTML = '<div class="dvtop" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#111;color:#fff"><b style="flex:1" id="htT"></b><button class="hbtn" onclick="closeHeat()">✕</button></div><div id="htMap" style="flex:1"></div><div id="htLeg" class="muted" style="padding:8px 12px;background:#f5f3f1"></div>';
+    document.body.appendChild(ov); }
+  ov.style.display = 'flex'; document.body.style.overflow = 'hidden';
+  $('htT').textContent = trText('🔥 من وين بتيجي الطلبات') + ' — ' + monthName(REP.month);
+  $('htLeg').textContent = trText('طلبات إلها موقع على الخريطة') + ': ' + R.pts.length + ' / ' + R.count + ' · ' + trText('كل ما اللون أحمر أكثر = طلبات أكثر');
+  try{
+    const L = await loadLeaflet();
+    if(!L.heatLayer){ window.L = L; await loadScript('https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js').catch(() => {}); }
+    if(HMAP){ HMAP.remove(); HMAP = null; }
+    const shop = SET.shopLoc ? [Number(SET.shopLoc.lat || SET.shopLoc[0]), Number(SET.shopLoc.lng || SET.shopLoc[1])] : RAHAT;
+    HMAP = L.map('htMap').setView(shop, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© OpenStreetMap'}).addTo(HMAP);
+    const pts = R.pts.filter(p => isFinite(p[0]) && isFinite(p[1]) && p[0]);
+    if(L.heatLayer && pts.length) L.heatLayer(pts.map(p => [p[0], p[1], 1]), {radius: 28, blur: 22, maxZoom: 17, minOpacity: .35}).addTo(HMAP);
+    else pts.forEach(p => L.circleMarker([p[0], p[1]], {radius: 7, color: '#e3242b', fillOpacity: .35, weight: 0}).addTo(HMAP));
+    (SET.zones || []).forEach((z, i) => { if(z.pts && z.pts.length > 2) L.polygon(z.pts, {color: z.color || ZCOL[i % ZCOL.length], weight: 2, fillOpacity: .04}).addTo(HMAP).bindTooltip(z.name || '', {className: 'ztip'}); });
+    if(pts.length) HMAP.fitBounds(L.latLngBounds(pts.map(p => [p[0], p[1]])).pad(0.15));
+    setTimeout(() => HMAP && HMAP.invalidateSize(), 150);
+  }catch(e){ alert(e.message); }
+}
+function closeHeat(){ const ov = $('htOv'); if(ov) ov.style.display = 'none'; document.body.style.overflow = ''; }
+
+/* ============ 🚫 ما استلم الطلب ============ */
+const noShows = ph => { const k = phKey(ph); return k ? (CUST_ORDERS || ORDERS).filter(o => o.noShow && phKey((o.customer||{}).phone) === k).length : 0; };
+async function markNoShow(id){
+  const o = ORDERS.find(x => x.id === id); if(!o) return;
+  const c = o.customer || {}, k = phKey(c.phone);
+  if(!confirm('الزبون ' + (c.name || '') + ' ما استلم الطلب؟ بنلغي الطلب وبنسجّلها عليه.')) return;
+  try{
+    await db.collection('orders').doc(id).update({noShow: true});
+    o.noShow = true; if(CUST_ORDERS){ const x = CUST_ORDERS.find(y => y.id === id); if(x) x.noShow = true; }
+    if(o.status !== 'cancel') setStatus(id, 'cancel');
+    const n = noShows(k), max = SET.noShowMax == null ? 2 : Number(SET.noShowMax);
+    if(max > 0 && n >= max && k && !isBlocked(k)){
+      const FV = firebase.firestore.FieldValue;
+      await db.collection('settings').doc('main').set({blocked: FV.arrayUnion(k)}, {merge:true});
+      SET.blocked = (SET.blocked || []).concat(k);
+      toast('🚫 الرقم انحظر — ' + n + ' مرات ما استلم');
+    }else toast('تم ✓ (' + n + ')');
+    render();
+  }catch(e){ alert(e.message); }
 }
 
 /* ========= 📊 التقارير ========= */
@@ -2439,7 +2948,7 @@ function calcReport(list){
   const ok = list.filter(o => o.status !== 'cancel');
   const vr = vatRate() / 100;
   const R = {count: ok.length, cancel: list.length - ok.length, gross: 0, sub: 0, fees: 0, disc: 0, coupon: 0, reward: 0, wheel: 0, gift: 0, bdayD: 0, bdayG: 0, posD: 0, bySrc: {},
-    byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set()};
+    byPay: {}, byType: {delivery: [0, 0], pickup: [0, 0]}, byZone: {}, byHour: Array(24).fill(0), items: {}, days: {}, prizes: [], unpaid: 0, customers: new Set(), byId: {}, pts: []};
   ok.forEach(o => {
     const t = Number(o.total || 0), c = o.customer || {}, pp = prizeParts(o);
     R.gross += t; R.sub += Number(o.subtotal || 0); R.fees += Number(o.fee || 0); R.disc += Number(o.discount || 0);
@@ -2452,7 +2961,9 @@ function calcReport(list){
     const dk = d.getDate();
     const D = R.days[dk] = R.days[dk] || {n: 0, gross: 0, fees: 0, disc: 0, prizes: 0};
     D.n++; D.gross += t; D.fees += Number(o.fee || 0); D.disc += Number(o.discount || 0); D.prizes += pp.reward + pp.wheel + pp.gift + pp.bdayD + pp.bdayG;
-    (o.items || []).forEach(i => { if(i.sub) return; const k = iName(i); R.items[k] = R.items[k] || [0, 0]; R.items[k][0] += Number(i.qty) || 0; R.items[k][1] += (Number(i.unit) || 0) * (Number(i.qty) || 0); });
+    (o.items || []).forEach(i => { if(i.sub) return; const k = iName(i); R.items[k] = R.items[k] || [0, 0]; R.items[k][0] += Number(i.qty) || 0; R.items[k][1] += (Number(i.unit) || 0) * (Number(i.qty) || 0);
+      if(i.id && !i.deal){ const P = R.byId[i.id] = R.byId[i.id] || {name: k, qty: 0, rev: 0}; P.qty += Number(i.qty) || 0; P.rev += (Number(i.unit) || 0) * (Number(i.qty) || 0); } });
+    if(c.loc && Array.isArray(c.loc)) R.pts.push([Number(c.loc[0]), Number(c.loc[1]), t]);
     if(!o.paid) R.unpaid += t;
     if(phKey(c.phone)) R.customers.add(phKey(c.phone));
     if(pp.reward) R.prizes.push({at: o.createdAtStr, name: c.name || '', phone: c.phone || '', what: '🎁 ' + (LANG === 'he' ? 'מתנת מועדון' : 'هدية الولاء'), cost: pp.reward, no: o.id});
@@ -2524,6 +3035,7 @@ function reportDocHtml(R, ym){
     <h3>🏆 الأصناف الأكثر مبيعاً</h3>
     <table class="rtb"><tr class="hd"><td>الصنف</td><td class="n">كمية</td><td class="n">المبلغ</td></tr>
       ${tops.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('') || '<tr><td colspan="3">—</td></tr>'}</table>
+    ${profitHtml(R)}
     ${Object.keys(R.byZone).length ? `<h3>🗺️ حسب المنطقة</h3><table class="rtb"><tr class="hd"><td>المنطقة</td><td class="n">طلبات</td><td class="n">المبلغ</td></tr>
       ${Object.entries(R.byZone).sort((a, b) => b[1][1] - a[1][1]).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v[0]}</td><td class="n">${rmoney(v[1])}</td></tr>`).join('')}</table>` : ''}
     <h3>🕐 ساعات الضغط</h3>
@@ -2551,6 +3063,7 @@ function renderRep(){
       <button class="btn sm gh" onclick="repShare()">📤 مشاركة (واتساب / إيميل)</button>
       <button class="btn sm gh" onclick="repWa()">💬 ملخص بالواتساب</button>
       <button class="btn sm gh" onclick="repMail()">✉️ إيميل</button>
+      <button class="btn sm gh" onclick="openHeat()">🔥 خريطة الطلبات</button>
     </div>`;
   if(REP.loading || !REP.orders){ $('vRep').innerHTML = bar + '<div class="empty"><div class="e">⏳</div><div>جاري التحميل...</div></div>'; return; }
   REP.R = calcReport(REP.orders);
@@ -3368,6 +3881,41 @@ function renderSet(){
         <div class="f"><label>إيميل المحاسب (للتقارير)</label><input id="sRepMail" type="email" dir="ltr" value="${esc(SET.reportEmail||'')}"></div>
       </div>
     </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🧾 חשבונית מס مع كل طلب</label>
+      <label class="chk"><input type="checkbox" id="ivOn" ${invCfg().on?'checked':''}><span>تفعيل الفاتورة (بتنطبع مع الطلب برقم تسلسلي)</span></label>
+      <div class="f3">
+        <div class="f"><label>نوع العوسيك</label><select id="ivKind">${[['murshe','עוסק מורשה'],['company','חברה בע״מ'],['patur','עוסק פטור (קבלה בלי מע״מ)']].map(([k,t])=>`<option value="${k}" ${(invCfg().kind||'murshe')===k?'selected':''}>${t}</option>`).join('')}</select></div>
+        <div class="f"><label>بلّش الترقيم من رقم</label><input id="ivStart" type="number" min="1" value="${invCfg().start||1}"></div>
+        <div class="f"><label>آخر رقم انطبع</label><input id="ivLast" value="${esc(INV_LAST == null ? '—' : INV_LAST)}" disabled class="ltr"></div>
+      </div>
+      <div class="f"><label>اسم المصلحة الرسمي (مثل ما مسجّل بمصلحة الضرائب)</label><input id="ivLegal" value="${esc(invCfg().legal||'')}" dir="rtl" placeholder="${esc(SET.name_he||SET.name||'')}"></div>
+      <div class="f"><label>سطر تحت الفاتورة</label><input id="ivFoot" value="${esc(invCfg().foot||'')}" placeholder="תודה ובתיאבון!"></div>
+      ${!SET.osek ? '<div class="warnbox">⚠️ لازم تكتب رقم עוסק / ח.פ بكرت "📊 التقارير والمحاسبة" فوق.</div>' : ''}
+      <div class="muted">الفاتورة بتطلع بالعبري، فيها رقم תסלסלי، מע״מ، و"מקור" بأول طباعة و"העתק" بعدها. إذا انلغى طلب بعد الفاتورة بتطلّع חשבונית זיכוי من كرت الطلب. <b>اسأل المحاسب تبعك</b> إذا بيكفيه هيك، أو بدّه نربط ببرنامج فواتير معتمد (Morning / iCount).</div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">♿ إتاحة (נגישות)</label>
+      <div class="muted" style="margin-bottom:8px">الموقع فيه زر ♿ وبيان إتاحة (הצהרת נגישות) زي ما بيطلب القانون. لازم يكون مكتوب فيه مين المسؤول عن الإتاحة وكيف يتواصلوا معه.</div>
+      <div class="f3">
+        <div class="f"><label>اسم مسؤول الإتاحة</label><input id="axName" value="${esc((SET.a11y||{}).name||'')}"></div>
+        <div class="f"><label>تلفون</label><input id="axPhone" inputmode="tel" class="ltr" value="${esc((SET.a11y||{}).phone||'')}"></div>
+        <div class="f"><label>إيميل</label><input id="axMail" type="email" dir="ltr" value="${esc((SET.a11y||{}).email||'')}"></div>
+      </div>
+      <div class="f"><label>تاريخ آخر تحديث للبيان</label><input id="axDate" value="${esc((SET.a11y||{}).date||'')}" placeholder="10/2026" class="ltr"></div>
+    </div>
+    <div class="card">
+      <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🎬 فيديوهات بالصفحة الرئيسية</label>
+      <div class="muted" style="margin-bottom:8px">الفيديوهات القصيرة (اللي بتعملها بـ Gemini أو بالتلفون) بتطلع للزبون بالصفحة الرئيسية. ارفع ملف فيديو، أو الصق رابط mp4 أو YouTube.</div>
+      <div id="vidRows">${(SET.videos || []).map(vidRow).join('')}</div>
+      <div class="bar">
+        <button type="button" class="btn sm gh" onclick="$('vidRows').insertAdjacentHTML('beforeend', vidRow({}))">+ رابط فيديو</button>
+        ${hasCloud() ? `<label class="btn sm red" style="cursor:pointer">⬆️ ارفع فيديو<input type="file" accept="video/*" style="display:none" onchange="vidUpload(this.files[0]);this.value=''"></label>` : ''}
+      </div>
+      <div class="f"><label>عنوان القسم</label><input id="vidTitle" value="${esc(SET.vidTitle||'')}" placeholder="🎬 من مطبخنا"></div>
+      ${heField('vidTitleHe', SET.vidTitle_he, 'العنوان بالعبري')}
+    </div>
+    ${backupHtml()}
     ${blockedHtml()}
     <div class="card">
       <label style="font-weight:800;font-size:15px;display:block;margin-bottom:6px">🕐 طلب مسبق</label>
@@ -3456,6 +4004,11 @@ async function saveSet(){
     osek: val('sOsek'), vat: num('sVat'), reportEmail: val('sRepMail'),
     preorder: {on: $('poOn').checked, days: Math.min(6, Math.max(0, Math.floor(num('poDays')))), lead: Math.max(10, num('poLead') || 30)},
     lowStock: Math.max(0, num('sLow')),
+    noShowMax: Math.max(0, Math.floor(num('nsMax'))), sms: {on: $('smsOn').checked},
+    videos: [...document.querySelectorAll('#vidRows .whr')].map(r => ({url: r.querySelector('.vu').value.trim(), title: r.querySelector('.wl').value.trim(), title_he: r.querySelector('.wlh').value.trim(), poster: r.dataset.poster || ''})).filter(v => /^https:\/\//i.test(v.url)),
+    vidTitle: val('vidTitle'), vidTitle_he: val('vidTitleHe'),
+    a11y: {name: val('axName'), phone: val('axPhone'), email: val('axMail'), date: val('axDate')},
+    inv: {on: $('ivOn').checked, kind: $('ivKind').value, start: Math.max(1, Math.floor(num('ivStart')) || 1), legal: val('ivLegal'), foot: val('ivFoot')},
     bday: {on: $('bdOn').checked, type: $('bdType').value, value: num('bdVal'), days: Math.min(15, Math.max(0, Math.floor(num('bdDays')))), text: val('bdTxt'), text_he: val('bdTxtHe')},
     loyalty: {on: $('lyOn').checked, every: Math.max(2, num('lyEvery') || 10), value: num('lyVal') || 0, text: val('lyTxt'), text_he: val('lyTxtHe')},
     wheel: {on: $('whOn').checked, prizes: [...document.querySelectorAll('#whRows .whr')].map(r => ({
@@ -3465,6 +4018,7 @@ async function saveSet(){
   if(data.wheel.on && data.wheel.prizes.filter(p => p.chance > 0).length < 2){ alert('العجلة بدها جائزتين على الأقل'); return; }
   if(data.wheel.prizes.some(p => p.type === 'percent' && p.value > 50)){ alert('خصم العجلة لازم يكون 50% أو أقل'); return; }
   if(data.bday.type === 'percent' && data.bday.value > 50){ alert('خصم عيد الميلاد لازم يكون 50% أو أقل'); return; }
+  if(data.inv.on && !data.osek){ alert('للفاتورة لازم تكتب رقم עוסק / ח.פ'); return; }
   if(data.onlineUrl && !/^https:\/\//i.test(data.onlineUrl)){ alert('رابط الدفع لازم يبلّش بـ https://'); return; }
   if(data.payboxLink && !/^https:\/\//i.test(data.payboxLink)){ alert('رابط PayBox لازم يبلّش بـ https://'); return; }
   try{ await db.collection('settings').doc('main').set(data, {merge:true}); toast('تم الحفظ ✓'); }
